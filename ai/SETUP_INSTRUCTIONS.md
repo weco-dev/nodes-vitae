@@ -172,29 +172,41 @@ fly secrets set RESEND_API_KEY="your_resend_api_key" --app vitae-staging
 ### **Create Sentry account and project**
 
 1. Sign up at https://sentry.io/signup/?project_platform=javascript-remix
-2. Create a Remix project
-3. Copy the DSN
+2. Create a Remix project (e.g., `nodes-vitae` in organization `weco-ita`)
+3. Run the Sentry wizard to configure integration:
+
+```bash
+npx @sentry/wizard@latest -i remix --saas --org weco-ita --project nodes-vitae
+```
+
+This will automatically:
+
+- Install required Sentry packages
+- Configure `vite.config.ts` with Sentry plugins
+- Set up error tracking and performance monitoring
 
 ### **Configure Sentry secrets**
 
+After running the wizard, you'll need to get your Sentry DSN from the project
+settings and configure it:
+
 ```bash
-fly secrets set SENTRY_DSN="your_sentry_dsn" --app vitae
-fly secrets set SENTRY_DSN="your_sentry_dsn" --app vitae-staging
+fly secrets set SENTRY_DSN="your_sentry_dsn_from_project_settings" --app nodes-vitae
+fly secrets set SENTRY_DSN="your_sentry_dsn_from_project_settings" --app nodes-vitae-staging
 ```
 
 ### **Set up Sentry build-time configuration (OPTIONAL)**
 
-> **Note**: This step is optional. Without it, Sentry will still work for error
-> monitoring, but you won't get source maps, release tracking, or commit
-> association.
+> **Note**: This step is optional but recommended for enhanced features like
+> source maps, release tracking, and commit association.
 
 1. Create internal integration at Sentry for auth token
 2. Add scopes: `Releases:Admin` and `Organization:Read`
 3. Get organization slug and project slug
-4. Add to GitHub Secrets (optional for enhanced Sentry features):
-   - `SENTRY_AUTH_TOKEN` (only this one is actually used)
-   - `SENTRY_ORG` (not used in current implementation)
-   - `SENTRY_PROJECT` (not used in current implementation)
+4. Add to GitHub Secrets:
+   - `SENTRY_AUTH_TOKEN` (required for source maps and releases)
+   - `SENTRY_ORG` (set to `weco-ita`)
+   - `SENTRY_PROJECT` (set to `nodes-vitae`)
 
 ### **Update fly.toml configuration**
 

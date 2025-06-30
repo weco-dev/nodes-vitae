@@ -1,5 +1,5 @@
 app = "nodes-vitae"
-primary_region = "sjc"
+primary_region = "fra"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []

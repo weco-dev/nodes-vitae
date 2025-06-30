@@ -1,3 +1,4 @@
+import { withSentry } from '@sentry/remix'
 import { OpenImgContextProvider } from 'openimg/react'
 import {
 	data,
@@ -256,7 +257,7 @@ function AppWithProviders() {
 	)
 }
 
-export default AppWithProviders
+export default withSentry(AppWithProviders)
 
 // this is a last resort error boundary. There's not much useful information we
 // can offer at this level.
