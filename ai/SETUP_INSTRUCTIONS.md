@@ -92,12 +92,21 @@ fly apps create nodes-vitae
 fly apps create nodes-vitae-staging
 ```
 
+> **Note** : Make sure this name matches the `app` set in your `fly.toml` file.
+> Otherwise, you will not be able to deploy.
+
 ### **Initialize Git and connect to GitHub**
 
 ```bash
+# Init repository
 git init
+git add .
+git commit -m "initial message"
+
+# Add git flow
 git flow init
-# Create new GitHub repository at https://repo.new/
+
+# Create new GitHub repository at https://github.com/weco-dev
 git remote add origin <YOUR_GITHUB_REPO_URL>
 # Don't push yet!
 ```
@@ -122,9 +131,11 @@ fly secrets set ALLOW_INDEXING=false --app vitae-staging
 ### **Create persistent volumes for database**
 
 ```bash
-fly volumes create data --region sjc --size 1 --app vitae
-fly volumes create data --region sjc --size 1 --app vitae-staging
+fly volumes create data --region fra --size 1 --app vitae
+fly volumes create data --region fra --size 1 --app vitae-staging
 ```
+
+If you need to change regions check with `fly platform regions`
 
 ### **Attach Consul for data replication**
 
