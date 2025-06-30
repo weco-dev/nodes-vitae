@@ -3,6 +3,7 @@ import {
 	type SentryReactRouterBuildOptions,
 	sentryReactRouter,
 } from '@sentry/react-router'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import { reactRouterDevTools } from 'react-router-devtools'
 import { defineConfig } from 'vite'
@@ -55,6 +56,13 @@ export default defineConfig((config) => ({
 		MODE === 'production' && process.env.SENTRY_AUTH_TOKEN
 			? sentryReactRouter(sentryConfig, config)
 			: null,
+
+		// Put the Sentry vite plugin after all other plugins
+		sentryVitePlugin({
+			authToken: process.env.SENTRY_AUTH_TOKEN,
+			org: 'weco-ita',
+			project: 'nodes-vitae',
+		}),
 	],
 	test: {
 		include: ['./app/**/*.test.{ts,tsx}'],
