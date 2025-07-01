@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { Badge } from '#app/components/ui/badge'
 import { Button } from '#app/components/ui/button'
 import {
@@ -40,8 +41,12 @@ export default function Index() {
 							>
 								Contatti
 							</a>
-							<Button variant="outline">Accedi</Button>
-							<Button>Inizia ora</Button>
+							<Button variant="outline" asChild>
+								<Link to="/signup">Accedi</Link>
+							</Button>
+							<Button asChild>
+								<Link to="/dashboard">Inizia ora</Link>
+							</Button>
 						</nav>
 					</div>
 				</div>
@@ -64,9 +69,11 @@ export default function Index() {
 						europee.
 					</p>
 					<div className="flex flex-col justify-center gap-4 sm:flex-row">
-						<Button size="lg" className="px-8 py-3 text-lg">
-							<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-							Inizia la valutazione gratuita
+						<Button size="lg" className="px-8 py-3 text-lg" asChild>
+							<Link to="/signup">
+								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+								Inizia la valutazione gratuita
+							</Link>
 						</Button>
 						<Button variant="outline" size="lg" className="px-8 py-3 text-lg">
 							<Icon name="camera" className="mr-2 h-5 w-5" />
@@ -316,9 +323,16 @@ export default function Index() {
 						futuro più sostenibile
 					</p>
 					<div className="flex flex-col justify-center gap-4 sm:flex-row">
-						<Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
-							<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-							Prova gratuita 30 giorni
+						<Button
+							size="lg"
+							variant="secondary"
+							className="px-8 py-3 text-lg"
+							asChild
+						>
+							<Link to="/signup">
+								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+								Prova gratuita 30 giorni
+							</Link>
 						</Button>
 						<Button
 							size="lg"
