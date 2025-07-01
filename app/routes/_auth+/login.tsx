@@ -12,10 +12,6 @@ import { Spacer } from '#app/components/spacer.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { login, requireAnonymous } from '#app/utils/auth.server.ts'
-import {
-	ProviderConnectionForm,
-	providerNames,
-} from '#app/utils/connections.tsx'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { getErrorMessage, useIsPending } from '#app/utils/misc.tsx'
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
@@ -101,16 +97,19 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 	return (
 		<div className="flex min-h-full flex-col justify-center pt-20 pb-32">
 			<div className="mx-auto w-full max-w-md">
-				<div className="flex flex-col gap-3 text-center">
-					<h1 className="text-h1">Welcome back!</h1>
-					<p className="text-body-md text-muted-foreground">
-						Please enter your details.
+				<div className="flex flex-col space-y-2 text-center">
+					<h1 className="text-2xl font-semibold tracking-tight">
+						Accedi al tuo account
+					</h1>
+					<p className="text-muted-foreground text-sm">
+						Inserisci email e password per accedere
 					</p>
 				</div>
-				<Spacer size="xs" />
+
+				<Spacer size="3xs" />
 
 				<div>
-					<div className="mx-auto w-full max-w-md px-8">
+					<div className="mx-auto w-full max-w-md">
 						<Form method="POST" {...getFormProps(form)}>
 							<HoneypotInputs />
 							<Field
@@ -139,21 +138,20 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 								<CheckboxField
 									labelProps={{
 										htmlFor: fields.remember.id,
-										children: 'Remember me',
+										children: 'Ricordami',
 									}}
 									buttonProps={getInputProps(fields.remember, {
 										type: 'checkbox',
 									})}
 									errors={fields.remember.errors}
 								/>
-								<div>
-									<Link
-										to="/forgot-password"
-										className="text-body-xs font-semibold"
-									>
-										Forgot password?
-									</Link>
-								</div>
+
+								<Link
+									to="/forgot-password"
+									className="text-body-xs font-semibold"
+								>
+									Password dimenticata?
+								</Link>
 							</div>
 
 							<input
@@ -168,37 +166,28 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 									type="submit"
 									disabled={isPending}
 								>
-									Log in
+									Login
 								</StatusButton>
 							</div>
 						</Form>
-						<hr className="my-4" />
-						<div className="flex flex-col gap-5">
+
+						<hr className="border-muted-foreground/20 my-4" />
+						<div className="flex flex-col">
 							<PasskeyLogin
 								redirectTo={redirectTo}
 								remember={fields.remember.value === 'on'}
 							/>
 						</div>
-						<hr className="my-4" />
-						<ul className="flex flex-col gap-5">
-							{providerNames.map((providerName) => (
-								<li key={providerName}>
-									<ProviderConnectionForm
-										type="Login"
-										providerName={providerName}
-										redirectTo={redirectTo}
-									/>
-								</li>
-							))}
-						</ul>
+
 						<div className="flex items-center justify-center gap-2 pt-6">
-							<span className="text-muted-foreground">New here?</span>
+							<span className="text-muted-foreground">Sei nuovo?</span>
 							<Link
 								to={
 									redirectTo
 										? `/signup?redirectTo=${encodeURIComponent(redirectTo)}`
 										: '/signup'
 								}
+								className="text-primary font-semibold hover:underline"
 							>
 								Create an account
 							</Link>
@@ -231,7 +220,7 @@ function PasskeyLogin({
 	const [isPending] = useTransition()
 	const [error, setError] = useState<string | null>(null)
 	const [passkeyMessage, setPasskeyMessage] = useOptimistic<string | null>(
-		'Login with a passkey',
+		'Login con passkey',
 	)
 	const navigate = useNavigate()
 
@@ -291,9 +280,11 @@ function PasskeyLogin({
 					<span>{passkeyMessage}</span>
 				</span>
 			</StatusButton>
-			<div className="mt-2">
-				<ErrorList errors={[error]} id="passkey-login-button-error" />
-			</div>
+			{error && (
+				<div className="mt-2">
+					<ErrorList errors={[error]} id="passkey-login-button-error" />
+				</div>
+			)}
 		</form>
 	)
 }

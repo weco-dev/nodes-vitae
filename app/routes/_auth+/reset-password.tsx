@@ -76,7 +76,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export const meta: Route.MetaFunction = () => {
-	return [{ title: 'Reset Password | Epic Notes' }]
+	return [{ title: 'Reset Password | Vitae' }]
 }
 
 export default function ResetPasswordPage({
@@ -96,51 +96,62 @@ export default function ResetPasswordPage({
 	})
 
 	return (
-		<div className="container flex flex-col justify-center pt-20 pb-32">
-			<div className="text-center">
-				<h1 className="text-h1">Password Reset</h1>
-				<p className="text-body-md text-muted-foreground mt-3">
-					Hi, {loaderData.resetPasswordUsername}. No worries. It happens all the
-					time.
-				</p>
-			</div>
-			<div className="mx-auto mt-16 max-w-sm min-w-full sm:min-w-[368px]">
-				<Form method="POST" {...getFormProps(form)}>
-					<Field
-						labelProps={{
-							htmlFor: fields.password.id,
-							children: 'New Password',
-						}}
-						inputProps={{
-							...getInputProps(fields.password, { type: 'password' }),
-							autoComplete: 'new-password',
-							autoFocus: true,
-						}}
-						errors={fields.password.errors}
-					/>
-					<Field
-						labelProps={{
-							htmlFor: fields.confirmPassword.id,
-							children: 'Confirm Password',
-						}}
-						inputProps={{
-							...getInputProps(fields.confirmPassword, { type: 'password' }),
-							autoComplete: 'new-password',
-						}}
-						errors={fields.confirmPassword.errors}
-					/>
+		<div className="flex min-h-full flex-col justify-center pt-20 pb-32">
+			<div className="mx-auto w-full max-w-md">
+				<div className="flex flex-col space-y-2 text-center">
+					<h1 className="text-2xl font-semibold tracking-tight">
+						Reset Password
+					</h1>
+					<p className="text-muted-foreground text-sm">
+						Ciao, {loaderData.resetPasswordUsername}. Nessun problema, succede
+						sempre.
+					</p>
+				</div>
 
-					<ErrorList errors={form.errors} id={form.errorId} />
+				<div className="mt-8">
+					<div className="mx-auto w-full max-w-md">
+						<Form method="POST" {...getFormProps(form)}>
+							<Field
+								labelProps={{
+									htmlFor: fields.password.id,
+									children: 'Nuova Password',
+								}}
+								inputProps={{
+									...getInputProps(fields.password, { type: 'password' }),
+									autoComplete: 'new-password',
+									autoFocus: true,
+								}}
+								errors={fields.password.errors}
+							/>
+							<Field
+								labelProps={{
+									htmlFor: fields.confirmPassword.id,
+									children: 'Conferma Password',
+								}}
+								inputProps={{
+									...getInputProps(fields.confirmPassword, {
+										type: 'password',
+									}),
+									autoComplete: 'new-password',
+								}}
+								errors={fields.confirmPassword.errors}
+							/>
 
-					<StatusButton
-						className="w-full"
-						status={isPending ? 'pending' : (form.status ?? 'idle')}
-						type="submit"
-						disabled={isPending}
-					>
-						Reset password
-					</StatusButton>
-				</Form>
+							<ErrorList errors={form.errors} id={form.errorId} />
+
+							<div className="pt-3">
+								<StatusButton
+									className="w-full"
+									status={isPending ? 'pending' : (form.status ?? 'idle')}
+									type="submit"
+									disabled={isPending}
+								>
+									Reset password
+								</StatusButton>
+							</div>
+						</Form>
+					</div>
+				</div>
 			</div>
 		</div>
 	)
