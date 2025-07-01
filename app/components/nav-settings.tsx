@@ -40,7 +40,7 @@ export function NavSettings({
 		<SidebarGroup
 			className={cn('group-data-[collapsible=icon]:hidden', className)}
 		>
-			<SidebarGroupLabel>Settings</SidebarGroupLabel>
+			<SidebarGroupLabel>More</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => (
 					<SidebarMenuItem key={item.title}>
