@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { cn } from '#app/utils/misc.tsx'
 
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
