@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Link, redirect } from 'react-router'
 import { Badge } from '#app/components/ui/badge'
 import { Button } from '#app/components/ui/button'
 import {
@@ -10,6 +10,17 @@ import {
 } from '#app/components/ui/card'
 import { Icon } from '#app/components/ui/icon'
 import { Separator } from '#app/components/ui/separator'
+import { getUserId } from '#app/utils/auth.server.ts'
+import { type Route } from './+types/index'
+
+export async function loader({ request }: Route.LoaderArgs) {
+	const userId = await getUserId(request)
+
+	if (userId) {
+		const redirectTo = '/dashboard'
+		return redirect(redirectTo)
+	}
+}
 
 export default function Index() {
 	return (
@@ -42,10 +53,10 @@ export default function Index() {
 								Contatti
 							</a>
 							<Button variant="outline" asChild>
-								<Link to="/signup">Accedi</Link>
+								<Link to="/login">Accedi</Link>
 							</Button>
 							<Button asChild>
-								<Link to="/dashboard">Inizia ora</Link>
+								<Link to="/signup">Inizia ora</Link>
 							</Button>
 						</nav>
 					</div>
