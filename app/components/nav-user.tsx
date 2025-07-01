@@ -4,7 +4,7 @@ import {
 	IconLogout,
 	IconNotification,
 	IconUserCircle,
-	IconNotes,
+	// IconNotes,
 } from '@tabler/icons-react'
 import { useRef } from 'react'
 import { Link, Form } from 'react-router'
@@ -115,15 +115,15 @@ export function NavUser() {
 							<DropdownMenuItem asChild>
 								<Link to={`/users/${user.username}`}>
 									<IconUserCircle />
-									Profile
+									Account
 								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem asChild>
+							{/* <DropdownMenuItem asChild>
 								<Link to={`/users/${user.username}/notes`}>
 									<IconNotes />
 									Notes
 								</Link>
-							</DropdownMenuItem>
+							</DropdownMenuItem> */}
 							<DropdownMenuItem>
 								<IconCreditCard />
 								Billing

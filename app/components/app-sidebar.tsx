@@ -11,7 +11,6 @@ import {
 	IconInnerShadowTop,
 	IconListDetails,
 	IconReport,
-	IconSearch,
 	IconSettings,
 	IconUsers,
 } from '@tabler/icons-react'
@@ -19,7 +18,7 @@ import * as React from 'react'
 
 import { NavDocuments } from '#app/components/nav-documents'
 import { NavMain } from '#app/components/nav-main'
-import { NavSecondary } from '#app/components/nav-secondary'
+import { NavSettings } from '#app/components/nav-settings'
 import { NavUser } from '#app/components/nav-user'
 import {
 	Sidebar,
@@ -112,23 +111,6 @@ const data = {
 			],
 		},
 	],
-	navSecondary: [
-		{
-			title: 'Settings',
-			url: '#',
-			icon: IconSettings,
-		},
-		{
-			title: 'Get Help',
-			url: '#',
-			icon: IconHelp,
-		},
-		{
-			title: 'Search',
-			url: '#',
-			icon: IconSearch,
-		},
-	],
 	documents: [
 		{
 			name: 'Data Library',
@@ -146,6 +128,32 @@ const data = {
 			icon: IconFileWord,
 		},
 	],
+	navSettings: [
+		{
+			title: 'Settings',
+			url: '#',
+			icon: IconSettings,
+			items: [
+				{
+					title: 'Profilo',
+					url: '#',
+				},
+				{
+					title: 'MFA',
+					url: '#',
+				},
+				{
+					title: '...',
+					url: '#',
+				},
+			],
+		},
+		{
+			title: 'Get Help',
+			url: '#',
+			icon: IconHelp,
+		},
+	],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -160,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						>
 							<a href="#">
 								<IconInnerShadowTop className="!size-5" />
-								<span className="text-base font-semibold">Acme Inc.</span>
+								<span className="text-base font-semibold">Vitae</span>
 							</a>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
@@ -169,7 +177,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 				<NavDocuments items={data.documents} />
-				<NavSecondary items={data.navSecondary} className="mt-auto" />
+				<NavSettings items={data.navSettings} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser />
