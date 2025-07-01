@@ -1,101 +1,462 @@
+import { Badge } from '#app/components/ui/badge'
+import { Button } from '#app/components/ui/button'
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '#app/components/ui/tooltip.tsx'
-import { cn } from '#app/utils/misc.tsx'
-import { type Route } from './+types/index.ts'
-import { logos } from './logos/logos.ts'
-
-export const meta: Route.MetaFunction = () => [{ title: 'Epic Notes' }]
-
-// Tailwind Grid cell classes lookup
-const columnClasses: Record<(typeof logos)[number]['column'], string> = {
-	1: 'xl:col-start-1',
-	2: 'xl:col-start-2',
-	3: 'xl:col-start-3',
-	4: 'xl:col-start-4',
-	5: 'xl:col-start-5',
-}
-const rowClasses: Record<(typeof logos)[number]['row'], string> = {
-	1: 'xl:row-start-1',
-	2: 'xl:row-start-2',
-	3: 'xl:row-start-3',
-	4: 'xl:row-start-4',
-	5: 'xl:row-start-5',
-	6: 'xl:row-start-6',
-}
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+} from '#app/components/ui/card'
+import { Icon } from '#app/components/ui/icon'
+import { Separator } from '#app/components/ui/separator'
 
 export default function Index() {
 	return (
-		<main className="font-poppins grid h-full place-items-center">
-			<div className="grid place-items-center px-4 py-16 xl:grid-cols-2 xl:gap-24">
-				<div className="flex max-w-md flex-col items-center text-center xl:order-2 xl:items-start xl:text-left">
-					<a
-						href="https://www.epicweb.dev/stack"
-						className="animate-slide-top xl:animate-slide-left [animation-fill-mode:backwards] xl:[animation-delay:0.5s] xl:[animation-fill-mode:backwards]"
-					>
-						<svg
-							className="text-foreground size-20 xl:-mt-4"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 65 65"
-						>
-							<path
-								fill="currentColor"
-								d="M39.445 25.555 37 17.163 65 0 47.821 28l-8.376-2.445Zm-13.89 0L28 17.163 0 0l17.179 28 8.376-2.445Zm13.89 13.89L37 47.837 65 65 47.821 37l-8.376 2.445Zm-13.89 0L28 47.837 0 65l17.179-28 8.376 2.445Z"
-							></path>
-						</svg>
-					</a>
-					<h1
-						data-heading
-						className="animate-slide-top text-foreground xl:animate-slide-left mt-8 text-4xl font-medium [animation-delay:0.3s] [animation-fill-mode:backwards] md:text-5xl xl:mt-4 xl:text-6xl xl:[animation-delay:0.8s] xl:[animation-fill-mode:backwards]"
-					>
-						<a href="https://www.epicweb.dev/stack">The Epic Stack</a>
-					</h1>
-					<p
-						data-paragraph
-						className="animate-slide-top text-muted-foreground xl:animate-slide-left mt-6 text-xl/7 [animation-delay:0.8s] [animation-fill-mode:backwards] xl:mt-8 xl:text-xl/6 xl:leading-10 xl:[animation-delay:1s] xl:[animation-fill-mode:backwards]"
-					>
-						Check the{' '}
-						<a
-							className="underline hover:no-underline"
-							href="https://github.com/epicweb-dev/epic-stack/blob/main/docs/getting-started.md"
-						>
-							Getting Started guide
-						</a>{' '}
-						file for how to get your project off the ground!
-					</p>
-				</div>
-				<ul className="mt-16 flex max-w-3xl flex-wrap justify-center gap-2 sm:gap-4 xl:mt-0 xl:grid xl:grid-flow-col xl:grid-cols-5 xl:grid-rows-6">
-					<TooltipProvider>
-						{logos.map((logo, i) => (
-							<li
-								key={logo.href}
-								className={cn(
-									columnClasses[logo.column],
-									rowClasses[logo.row],
-									'animate-roll-reveal [animation-fill-mode:backwards]',
-								)}
-								style={{ animationDelay: `${i * 0.07}s` }}
+		<div className="from-secondary/30 to-background min-h-screen bg-gradient-to-b">
+			{/* Header */}
+			<header className="border-border/60 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-sm">
+				<div className="container mx-auto px-4 py-4">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center space-x-2">
+							<Icon name="sun" className="text-primary h-8 w-8" />
+							<span className="text-foreground text-2xl font-bold">Vitae</span>
+						</div>
+						<nav className="hidden items-center space-x-6 md:flex">
+							<a
+								href="#features"
+								className="text-muted-foreground hover:text-primary transition-colors"
 							>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<a
-											href={logo.href}
-											className="grid size-20 place-items-center rounded-2xl bg-violet-600/10 p-4 transition hover:-rotate-6 hover:bg-violet-600/15 sm:size-24 dark:bg-violet-200 dark:hover:bg-violet-100"
-										>
-											<img src={logo.src} alt="" />
-										</a>
-									</TooltipTrigger>
-									<TooltipContent>{logo.alt}</TooltipContent>
-								</Tooltip>
-							</li>
-						))}
-					</TooltipProvider>
-				</ul>
-			</div>
-		</main>
+								Funzionalità
+							</a>
+							<a
+								href="#benefits"
+								className="text-muted-foreground hover:text-primary transition-colors"
+							>
+								Vantaggi
+							</a>
+							<a
+								href="#contact"
+								className="text-muted-foreground hover:text-primary transition-colors"
+							>
+								Contatti
+							</a>
+							<Button variant="outline">Accedi</Button>
+							<Button>Inizia ora</Button>
+						</nav>
+					</div>
+				</div>
+			</header>
+
+			{/* Hero Section */}
+			<section className="px-4 py-20">
+				<div className="container mx-auto text-center">
+					<Badge variant="secondary" className="mb-4">
+						🍇 Piattaforma ESG per il settore vitivinicolo
+					</Badge>
+					<h1 className="text-foreground mb-6 text-5xl leading-tight font-bold md:text-6xl">
+						Sostenibilità Sociale per le
+						<span className="text-primary block">Aziende Vitivinicole</span>
+					</h1>
+					<p className="text-muted-foreground mx-auto mb-8 max-w-3xl text-xl leading-relaxed">
+						Una piattaforma digitale dedicata alle micro e PMI vitivinicole per
+						l'autovalutazione della sostenibilità sociale secondo criteri ESG,
+						con strumenti guidati e conformi alle normative nazionali ed
+						europee.
+					</p>
+					<div className="flex flex-col justify-center gap-4 sm:flex-row">
+						<Button size="lg" className="px-8 py-3 text-lg">
+							<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+							Inizia la valutazione gratuita
+						</Button>
+						<Button variant="outline" size="lg" className="px-8 py-3 text-lg">
+							<Icon name="camera" className="mr-2 h-5 w-5" />
+							Guarda la demo
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* Features Section */}
+			<section id="features" className="bg-primary/10 px-4 py-20">
+				<div className="container mx-auto">
+					<div className="mb-16 text-center">
+						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
+							Strumenti specializzati per il vino
+						</h2>
+						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
+							Soluzioni verticali pensate specificamente per le esigenze delle
+							aziende vitivinicole
+						</p>
+					</div>
+					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+							<CardHeader>
+								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+									<Icon
+										name="check"
+										className="text-secondary-foreground h-6 w-6"
+									/>
+								</div>
+								<CardTitle className="text-xl">
+									Autovalutazione Guidata
+								</CardTitle>
+								<CardDescription>
+									Questionari strutturati per valutare la sostenibilità sociale
+									della tua azienda
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<ul className="text-muted-foreground space-y-2 text-sm">
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Criteri ESG specifici per il settore
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Domande adattate alle PMI
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Processo step-by-step
+									</li>
+								</ul>
+							</CardContent>
+						</Card>
+
+						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+							<CardHeader>
+								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+									<Icon
+										name="file-text"
+										className="text-secondary-foreground h-6 w-6"
+									/>
+								</div>
+								<CardTitle className="text-xl">Conformità Normativa</CardTitle>
+								<CardDescription>
+									Strumenti allineati con le normative europee e italiane
+									vigenti
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<ul className="text-muted-foreground space-y-2 text-sm">
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Direttiva CSRD europea
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Standard EFRAG ESRS
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Aggiornamenti automatici
+									</li>
+								</ul>
+							</CardContent>
+						</Card>
+
+						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+							<CardHeader>
+								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+									<Icon
+										name="dots-horizontal"
+										className="text-secondary-foreground h-6 w-6"
+									/>
+								</div>
+								<CardTitle className="text-xl">Report Personalizzati</CardTitle>
+								<CardDescription>
+									Dashboard e report dettagliati per monitorare i progressi
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<ul className="text-muted-foreground space-y-2 text-sm">
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Metriche di sostenibilità
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Piani di miglioramento
+									</li>
+									<li className="flex items-center">
+										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
+										Export per stakeholder
+									</li>
+								</ul>
+							</CardContent>
+						</Card>
+					</div>
+				</div>
+			</section>
+
+			{/* Benefits Section */}
+			<section id="benefits" className="bg-secondary/30 px-4 py-20">
+				<div className="container mx-auto">
+					<div className="mb-16 text-center">
+						<h2 className="text-foreground mb-4 text-4xl font-bold">
+							Perché Scegliere Vitae?
+						</h2>
+						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
+							Vantaggi concreti per la tua azienda vitivinicola
+						</p>
+					</div>
+					<div className="grid items-center gap-12 lg:grid-cols-2">
+						<div className="space-y-8">
+							<div className="flex items-start space-x-4">
+								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+									<Icon
+										name="plus"
+										className="text-primary-foreground h-6 w-6"
+									/>
+								</div>
+								<div>
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
+										Specifico per il Settore Vino
+									</h3>
+									<p className="text-muted-foreground">
+										Non una soluzione generica, ma strumenti pensati
+										specificamente per le peculiarità delle aziende vitivinicole
+										e i loro processi produttivi.
+									</p>
+								</div>
+							</div>
+							<div className="flex items-start space-x-4">
+								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+									<Icon
+										name="dots-horizontal"
+										className="text-primary-foreground h-6 w-6"
+									/>
+								</div>
+								<div>
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
+										Pensato per Micro e PMI
+									</h3>
+									<p className="text-muted-foreground">
+										Strumenti accessibili e user-friendly, senza la complessità
+										delle soluzioni enterprise. Perfetto per aziende familiari e
+										cooperative.
+									</p>
+								</div>
+							</div>
+							<div className="flex items-start space-x-4">
+								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
+									<Icon
+										name="lock-closed"
+										className="text-primary-foreground h-6 w-6"
+									/>
+								</div>
+								<div>
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
+										Conformità Garantita
+									</h3>
+									<p className="text-muted-foreground">
+										Sempre aggiornato con le ultime normative ESG europee e
+										italiane, per essere pronti alle verifiche e audit.
+									</p>
+								</div>
+							</div>
+						</div>
+						<div className="relative">
+							<div className="bg-card border-border/60 rounded-2xl border p-8 shadow-xl">
+								<h4 className="text-card-foreground mb-6 text-center text-2xl font-bold">
+									Dashboard ESG
+								</h4>
+								<div className="space-y-4">
+									<div className="flex items-center justify-between">
+										<span className="text-muted-foreground">
+											Sostenibilità Sociale
+										</span>
+										<Badge variant="secondary">85%</Badge>
+									</div>
+									<div className="bg-muted h-2 w-full rounded-full">
+										<div
+											className="bg-primary h-2 rounded-full"
+											style={{ width: '85%' }}
+										></div>
+									</div>
+									<div className="flex items-center justify-between">
+										<span className="text-muted-foreground">
+											Benessere Lavoratori
+										</span>
+										<Badge variant="secondary">92%</Badge>
+									</div>
+									<div className="bg-muted h-2 w-full rounded-full">
+										<div
+											className="bg-primary h-2 rounded-full"
+											style={{ width: '92%' }}
+										></div>
+									</div>
+									<div className="flex items-center justify-between">
+										<span className="text-muted-foreground">
+											Coinvolgimento Comunità
+										</span>
+										<Badge variant="secondary">78%</Badge>
+									</div>
+									<div className="bg-muted h-2 w-full rounded-full">
+										<div
+											className="bg-primary h-2 rounded-full"
+											style={{ width: '78%' }}
+										></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* CTA Section */}
+			<section className="bg-primary px-4 py-20">
+				<div className="container mx-auto text-center">
+					<h2 className="text-primary-foreground mb-4 text-4xl font-bold">
+						Inizia il Tuo Percorso ESG Oggi
+					</h2>
+					<p className="text-primary-foreground/80 mx-auto mb-8 max-w-2xl text-xl">
+						Unisciti alle aziende vitivinicole che stanno già costruendo un
+						futuro più sostenibile
+					</p>
+					<div className="flex flex-col justify-center gap-4 sm:flex-row">
+						<Button size="lg" variant="secondary" className="px-8 py-3 text-lg">
+							<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+							Prova gratuita 30 giorni
+						</Button>
+						<Button
+							size="lg"
+							variant="outline"
+							className="border-primary-foreground text-primary hover:bg-primary-foreground hover:text-primary px-8 py-3 text-lg"
+						>
+							<Icon name="clock" className="mr-2 h-5 w-5" />
+							Prenota una demo
+						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* Footer */}
+			<footer
+				id="contact"
+				className="bg-card text-card-foreground border-border border-t px-4 py-16"
+			>
+				<div className="container mx-auto">
+					<div className="grid gap-8 md:grid-cols-4">
+						<div>
+							<div className="mb-4 flex items-center space-x-2">
+								<Icon name="sun" className="text-primary h-8 w-8" />
+								<span className="text-2xl font-bold">Vitae</span>
+							</div>
+							<p className="text-muted-foreground mb-4">
+								La piattaforma ESG dedicata alle aziende vitivinicole italiane.
+							</p>
+							<div className="flex space-x-4">
+								<Icon
+									name="github-logo"
+									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
+								/>
+								<Icon
+									name="link-2"
+									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
+								/>
+								<Icon
+									name="envelope-closed"
+									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
+								/>
+							</div>
+						</div>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Prodotto</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<a href="#" className="hover:text-primary">
+										Funzionalità
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Prezzi
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Demo
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										API
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Supporto</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<a href="#" className="hover:text-primary">
+										Centro Assistenza
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Documentazione
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Webinar
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Community
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Azienda</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<a href="#" className="hover:text-primary">
+										Chi siamo
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Blog
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Carriere
+									</a>
+								</li>
+								<li>
+									<a href="#" className="hover:text-primary">
+										Contatti
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<Separator className="bg-border my-8" />
+					<div className="flex flex-col items-center justify-between md:flex-row">
+						<p className="text-muted-foreground text-sm">
+							© 2025 Vitae. Tutti i diritti riservati.
+						</p>
+						<div className="text-muted-foreground mt-4 flex space-x-6 text-sm md:mt-0">
+							<a href="#" className="hover:text-primary">
+								Privacy Policy
+							</a>
+							<a href="#" className="hover:text-primary">
+								Termini di Servizio
+							</a>
+							<a href="#" className="hover:text-primary">
+								Cookie Policy
+							</a>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
 	)
 }
