@@ -2,7 +2,6 @@ import { withSentry } from '@sentry/remix'
 import { OpenImgContextProvider } from 'openimg/react'
 import {
 	data,
-	Link,
 	Links,
 	Meta,
 	Outlet,
@@ -182,8 +181,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function App() {
 	const data = useLoaderData<typeof loader>()
-	// const user = useOptionalUser()
 	const theme = useTheme()
+	// const user = useOptionalUser()
 	// const matches = useMatches()
 	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index')
 	// const searchBar = isOnSearchPage ? null : <SearchBar status="idle" />
