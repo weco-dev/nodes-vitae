@@ -9,7 +9,6 @@ import {
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	useMatches,
 } from 'react-router'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { type Route } from './+types/root.ts'
@@ -17,14 +16,10 @@ import appleTouchIconAssetUrl from './assets/favicons/apple-touch-icon.png'
 import faviconAssetUrl from './assets/favicons/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { EpicProgress } from './components/progress-bar.tsx'
-import { SearchBar } from './components/search-bar.tsx'
 import { useToast } from './components/toaster.tsx'
-import { Button } from './components/ui/button.tsx'
 import { href as iconsHref } from './components/ui/icon.tsx'
 import { EpicToaster } from './components/ui/sonner.tsx'
-import { UserDropdown } from './components/user-dropdown.tsx'
 import {
-	ThemeSwitch,
 	useOptionalTheme,
 	useTheme,
 } from './routes/resources+/theme-switch.tsx'
@@ -40,7 +35,6 @@ import { useNonce } from './utils/nonce-provider.ts'
 import { type Theme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
-import { useOptionalUser } from './utils/user.ts'
 
 export const links: Route.LinksFunction = () => {
 	return [
@@ -188,11 +182,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function App() {
 	const data = useLoaderData<typeof loader>()
-	const user = useOptionalUser()
+	// const user = useOptionalUser()
 	const theme = useTheme()
-	const matches = useMatches()
-	const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index')
-	const searchBar = isOnSearchPage ? null : <SearchBar status="idle" />
+	// const matches = useMatches()
+	// const isOnSearchPage = matches.find((m) => m.id === 'routes/users+/index')
+	// const searchBar = isOnSearchPage ? null : <SearchBar status="idle" />
 	useToast(data.toast)
 
 	return (
@@ -200,7 +194,7 @@ function App() {
 			optimizerEndpoint="/resources/images"
 			getSrc={getImgSrc}
 		>
-			<div className="flex min-h-screen flex-col justify-between">
+			{/* <div className="flex min-h-screen flex-col justify-between">
 				<header className="container py-6">
 					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
 						<Logo />
@@ -221,32 +215,33 @@ function App() {
 				</header>
 
 				<div className="flex flex-1 flex-col">
-					<Outlet />
+					
 				</div>
 
 				<div className="container flex justify-between pb-5">
 					<Logo />
 					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
 				</div>
-			</div>
+			</div> */}
+			<Outlet />
 			<EpicToaster closeButton position="top-center" theme={theme} />
 			<EpicProgress />
 		</OpenImgContextProvider>
 	)
 }
 
-function Logo() {
-	return (
-		<Link to="/" className="group grid leading-snug">
-			<span className="font-light transition group-hover:-translate-x-1">
-				epic
-			</span>
-			<span className="font-bold transition group-hover:translate-x-1">
-				notes
-			</span>
-		</Link>
-	)
-}
+// function Logo() {
+// 	return (
+// 		<Link to="/" className="group grid leading-snug">
+// 			<span className="font-light transition group-hover:-translate-x-1">
+// 				epic
+// 			</span>
+// 			<span className="font-bold transition group-hover:translate-x-1">
+// 				notes
+// 			</span>
+// 		</Link>
+// 	)
+// }
 
 function AppWithProviders() {
 	const data = useLoaderData<typeof loader>()
