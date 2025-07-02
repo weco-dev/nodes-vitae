@@ -43,9 +43,9 @@ function generateBreadcrumbsFromPath(pathname: string): BreadcrumbItem[] {
 	const breadcrumbs: BreadcrumbItem[] = []
 
 	// Always start with Dashboard/Home
-	if (segments.length > 0) {
-		breadcrumbs.push({ label: 'Dashboard', href: '/' })
-	}
+	// if (segments.length > 0) {
+	// 	breadcrumbs.push({ label: 'Dashboard', href: '/' })
+	// }
 
 	// Add each segment as a breadcrumb
 	segments.forEach((segment, index) => {
@@ -85,10 +85,16 @@ export function DynamicBreadcrumb() {
 						<BreadcrumbItem>
 							{breadcrumb.href ? (
 								<BreadcrumbLink href={breadcrumb.href}>
-									{breadcrumb.label}
+									<span className="text-base font-medium">
+										{breadcrumb.label}
+									</span>
 								</BreadcrumbLink>
 							) : (
-								<BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
+								<BreadcrumbPage>
+									<span className="text-base font-medium">
+										{breadcrumb.label}
+									</span>
+								</BreadcrumbPage>
 							)}
 						</BreadcrumbItem>
 						{index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
