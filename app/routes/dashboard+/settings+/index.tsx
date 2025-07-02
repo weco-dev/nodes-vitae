@@ -40,7 +40,7 @@ export default function SettingsIndex() {
 					</Link>
 				</Card>
 				<Card className="hover:bg-muted/50 transition-colors">
-					<Link to="profile/me">
+					<Link to="#">
 						<CardHeader>
 							<div className="flex items-center gap-2">
 								<CardTitle className="text-lg">Piano pagamento</CardTitle>
@@ -53,7 +53,7 @@ export default function SettingsIndex() {
 					</Link>
 				</Card>
 				<Card className="hover:bg-muted/50 transition-colors">
-					<Link to="profile/me">
+					<Link to="#">
 						<CardHeader>
 							<div className="flex items-center gap-2">
 								<CardTitle className="text-lg">Notifiche</CardTitle>
