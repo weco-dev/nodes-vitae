@@ -1,6 +1,7 @@
 'use client'
 
 import { IconDots, type Icon } from '@tabler/icons-react'
+import { Link } from 'react-router'
 
 import {
 	DropdownMenu,
@@ -45,10 +46,10 @@ export function NavSettings({
 				{items.map((item) => (
 					<SidebarMenuItem key={item.title}>
 						<SidebarMenuButton asChild>
-							<a href={item.url}>
+							<Link to={item.url}>
 								<item.icon />
 								<span>{item.title}</span>
-							</a>
+							</Link>
 						</SidebarMenuButton>
 						{item.items && item.items.length > 0 && (
 							<DropdownMenu>
@@ -67,9 +68,9 @@ export function NavSettings({
 								>
 									{item.items.map((subItem) => (
 										<DropdownMenuItem key={subItem.title} asChild>
-											<a href={subItem.url}>
+											<Link to={subItem.url}>
 												<span>{subItem.title}</span>
-											</a>
+											</Link>
 										</DropdownMenuItem>
 									))}
 								</DropdownMenuContent>

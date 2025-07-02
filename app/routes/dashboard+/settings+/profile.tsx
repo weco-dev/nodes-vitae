@@ -2,12 +2,10 @@ import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { Link, Outlet, useMatches } from 'react-router'
 import { z } from 'zod'
-import { Spacer } from '#app/components/spacer.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { cn } from '#app/utils/misc.tsx'
-import { useUser } from '#app/utils/user.ts'
 import { type Route } from './+types/profile.ts'
 
 export const BreadcrumbHandle = z.object({ breadcrumb: z.any() })
@@ -33,7 +31,6 @@ const BreadcrumbHandleMatch = z.object({
 })
 
 export default function EditUserProfile() {
-	const user = useUser()
 	const matches = useMatches()
 	const breadcrumbs = matches
 		.map((m) => {
@@ -48,35 +45,23 @@ export default function EditUserProfile() {
 		.filter(Boolean)
 
 	return (
-		<div className="m-auto mt-16 mb-24 max-w-3xl">
-			<div className="container">
-				<ul className="flex gap-3">
-					<li>
-						<Link
-							className="text-muted-foreground"
-							to={`/users/${user.username}`}
-						>
-							Profile
-						</Link>
-					</li>
+		<div className="p-6">
+			{breadcrumbs.length > 0 && (
+				<div className="mb-4 flex flex-wrap gap-2">
 					{breadcrumbs.map((breadcrumb, i, arr) => (
-						<li
+						<div
 							key={i}
-							className={cn('flex items-center gap-3', {
+							className={cn('flex items-center gap-2', {
 								'text-muted-foreground': i < arr.length - 1,
 							})}
 						>
-							<Icon name="arrow-right" size="sm">
-								{breadcrumb}
-							</Icon>
-						</li>
+							{i > 0 && <Icon name="arrow-right" size="sm" />}
+							{breadcrumb}
+						</div>
 					))}
-				</ul>
-			</div>
-			<Spacer size="xs" />
-			<main className="bg-muted mx-auto px-6 py-8 md:container md:rounded-3xl">
-				<Outlet />
-			</main>
+				</div>
+			)}
+			<Outlet />
 		</div>
 	)
 }

@@ -47,7 +47,7 @@ async function requirePassword(userId: string) {
 		where: { userId },
 	})
 	if (!password) {
-		throw redirect('/settings/profile/password/create')
+		throw redirect('/dashboard/settings/profile/password/create')
 	}
 }
 
@@ -112,7 +112,7 @@ export async function action({ request }: Route.ActionArgs) {
 	})
 
 	return redirectWithToast(
-		`/settings/profile`,
+		`/dashboard/settings/profile`,
 		{
 			type: 'success',
 			title: 'Password Changed',

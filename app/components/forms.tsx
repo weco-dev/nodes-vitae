@@ -1,7 +1,7 @@
 import { useInputControl } from '@conform-to/react'
 import { REGEXP_ONLY_DIGITS_AND_CHARS, type OTPInputProps } from 'input-otp'
 import React, { useId } from 'react'
-import { Checkbox, type CheckboxProps } from './ui/checkbox.tsx'
+import { Checkbox } from './ui/checkbox.tsx'
 import {
 	InputOTP,
 	InputOTPGroup,
@@ -145,7 +145,7 @@ export function CheckboxField({
 	className,
 }: {
 	labelProps: React.ComponentProps<'label'>
-	buttonProps: CheckboxProps & {
+	buttonProps: React.ComponentProps<'input'> & {
 		name: string
 		form: string
 		value?: string
@@ -153,7 +153,15 @@ export function CheckboxField({
 	errors?: ListOfErrors
 	className?: string
 }) {
-	const { key, defaultChecked, ...checkboxProps } = buttonProps
+	const {
+		key,
+		defaultChecked,
+		type,
+		onChange,
+		onFocus,
+		onBlur,
+		...inputProps
+	} = buttonProps
 	const fallbackId = useId()
 	const checkedValue = buttonProps.value ?? 'on'
 	const input = useInputControl({
@@ -169,24 +177,21 @@ export function CheckboxField({
 		<div className={className}>
 			<div className="flex gap-2">
 				<Checkbox
-					{...checkboxProps}
 					id={id}
+					name={inputProps.name}
+					form={inputProps.form}
 					aria-invalid={errorId ? true : undefined}
 					aria-describedby={errorId}
 					checked={input.value === checkedValue}
 					onCheckedChange={(state) => {
 						input.change(state.valueOf() ? checkedValue : '')
-						buttonProps.onCheckedChange?.(state)
 					}}
-					onFocus={(event) => {
+					onFocus={() => {
 						input.focus()
-						buttonProps.onFocus?.(event)
 					}}
-					onBlur={(event) => {
+					onBlur={() => {
 						input.blur()
-						buttonProps.onBlur?.(event)
 					}}
-					type="button"
 				/>
 				<label
 					htmlFor={id}

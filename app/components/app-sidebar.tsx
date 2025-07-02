@@ -131,20 +131,32 @@ const data = {
 	navSettings: [
 		{
 			title: 'Settings',
-			url: '#',
+			url: '/dashboard/settings',
 			icon: IconSettings,
 			items: [
 				{
-					title: 'Profilo',
-					url: '#',
+					title: 'Profile',
+					url: '/dashboard/settings/profile',
 				},
 				{
-					title: 'MFA',
-					url: '#',
+					title: 'Password',
+					url: '/dashboard/settings/profile/password',
 				},
 				{
-					title: '...',
-					url: '#',
+					title: 'Two-Factor Auth',
+					url: '/dashboard/settings/profile/two-factor',
+				},
+				{
+					title: 'Passkeys',
+					url: '/dashboard/settings/profile/passkeys',
+				},
+				{
+					title: 'Connections',
+					url: '/dashboard/settings/profile/connections',
+				},
+				{
+					title: 'Photo',
+					url: '/dashboard/settings/profile/photo',
 				},
 			],
 		},
