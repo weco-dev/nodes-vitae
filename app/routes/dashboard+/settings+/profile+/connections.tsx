@@ -1,6 +1,6 @@
 import { invariantResponse } from '@epic-web/invariant'
 import { useState } from 'react'
-import { data, useFetcher } from 'react-router'
+import { data, Link, useFetcher } from 'react-router'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
@@ -108,32 +108,62 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Connections({ loaderData }: Route.ComponentProps) {
 	return (
-		<div className="mx-auto max-w-md">
-			{loaderData.connections.length ? (
-				<div className="flex flex-col gap-2">
-					<p>Here are your current connections:</p>
-					<ul className="flex flex-col gap-4">
-						{loaderData.connections.map((c) => (
-							<li key={c.id}>
-								<Connection
-									connection={c}
-									canDelete={loaderData.canDeleteConnections}
-								/>
-							</li>
+		<div className="flex min-h-svh w-full">
+			<div className="w-full max-w-sm">
+				<div className="flex flex-col gap-6">
+					<div>
+						<h1 className="text-xl font-semibold">Connessioni</h1>
+						<p className="text-muted-foreground">
+							Gestisci i tuoi account collegati
+						</p>
+					</div>
+
+					<hr className="border-muted-foreground/20 my-2" />
+
+					{loaderData.connections.length ? (
+						<div className="flex flex-col gap-4">
+							<p className="text-sm font-medium">Le tue connessioni attuali:</p>
+							<ul className="flex flex-col gap-3">
+								{loaderData.connections.map((c) => (
+									<li key={c.id}>
+										<Connection
+											connection={c}
+											canDelete={loaderData.canDeleteConnections}
+										/>
+									</li>
+								))}
+							</ul>
+						</div>
+					) : (
+						<div className="rounded-lg border p-4">
+							<p className="text-muted-foreground">
+								Non hai ancora connessioni.
+							</p>
+						</div>
+					)}
+
+					<hr className="border-muted-foreground/20" />
+
+					<div className="flex flex-col gap-3">
+						<p className="text-sm font-medium">Aggiungi nuove connessioni:</p>
+						{providerNames.map((providerName) => (
+							<ProviderConnectionForm
+								key={providerName}
+								type="Connect"
+								providerName={providerName}
+							/>
 						))}
-					</ul>
+					</div>
+
+					{/* torna alla pagina profilo */}
+					<div className="mt-4 text-sm">
+						<Link to="../profile">
+							<Icon name="arrow-left" className="mr-2">
+								Torna alla pagina profilo
+							</Icon>
+						</Link>
+					</div>
 				</div>
-			) : (
-				<p>You don't have any connections yet.</p>
-			)}
-			<div className="border-border mt-5 flex flex-col gap-5 border-t-2 border-b-2 py-3">
-				{providerNames.map((providerName) => (
-					<ProviderConnectionForm
-						key={providerName}
-						type="Connect"
-						providerName={providerName}
-					/>
-				))}
 			</div>
 		</div>
 	)

@@ -1,8 +1,9 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { data, Form, redirect } from 'react-router'
+import { data, Form, Link, redirect } from 'react-router'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	prepareVerification,
@@ -106,32 +107,56 @@ export default function ChangeEmailIndex({
 
 	const isPending = useIsPending()
 	return (
-		<div>
-			<h1 className="text-h1">Change Email</h1>
-			<p>You will receive an email at the new email address to confirm.</p>
-			<p>
-				An email notice will also be sent to your old address{' '}
-				{loaderData.user.email}.
-			</p>
-			<div className="mx-auto mt-5 max-w-sm">
-				<Form method="POST" {...getFormProps(form)}>
-					<Field
-						labelProps={{ children: 'New Email' }}
-						inputProps={{
-							...getInputProps(fields.email, { type: 'email' }),
-							autoComplete: 'email',
-						}}
-						errors={fields.email.errors}
-					/>
-					<ErrorList id={form.errorId} errors={form.errors} />
+		<div className="flex min-h-svh w-full">
+			<div className="w-full max-w-sm">
+				<div className="flex flex-col gap-6">
 					<div>
-						<StatusButton
-							status={isPending ? 'pending' : (form.status ?? 'idle')}
-						>
-							Send Confirmation
-						</StatusButton>
+						<h1 className="text-xl font-semibold">Cambia email</h1>
+						<p className="text-muted-foreground">
+							Riceverai un'email al nuovo indirizzo per confermare. Verrà
+							inviata anche una notifica al tuo vecchio indirizzo{' '}
+							{loaderData.user.email}.
+						</p>
 					</div>
-				</Form>
+
+					<hr className="border-muted-foreground/20 my-2" />
+
+					<Form method="POST" {...getFormProps(form)}>
+						<div className="flex flex-col">
+							<Field
+								labelProps={{
+									htmlFor: fields.email.id,
+									children: 'Nuova email',
+								}}
+								inputProps={{
+									...getInputProps(fields.email, { type: 'email' }),
+									autoComplete: 'email',
+									placeholder: 'La tua nuova email',
+								}}
+								errors={fields.email.errors}
+							/>
+							<div className="flex flex-col gap-3">
+								<StatusButton
+									type="submit"
+									status={isPending ? 'pending' : (form.status ?? 'idle')}
+									className="w-full"
+								>
+									Invia conferma
+								</StatusButton>
+							</div>
+						</div>
+						<ErrorList id={form.errorId} errors={form.errors} />
+
+						{/* torna alla pagina profilo */}
+						<div className="mt-4 text-sm">
+							<Link to="../profile">
+								<Icon name="arrow-left" className="mr-2">
+									Torna alla pagina profilo
+								</Icon>
+							</Link>
+						</div>
+					</Form>
+				</div>
 			</div>
 		</div>
 	)

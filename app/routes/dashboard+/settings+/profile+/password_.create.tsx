@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { data, redirect, Form, Link } from 'react-router'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	checkIsCommonPassword,
@@ -93,37 +94,72 @@ export default function CreatePasswordRoute({
 	})
 
 	return (
-		<Form method="POST" {...getFormProps(form)} className="mx-auto max-w-md">
-			<Field
-				labelProps={{ children: 'New Password' }}
-				inputProps={{
-					...getInputProps(fields.password, { type: 'password' }),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.password.errors}
-			/>
-			<Field
-				labelProps={{ children: 'Confirm New Password' }}
-				inputProps={{
-					...getInputProps(fields.confirmPassword, {
-						type: 'password',
-					}),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.confirmPassword.errors}
-			/>
-			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="grid w-full grid-cols-2 gap-6">
-				<Button variant="secondary" asChild>
-					<Link to="..">Cancel</Link>
-				</Button>
-				<StatusButton
-					type="submit"
-					status={isPending ? 'pending' : (form.status ?? 'idle')}
-				>
-					Create Password
-				</StatusButton>
+		<div className="flex min-h-svh w-full">
+			<div className="w-full max-w-sm">
+				<div className="flex flex-col gap-6">
+					<div>
+						<h1 className="text-xl font-semibold">Crea una password</h1>
+						<p className="text-muted-foreground">
+							Imposta una nuova password per il tuo account
+						</p>
+					</div>
+
+					<hr className="border-muted-foreground/20 my-2" />
+
+					<Form method="POST" {...getFormProps(form)}>
+						<div className="flex flex-col">
+							<Field
+								labelProps={{
+									htmlFor: fields.password.id,
+									children: 'Nuova password',
+								}}
+								inputProps={{
+									...getInputProps(fields.password, { type: 'password' }),
+									autoComplete: 'new-password',
+									placeholder: 'La tua nuova password',
+								}}
+								errors={fields.password.errors}
+							/>
+							<Field
+								labelProps={{
+									htmlFor: fields.confirmPassword.id,
+									children: 'Conferma password',
+								}}
+								inputProps={{
+									...getInputProps(fields.confirmPassword, {
+										type: 'password',
+									}),
+									autoComplete: 'new-password',
+									placeholder: 'Conferma la password',
+								}}
+								errors={fields.confirmPassword.errors}
+							/>
+							<div className="flex flex-col gap-3">
+								<StatusButton
+									type="submit"
+									status={isPending ? 'pending' : (form.status ?? 'idle')}
+									className="w-full"
+								>
+									Crea password
+								</StatusButton>
+								<Button variant="secondary" asChild className="w-full">
+									<Link to="..">Annulla</Link>
+								</Button>
+							</div>
+						</div>
+						<ErrorList id={form.errorId} errors={form.errors} />
+
+						{/* torna alla pagina profilo */}
+						<div className="mt-4 text-sm">
+							<Link to="../profile">
+								<Icon name="arrow-left" className="mr-2">
+									Torna alla pagina profilo
+								</Icon>
+							</Link>
+						</div>
+					</Form>
+				</div>
 			</div>
-		</Form>
+		</div>
 	)
 }

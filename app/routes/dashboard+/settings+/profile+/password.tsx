@@ -4,6 +4,7 @@ import { data, redirect, Form, Link } from 'react-router'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	checkIsCommonPassword,
@@ -130,45 +131,83 @@ export default function ChangePasswordRoute({
 	})
 
 	return (
-		<Form method="POST" {...getFormProps(form)} className="mx-auto max-w-md">
-			<Field
-				labelProps={{ children: 'Current Password' }}
-				inputProps={{
-					...getInputProps(fields.currentPassword, { type: 'password' }),
-					autoComplete: 'current-password',
-				}}
-				errors={fields.currentPassword.errors}
-			/>
-			<Field
-				labelProps={{ children: 'New Password' }}
-				inputProps={{
-					...getInputProps(fields.newPassword, { type: 'password' }),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.newPassword.errors}
-			/>
-			<Field
-				labelProps={{ children: 'Confirm New Password' }}
-				inputProps={{
-					...getInputProps(fields.confirmNewPassword, {
-						type: 'password',
-					}),
-					autoComplete: 'new-password',
-				}}
-				errors={fields.confirmNewPassword.errors}
-			/>
-			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="grid w-full grid-cols-2 gap-6">
-				<Button variant="secondary" asChild>
-					<Link to="..">Cancel</Link>
-				</Button>
-				<StatusButton
-					type="submit"
-					status={isPending ? 'pending' : (form.status ?? 'idle')}
-				>
-					Change Password
-				</StatusButton>
+		<div className="flex min-h-svh w-full">
+			<div className="w-full max-w-sm">
+				<div className="flex flex-col gap-6">
+					<div>
+						<h1 className="text-xl font-semibold">Cambia password</h1>
+						<p className="text-muted-foreground">
+							Aggiorna la tua password qui sotto
+						</p>
+					</div>
+
+					<hr className="border-muted-foreground/20 my-2" />
+
+					<Form method="POST" {...getFormProps(form)}>
+						<div className="flex flex-col">
+							<Field
+								labelProps={{
+									htmlFor: fields.currentPassword.id,
+									children: 'Password attuale',
+								}}
+								inputProps={{
+									...getInputProps(fields.currentPassword, {
+										type: 'password',
+									}),
+									autoComplete: 'current-password',
+									placeholder: 'La tua password attuale',
+								}}
+								errors={fields.currentPassword.errors}
+							/>
+							<Field
+								labelProps={{
+									htmlFor: fields.newPassword.id,
+									children: 'Nuova password',
+								}}
+								inputProps={{
+									...getInputProps(fields.newPassword, { type: 'password' }),
+									autoComplete: 'new-password',
+									placeholder: 'La tua nuova password',
+								}}
+								errors={fields.newPassword.errors}
+							/>
+							<Field
+								labelProps={{
+									htmlFor: fields.confirmNewPassword.id,
+									children: 'Conferma nuova password',
+								}}
+								inputProps={{
+									...getInputProps(fields.confirmNewPassword, {
+										type: 'password',
+									}),
+									autoComplete: 'new-password',
+									placeholder: 'Conferma la nuova password',
+								}}
+								errors={fields.confirmNewPassword.errors}
+							/>
+							<div className="flex flex-col gap-3">
+								<StatusButton
+									type="submit"
+									status={isPending ? 'pending' : (form.status ?? 'idle')}
+									className="w-full"
+								>
+									Cambia password
+								</StatusButton>
+							</div>
+						</div>
+						<ErrorList id={form.errorId} errors={form.errors} />
+
+						{/* torna alla pagina profilo */}
+						<div className="mt-4 text-sm">
+							<Link to="../profile">
+								<Icon name="arrow-left" className="mr-2">
+									Torna alla pagina profilo
+								</Icon>
+							</Link>
+						</div>
+					</Form>
+				</div>
 			</div>
-		</Form>
+		</div>
 	)
 }
