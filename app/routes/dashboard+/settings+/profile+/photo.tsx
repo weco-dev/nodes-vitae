@@ -18,7 +18,7 @@ import {
 	useIsPending,
 } from '#app/utils/misc.tsx'
 import { uploadProfileImage } from '#app/utils/storage.server.ts'
-import { type Route } from './+types/profile.photo.ts'
+import { type Route } from './+types/photo.ts'
 import { type BreadcrumbHandle } from './profile.tsx'
 
 export const handle: BreadcrumbHandle & SEOHandle = {

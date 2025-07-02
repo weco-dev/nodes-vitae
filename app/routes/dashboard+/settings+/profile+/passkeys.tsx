@@ -7,7 +7,7 @@ import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { type Route } from './+types/profile.passkeys.ts'
+import { type Route } from './+types/passkeys.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="passkey">Passkeys</Icon>,

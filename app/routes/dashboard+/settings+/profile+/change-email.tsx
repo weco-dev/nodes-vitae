@@ -16,8 +16,8 @@ import { sendEmail } from '#app/utils/email.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { EmailSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { type Route } from './+types/profile.change-email.ts'
-import { EmailChangeEmail } from './profile.change-email.server.tsx'
+import { type Route } from './+types/change-email.ts'
+import { EmailChangeEmail } from './change-email.server.tsx'
 import { type BreadcrumbHandle } from './profile.tsx'
 
 export const handle: BreadcrumbHandle & SEOHandle = {
