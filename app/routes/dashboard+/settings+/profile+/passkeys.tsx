@@ -9,10 +9,6 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { type Route } from './+types/passkeys.ts'
 
-export const handle = {
-	breadcrumb: <Icon name="passkey">Passkeys</Icon>,
-}
-
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)
 	const passkeys = await prisma.passkey.findMany({

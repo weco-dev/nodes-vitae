@@ -1,12 +1,6 @@
-import { getFormProps, getInputProps, useForm } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { invariantResponse } from '@epic-web/invariant'
 import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { Img } from 'openimg/react'
-import { data, Link, useFetcher } from 'react-router'
-import { z } from 'zod'
-import { ErrorList, Field } from '#app/components/forms.tsx'
-import { Button } from '#app/components/ui/button.tsx'
+import { Link, useFetcher } from 'react-router'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId, sessionKey } from '#app/utils/auth.server.ts'
@@ -14,18 +8,12 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc, useDoubleCheck } from '#app/utils/misc.tsx'
 import { authSessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { type Route } from './+types/index.ts'
 import { twoFAVerificationType } from './two-factor.tsx'
 
 export const handle: SEOHandle = {
 	getSitemapEntries: () => null,
 }
-
-const ProfileFormSchema = z.object({
-	name: NameSchema.nullable().default(null),
-	username: UsernameSchema,
-})
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)
@@ -73,7 +61,6 @@ type ProfileActionArgs = {
 	userId: string
 	formData: FormData
 }
-const profileUpdateActionIntent = 'update-profile'
 const signOutOfSessionsActionIntent = 'sign-out-of-sessions'
 const deleteDataActionIntent = 'delete-data'
 
@@ -82,9 +69,6 @@ export async function action({ request }: Route.ActionArgs) {
 	const formData = await request.formData()
 	const intent = formData.get('intent')
 	switch (intent) {
-		case profileUpdateActionIntent: {
-			return profileUpdateAction({ request, userId, formData })
-		}
 		case signOutOfSessionsActionIntent: {
 			return signOutOfSessionsAction({ request, userId, formData })
 		}
@@ -98,43 +82,55 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
+	const user = loaderData.user
 	return (
 		<div className="flex flex-col gap-12">
-			<div className="flex justify-center">
-				<div className="relative size-52">
-					<Img
-						src={getUserImgSrc(loaderData.user.image?.objectKey)}
-						alt={loaderData.user.name ?? loaderData.user.username}
-						className="h-full w-full rounded-full object-cover"
-						width={832}
-						height={832}
-						isAboveFold
-					/>
-					<Button
-						asChild
-						variant="outline"
-						className="absolute top-3 -right-3 flex size-10 items-center justify-center rounded-full p-0"
-					>
-						<Link
-							preventScrollReset
-							to="photo"
-							title="Change profile photo"
-							aria-label="Change profile photo"
-						>
-							<Icon name="camera" className="size-4" />
-						</Link>
-					</Button>
+			<div>
+				<h1 className="text-xl font-semibold">Il tuo profilo</h1>
+				<p className="text-muted-foreground">
+					Visualizza e gestisci le tue informazioni personali
+				</p>
+			</div>
+
+			<hr className="border-muted-foreground/20" />
+
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+				<div className="col-span-1 flex flex-col gap-4">
+					<div className="bg-muted flex h-24 w-24 rounded-full">
+						{user.image?.objectKey ? (
+							<img
+								src={
+									loaderData.user
+										? getUserImgSrc(loaderData.user.image?.objectKey)
+										: ''
+								}
+								alt={`${user.name ?? user.username}'s profile`}
+								className="h-full w-full rounded-full object-cover"
+							/>
+						) : (
+							<Icon name="avatar" className="h-12 w-12" />
+						)}
+					</div>
+					<div>
+						<p className="text-lg font-semibold">
+							{user.name ?? user.username}
+						</p>
+						<p className="text-lg font-semibold">{user.email}</p>
+					</div>
 				</div>
 			</div>
-			<UpdateProfile loaderData={loaderData} />
 
-			<div className="border-foreground col-span-6 my-6 h-1 border-b-[1.5px]" />
+			<hr className="border-muted-foreground/20" />
+
 			<div className="col-span-full flex flex-col gap-6">
 				<div>
+					<Link to="me">
+						<Icon name="reset">Change profile</Icon>
+					</Link>
+				</div>
+				<div>
 					<Link to="change-email">
-						<Icon name="envelope-closed">
-							Change email from {loaderData.user.email}
-						</Icon>
+						<Icon name="envelope-closed">Change email</Icon>
 					</Link>
 				</div>
 				<div>
@@ -176,105 +172,6 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 				<DeleteData />
 			</div>
 		</div>
-	)
-}
-
-async function profileUpdateAction({ userId, formData }: ProfileActionArgs) {
-	const submission = await parseWithZod(formData, {
-		async: true,
-		schema: ProfileFormSchema.superRefine(async ({ username }, ctx) => {
-			const existingUsername = await prisma.user.findUnique({
-				where: { username },
-				select: { id: true },
-			})
-			if (existingUsername && existingUsername.id !== userId) {
-				ctx.addIssue({
-					path: ['username'],
-					code: z.ZodIssueCode.custom,
-					message: 'A user already exists with this username',
-				})
-			}
-		}),
-	})
-	if (submission.status !== 'success') {
-		return data(
-			{ result: submission.reply() },
-			{ status: submission.status === 'error' ? 400 : 200 },
-		)
-	}
-
-	const { username, name } = submission.value
-
-	await prisma.user.update({
-		select: { username: true },
-		where: { id: userId },
-		data: {
-			name: name,
-			username: username,
-		},
-	})
-
-	return {
-		result: submission.reply(),
-	}
-}
-
-function UpdateProfile({
-	loaderData,
-}: {
-	loaderData: Route.ComponentProps['loaderData']
-}) {
-	const fetcher = useFetcher<typeof profileUpdateAction>()
-
-	const [form, fields] = useForm({
-		id: 'edit-profile',
-		constraint: getZodConstraint(ProfileFormSchema),
-		lastResult: fetcher.data?.result,
-		onValidate({ formData }) {
-			return parseWithZod(formData, { schema: ProfileFormSchema })
-		},
-		defaultValue: {
-			username: loaderData.user.username,
-			name: loaderData.user.name,
-		},
-	})
-
-	return (
-		<fetcher.Form method="POST" {...getFormProps(form)}>
-			<div className="grid grid-cols-6 gap-x-10">
-				<Field
-					className="col-span-3"
-					labelProps={{
-						htmlFor: fields.username.id,
-						children: 'Username',
-					}}
-					inputProps={getInputProps(fields.username, { type: 'text' })}
-					errors={fields.username.errors}
-				/>
-				<Field
-					className="col-span-3"
-					labelProps={{ htmlFor: fields.name.id, children: 'Name' }}
-					inputProps={getInputProps(fields.name, { type: 'text' })}
-					errors={fields.name.errors}
-				/>
-			</div>
-
-			<ErrorList errors={form.errors} id={form.errorId} />
-
-			<div className="mt-8 flex justify-center">
-				<StatusButton
-					type="submit"
-					size="lg"
-					name="intent"
-					value={profileUpdateActionIntent}
-					status={
-						fetcher.state !== 'idle' ? 'pending' : (form.status ?? 'idle')
-					}
-				>
-					Save changes
-				</StatusButton>
-			</div>
-		</fetcher.Form>
 	)
 }
 

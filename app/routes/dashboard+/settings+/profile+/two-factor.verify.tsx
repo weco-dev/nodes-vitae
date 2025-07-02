@@ -1,11 +1,9 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import * as QRCode from 'qrcode'
 import { data, redirect, Form, useNavigation } from 'react-router'
 import { z } from 'zod'
 import { ErrorList, OTPField } from '#app/components/forms.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { isCodeValid } from '#app/routes/_auth+/verify.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -14,13 +12,7 @@ import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { getTOTPAuthUri } from '#app/utils/totp.server.ts'
 import { type Route } from './+types/two-factor.verify.ts'
-import { type BreadcrumbHandle } from './profile.tsx'
 import { twoFAVerificationType } from './two-factor.tsx'
-
-export const handle: BreadcrumbHandle & SEOHandle = {
-	breadcrumb: <Icon name="check">Verify</Icon>,
-	getSitemapEntries: () => null,
-}
 
 const CancelSchema = z.object({ intent: z.literal('cancel') })
 const VerifySchema = z.object({

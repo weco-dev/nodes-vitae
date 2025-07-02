@@ -1,10 +1,8 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { type SEOHandle } from '@nasa-gcn/remix-seo'
-import { data, redirect, Form } from 'react-router'
+import { data, Form, redirect } from 'react-router'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	prepareVerification,
@@ -18,12 +16,6 @@ import { EmailSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type Route } from './+types/change-email.ts'
 import { EmailChangeEmail } from './change-email.server.tsx'
-import { type BreadcrumbHandle } from './profile.tsx'
-
-export const handle: BreadcrumbHandle & SEOHandle = {
-	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
-	getSitemapEntries: () => null,
-}
 
 export const newEmailAddressSessionKey = 'new-email-address'
 

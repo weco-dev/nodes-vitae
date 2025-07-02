@@ -135,28 +135,28 @@ const data = {
 			icon: IconSettings,
 			items: [
 				{
-					title: 'Profile',
+					title: 'Profilo',
 					url: '/dashboard/settings/profile',
 				},
 				{
-					title: 'Password',
+					title: 'Foto Profilo',
+					url: '/dashboard/settings/profile/photo',
+				},
+				{
+					title: 'Cambia assword',
 					url: '/dashboard/settings/profile/password',
 				},
 				{
-					title: 'Two-Factor Auth',
+					title: 'Abilita 2FA (auth a due fattori)',
 					url: '/dashboard/settings/profile/two-factor',
 				},
 				{
-					title: 'Passkeys',
+					title: 'Accedi sicuro con passkeys',
 					url: '/dashboard/settings/profile/passkeys',
 				},
 				{
-					title: 'Connections',
+					title: 'Login con account esterni',
 					url: '/dashboard/settings/profile/connections',
-				},
-				{
-					title: 'Photo',
-					url: '/dashboard/settings/profile/photo',
 				},
 			],
 		},

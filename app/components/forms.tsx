@@ -50,7 +50,7 @@ export function Field({
 	const errorId = errors?.length ? `${id}-error` : undefined
 	return (
 		<div className={className}>
-			<Label htmlFor={id} {...labelProps} />
+			<Label htmlFor={id} {...labelProps} className="pb-1" />
 			<Input
 				id={id}
 				aria-invalid={errorId ? true : undefined}

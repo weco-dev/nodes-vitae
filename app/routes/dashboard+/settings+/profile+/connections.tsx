@@ -1,5 +1,4 @@
 import { invariantResponse } from '@epic-web/invariant'
-import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { useState } from 'react'
 import { data, useFetcher } from 'react-router'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -24,12 +23,6 @@ import { pipeHeaders } from '#app/utils/headers.server.js'
 import { makeTimings } from '#app/utils/timing.server.ts'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
 import { type Route } from './+types/connections.ts'
-import { type BreadcrumbHandle } from './profile.tsx'
-
-export const handle: BreadcrumbHandle & SEOHandle = {
-	breadcrumb: <Icon name="link-2">Connections</Icon>,
-	getSitemapEntries: () => null,
-}
 
 async function userCanDeleteConnections(userId: string) {
 	const user = await prisma.user.findUnique({
