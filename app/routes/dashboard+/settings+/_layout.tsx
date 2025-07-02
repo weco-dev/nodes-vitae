@@ -15,14 +15,12 @@ export default function SettingsLayout() {
 					<div className="px-4 lg:px-6">
 						<div className="flex flex-col gap-4">
 							<div>
-								<h1 className="text-2xl font-semibold">Settings</h1>
+								<h1 className="text-2xl font-semibold">Impostazioni</h1>
 								<p className="text-muted-foreground">
-									Manage your account settings and preferences.
+									Gestisci le impostazioni del tuo account e le preferenze.
 								</p>
 							</div>
-							<div className="bg-card rounded-lg border">
-								<Outlet />
-							</div>
+							<Outlet />
 						</div>
 					</div>
 				</div>

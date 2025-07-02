@@ -5,7 +5,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '#app/components/ui/card.tsx'
-import { Icon } from '#app/components/ui/icon.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { type Route } from './+types/index'
 
@@ -17,60 +16,63 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function SettingsIndex() {
 	const settingsItems = [
 		{
-			title: 'Profile',
-			description: 'Manage your personal information and account details',
+			title: 'Profilo',
+			description:
+				"Gestisci le tue informazioni personali e i dettagli dell'account",
 			href: '/dashboard/settings/profile',
-			icon: 'file-text',
 		},
 		{
 			title: 'Password',
-			description: 'Update your password and security settings',
+			description: 'Aggiorna la tua password e le impostazioni di sicurezza',
 			href: '/dashboard/settings/profile/password',
-			icon: 'lock',
 		},
 		{
-			title: 'Two-Factor Authentication',
-			description: 'Add an extra layer of security to your account',
+			title: 'Autenticazione a 2 fattori',
+			description: 'Aggiungi un livello extra di sicurezza al tuo account',
 			href: '/dashboard/settings/profile/two-factor',
-			icon: 'shield',
 		},
 		{
-			title: 'Passkeys',
-			description: 'Manage your passkeys for secure authentication',
+			title: 'Passkey',
+			description: "Gestisci le tue passkey per l'autenticazione sicura",
 			href: '/dashboard/settings/profile/passkeys',
-			icon: 'key',
 		},
 		{
-			title: 'Connected Accounts',
-			description: 'Manage third-party account connections',
+			title: 'Account collegati',
+			description: 'Gestisci le connessioni agli account di terze parti',
 			href: '/dashboard/settings/profile/connections',
-			icon: 'link',
 		},
 		{
-			title: 'Profile Photo',
-			description: 'Update your profile picture',
+			title: 'Foto Profilo',
+			description: 'Aggiorna la tua immagine del profilo',
 			href: '/dashboard/settings/profile/photo',
-			icon: 'camera',
 		},
 	]
 
 	return (
-		<div className="p-6">
-			<div className="grid gap-4 md:grid-cols-2">
+		<div>
+			<h2 className="my-4 text-xl font-semibold">Account</h2>
+			<div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-6 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
 				{settingsItems.map((item) => (
-					<Link key={item.href} to={item.href}>
-						<Card className="hover:bg-muted/50 h-full transition-colors">
+					<Card key={item.href} className="hover:bg-muted/50 transition-colors">
+						<Link to={item.href}>
 							<CardHeader>
 								<div className="flex items-center gap-2">
-									<Icon name={item.icon as any} size="md" />
 									<CardTitle className="text-lg">{item.title}</CardTitle>
 								</div>
 								<CardDescription>{item.description}</CardDescription>
 							</CardHeader>
-						</Card>
-					</Link>
+						</Link>
+					</Card>
 				))}
 			</div>
+
+			<hr className="border-muted-foreground/20 my-8" />
+			<h2 className="my-4 text-xl font-semibold">Billing</h2>
+			<p>...</p>
+
+			<hr className="border-muted-foreground/20 my-8" />
+			<h2 className="my-4 text-xl font-semibold">Notifiche</h2>
+			<p>...</p>
 		</div>
 	)
 }
