@@ -133,32 +133,20 @@ const data = {
 			title: 'Settings',
 			url: '/dashboard/settings',
 			icon: IconSettings,
-			items: [
-				{
-					title: 'Profilo',
-					url: '/dashboard/settings/profile',
-				},
-				{
-					title: 'Foto Profilo',
-					url: '/dashboard/settings/profile/photo',
-				},
-				{
-					title: 'Cambia assword',
-					url: '/dashboard/settings/profile/password',
-				},
-				{
-					title: 'Abilita 2FA (auth a due fattori)',
-					url: '/dashboard/settings/profile/two-factor',
-				},
-				{
-					title: 'Accedi sicuro con passkeys',
-					url: '/dashboard/settings/profile/passkeys',
-				},
-				{
-					title: 'Login con account esterni',
-					url: '/dashboard/settings/profile/connections',
-				},
-			],
+			// items: [
+			// 	{
+			// 		title: 'Il mio profilo',
+			// 		url: '/dashboard/settings/profile',
+			// 	},
+			// 	{
+			// 		title: 'Piano pagamento',
+			// 		url: '#',
+			// 	},
+			// 	{
+			// 		title: 'Notifiche',
+			// 		url: '#',
+			// 	},
+			// ],
 		},
 		{
 			title: 'Get Help',
@@ -178,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							asChild
 							className="data-[slot=sidebar-menu-button]:!p-1.5"
 						>
-							<a href="#">
+							<a href="/">
 								<IconInnerShadowTop className="!size-5" />
 								<span className="text-base font-semibold">Vitae</span>
 							</a>

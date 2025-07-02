@@ -118,7 +118,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 							</h2>
 							<p className="text-muted-foreground">{user.email}</p>
 							<p className="text-muted-foreground mt-1 text-sm">
-								Nick: <span className="font-medium">{user.username}</span>
+								Nick <span className="font-medium">@{user.username}</span>
 							</p>
 							<div>
 								<label className="text-muted-foreground text-sm">

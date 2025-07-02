@@ -91,11 +91,11 @@ export function NavUser() {
 					>
 						<DropdownMenuLabel className="p-0 font-normal">
 							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage
+								<Avatar className="h-8 w-8">
+									{/* <AvatarImage
 										src={getUserImgSrc(user.image?.objectKey)}
 										alt={user.name ?? user.username}
-									/>
+									/> */}
 									<AvatarFallback className="rounded-lg">
 										{(user.name ?? user.username).slice(0, 2).toUpperCase()}
 									</AvatarFallback>
@@ -113,24 +113,22 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link to={`/users/${user.username}`}>
+								<Link to="/dashboard/settings/profile">
 									<IconUserCircle />
-									Account
+									Profile
 								</Link>
 							</DropdownMenuItem>
-							{/* <DropdownMenuItem asChild>
-								<Link to={`/users/${user.username}/notes`}>
-									<IconNotes />
-									Notes
+							<DropdownMenuItem asChild>
+								<Link to="/dashboard/settings/#">
+									<IconCreditCard />
+									Billing
 								</Link>
-							</DropdownMenuItem> */}
-							<DropdownMenuItem>
-								<IconCreditCard />
-								Billing
 							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<IconNotification />
-								Notifications
+							<DropdownMenuItem asChild>
+								<Link to="/dashboard/settings/#">
+									<IconNotification />
+									Notifications
+								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
