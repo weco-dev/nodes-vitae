@@ -94,9 +94,9 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 
 			<hr className="border-muted-foreground/20" />
 
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-				<div className="col-span-1 flex flex-col gap-4">
-					<div className="bg-muted flex h-24 w-24 rounded-full">
+			<div className="rounded-lg border p-6">
+				<div className="flex items-start gap-6">
+					<div className="bg-muted flex h-20 w-20 shrink-0 rounded-full">
 						{user.image?.objectKey ? (
 							<img
 								src={
@@ -108,14 +108,43 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 								className="h-full w-full rounded-full object-cover"
 							/>
 						) : (
-							<Icon name="avatar" className="h-12 w-12" />
+							<Icon name="avatar" className="h-10 w-10 self-center" />
 						)}
 					</div>
-					<div>
-						<p className="text-lg font-semibold">
-							{user.name ?? user.username}
-						</p>
-						<p className="text-lg font-semibold">{user.email}</p>
+					<div className="flex-1">
+						<div className="">
+							<h2 className="text-xl font-semibold">
+								{user.name ?? user.username}
+							</h2>
+							<p className="text-muted-foreground">{user.email}</p>
+							<p className="text-muted-foreground mt-1 text-sm">
+								Nick: <span className="font-medium">{user.username}</span>
+							</p>
+							<div>
+								<label className="text-muted-foreground text-sm">
+									Autenticazione 2FA
+								</label>
+
+								<span
+									className={`ml-1 items-center text-sm font-medium ${
+										loaderData.isTwoFactorEnabled
+											? 'text-primary'
+											: 'text-destructive'
+									}`}
+								>
+									{loaderData.isTwoFactorEnabled ? 'attiva' : 'non attiva'}
+								</span>
+							</div>
+						</div>
+					</div>
+					<div className="flex gap-2">
+						<Link
+							to="me"
+							className="bg-background hover:bg-muted/50 inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors"
+						>
+							<Icon name="pencil-1" className="h-4 w-4" />
+							Modifica
+						</Link>
 					</div>
 				</div>
 			</div>
@@ -158,13 +187,15 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 					to="two-factor"
 					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
 				>
-					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-						{loaderData.isTwoFactorEnabled ? (
-							<Icon name="lock-closed" className="h-5 w-5 text-green-600" />
-						) : (
-							<Icon name="lock-open-1" className="h-5 w-5 text-orange-600" />
-						)}
-					</div>
+					{loaderData.isTwoFactorEnabled ? (
+						<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+							<Icon name="lock-closed" className="text-primary h-5 w-5" />
+						</div>
+					) : (
+						<div className="bg-destructive/10 flex h-10 w-10 items-center justify-center rounded-lg">
+							<Icon name="lock-open-1" className="text-destructive h-5 w-5" />
+						</div>
+					)}
 					<div>
 						<p className="font-medium">
 							{loaderData.isTwoFactorEnabled
