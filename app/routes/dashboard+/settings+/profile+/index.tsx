@@ -122,54 +122,146 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 
 			<hr className="border-muted-foreground/20" />
 
-			<div className="col-span-full flex flex-col gap-6">
-				<div>
-					<Link to="me">
-						<Icon name="reset">Change profile</Icon>
-					</Link>
-				</div>
-				<div>
-					<Link to="change-email">
-						<Icon name="envelope-closed">Change email</Icon>
-					</Link>
-				</div>
-				<div>
-					<Link to="two-factor">
+			{/* Link section */}
+			<div className="grid gap-4 sm:grid-cols-2">
+				<Link
+					to="me"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="reset" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Modifica profilo</p>
+						<p className="text-muted-foreground text-sm">
+							Aggiorna le tue informazioni personali
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to="change-email"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="envelope-closed" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Cambia email</p>
+						<p className="text-muted-foreground text-sm">
+							Aggiorna il tuo indirizzo email
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to="two-factor"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
 						{loaderData.isTwoFactorEnabled ? (
-							<Icon name="lock-closed">2FA is enabled</Icon>
+							<Icon name="lock-closed" className="h-5 w-5 text-green-600" />
 						) : (
-							<Icon name="lock-open-1">Enable 2FA</Icon>
+							<Icon name="lock-open-1" className="h-5 w-5 text-orange-600" />
 						)}
-					</Link>
+					</div>
+					<div>
+						<p className="font-medium">
+							{loaderData.isTwoFactorEnabled
+								? 'Autenticazione 2FA attiva'
+								: 'Abilita 2FA'}
+						</p>
+						<p className="text-muted-foreground text-sm">
+							{loaderData.isTwoFactorEnabled
+								? 'La tua 2FA è configurata'
+								: 'Aggiungi sicurezza extra al tuo account'}
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to={loaderData.hasPassword ? 'password' : 'password/create'}
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="dots-horizontal" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">
+							{loaderData.hasPassword ? 'Cambia password' : 'Crea una password'}
+						</p>
+						<p className="text-muted-foreground text-sm">
+							{loaderData.hasPassword
+								? 'Aggiorna la tua password'
+								: 'Imposta una nuova password'}
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to="connections"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="link-2" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Connessioni</p>
+						<p className="text-muted-foreground text-sm">
+							Gestisci account collegati
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to="passkeys"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="passkey" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Passkey</p>
+						<p className="text-muted-foreground text-sm">
+							Gestisci i tuoi passkey
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					reloadDocument
+					download="my-epic-notes-data.json"
+					to="/resources/download-user-data"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="download" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Scarica i tuoi dati</p>
+						<p className="text-muted-foreground text-sm">
+							Esporta tutte le tue informazioni
+						</p>
+					</div>
+				</Link>
+
+				<div className="flex items-center gap-3 rounded-lg border p-4">
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="avatar" className="text-primary h-5 w-5" />
+					</div>
+					<div className="flex-1">
+						<SignOutOfSessions loaderData={loaderData} />
+					</div>
 				</div>
-				<div>
-					<Link to={loaderData.hasPassword ? 'password' : 'password/create'}>
-						<Icon name="dots-horizontal">
-							{loaderData.hasPassword ? 'Change Password' : 'Create a Password'}
-						</Icon>
-					</Link>
+
+				<div className="border-destructive/20 flex items-center gap-3 rounded-lg border p-4">
+					<div className="bg-destructive/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="trash" className="text-destructive h-5 w-5" />
+					</div>
+					<div className="flex-1">
+						<DeleteData />
+					</div>
 				</div>
-				<div>
-					<Link to="connections">
-						<Icon name="link-2">Manage connections</Icon>
-					</Link>
-				</div>
-				<div>
-					<Link to="passkeys">
-						<Icon name="passkey">Manage passkeys</Icon>
-					</Link>
-				</div>
-				<div>
-					<Link
-						reloadDocument
-						download="my-epic-notes-data.json"
-						to="/resources/download-user-data"
-					>
-						<Icon name="download">Download your data</Icon>
-					</Link>
-				</div>
-				<SignOutOfSessions loaderData={loaderData} />
-				<DeleteData />
 			</div>
 		</div>
 	)
