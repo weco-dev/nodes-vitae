@@ -169,6 +169,21 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 				</Link>
 
 				<Link
+					to="photo"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+						<Icon name="camera" className="text-primary h-5 w-5" />
+					</div>
+					<div>
+						<p className="font-medium">Cambia foto profilo</p>
+						<p className="text-muted-foreground text-sm">
+							Aggiorna la tua immagine del profilo
+						</p>
+					</div>
+				</Link>
+
+				<Link
 					to="change-email"
 					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
 				>
@@ -179,33 +194,6 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 						<p className="font-medium">Cambia email</p>
 						<p className="text-muted-foreground text-sm">
 							Aggiorna il tuo indirizzo email
-						</p>
-					</div>
-				</Link>
-
-				<Link
-					to="two-factor"
-					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
-				>
-					{loaderData.isTwoFactorEnabled ? (
-						<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
-							<Icon name="lock-closed" className="text-primary h-5 w-5" />
-						</div>
-					) : (
-						<div className="bg-destructive/10 flex h-10 w-10 items-center justify-center rounded-lg">
-							<Icon name="lock-open-1" className="text-destructive h-5 w-5" />
-						</div>
-					)}
-					<div>
-						<p className="font-medium">
-							{loaderData.isTwoFactorEnabled
-								? 'Autenticazione 2FA attiva'
-								: 'Abilita 2FA'}
-						</p>
-						<p className="text-muted-foreground text-sm">
-							{loaderData.isTwoFactorEnabled
-								? 'La tua 2FA è configurata'
-								: 'Aggiungi sicurezza extra al tuo account'}
 						</p>
 					</div>
 				</Link>
@@ -225,6 +213,33 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 							{loaderData.hasPassword
 								? 'Aggiorna la tua password'
 								: 'Imposta una nuova password'}
+						</p>
+					</div>
+				</Link>
+
+				<Link
+					to="two-factor"
+					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
+				>
+					{loaderData.isTwoFactorEnabled ? (
+						<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+							<Icon name="lock-closed" className="text-primary h-5 w-5" />
+						</div>
+					) : (
+						<div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+							<Icon name="lock-open-1" className="text-primary h-5 w-5" />
+						</div>
+					)}
+					<div>
+						<p className="font-medium">
+							{loaderData.isTwoFactorEnabled
+								? 'Autenticazione 2FA attiva'
+								: 'Abilita 2FA'}
+						</p>
+						<p className="text-muted-foreground text-sm">
+							{loaderData.isTwoFactorEnabled
+								? 'La tua 2FA è configurata'
+								: 'Aggiungi sicurezza extra al tuo account'}
 						</p>
 					</div>
 				</Link>
@@ -378,7 +393,7 @@ function DeleteData() {
 						name: 'intent',
 						value: deleteDataActionIntent,
 					})}
-					variant={dc.doubleCheck ? 'destructive' : 'default'}
+					variant={dc.doubleCheck ? 'destructive' : 'destructive'}
 					status={fetcher.state !== 'idle' ? 'pending' : 'idle'}
 				>
 					<Icon name="trash">

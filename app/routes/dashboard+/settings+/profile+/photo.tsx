@@ -172,7 +172,7 @@ export default function PhotoRoute({
 						className="cursor-pointer peer-valid:hidden peer-focus-within:ring-2 peer-focus-visible:ring-2"
 					>
 						<label htmlFor={fields.photoFile.id}>
-							<Icon name="pencil-1">Change</Icon>
+							<Icon name="pencil-1">Cambia</Icon>
 						</label>
 					</Button>
 					<StatusButton
@@ -188,7 +188,7 @@ export default function PhotoRoute({
 									: 'idle'
 						}
 					>
-						Save Photo
+						Salva Foto
 					</StatusButton>
 					<Button
 						variant="destructive"
@@ -215,9 +215,7 @@ export default function PhotoRoute({
 							}
 						>
 							<Icon name="trash">
-								{doubleCheckDeleteImage.doubleCheck
-									? 'Are you sure?'
-									: 'Delete'}
+								{doubleCheckDeleteImage.doubleCheck ? 'Sei sicuro?' : 'Elimina'}
 							</Icon>
 						</StatusButton>
 					) : null}
