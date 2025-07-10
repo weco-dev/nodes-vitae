@@ -1,4 +1,5 @@
-import { useFetcher } from 'react-router'
+import { Link, useFetcher } from 'react-router'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireRecentVerification } from '#app/routes/_auth+/verify.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -20,8 +21,8 @@ export async function action({ request }: Route.ActionArgs) {
 		where: { target_type: { target: userId, type: twoFAVerificationType } },
 	})
 	return redirectWithToast('/dashboard/settings/profile/two-factor', {
-		title: '2FA Disabled',
-		description: 'Two factor authentication has been disabled.',
+		title: '2FA Disabilitato',
+		description: "L'autenticazione a due fattori è stata disabilitata.",
 	})
 }
 
@@ -30,25 +31,49 @@ export default function TwoFactorDisableRoute() {
 	const dc = useDoubleCheck()
 
 	return (
-		<div className="mx-auto max-w-sm">
-			<disable2FAFetcher.Form method="POST">
-				<p>
-					Disabling two factor authentication is not recommended. However, if
-					you would like to do so, click here:
-				</p>
-				<StatusButton
-					variant="destructive"
-					status={disable2FAFetcher.state === 'loading' ? 'pending' : 'idle'}
-					{...dc.getButtonProps({
-						className: 'mx-auto',
-						name: 'intent',
-						value: 'disable',
-						type: 'submit',
-					})}
-				>
-					{dc.doubleCheck ? 'Are you sure?' : 'Disable 2FA'}
-				</StatusButton>
-			</disable2FAFetcher.Form>
+		<div className="flex h-full">
+			<div className="w-full max-w-md">
+				<div className="space-y-6">
+					<div>
+						<h1 className="text-2xl font-semibold">Disabilita 2FA</h1>
+						<p className="text-muted-foreground mt-2">
+							Disabilitare l'autenticazione a due fattori non è raccomandato
+						</p>
+					</div>
+
+					<disable2FAFetcher.Form method="POST" className="space-y-6">
+						<div className="space-y-4">
+							<p className="text-muted-foreground text-sm">
+								Se desideri procedere con la disabilitazione dell'autenticazione
+								a due fattori, clicca il pulsante qui sotto.
+							</p>
+
+							<StatusButton
+								variant="destructive"
+								status={
+									disable2FAFetcher.state === 'loading' ? 'pending' : 'idle'
+								}
+								{...dc.getButtonProps({
+									name: 'intent',
+									value: 'disable',
+									type: 'submit',
+								})}
+							>
+								{dc.doubleCheck ? 'Sei sicuro?' : 'Disabilita 2FA'}
+							</StatusButton>
+						</div>
+					</disable2FAFetcher.Form>
+					<div className="mt-6">
+						<Link
+							to="/dashboard/settings/profile"
+							className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center text-sm"
+						>
+							<Icon name="arrow-left" className="mr-2 h-4 w-4" />
+							Torna alla pagina profilo
+						</Link>
+					</div>
+				</div>
+			</div>
 		</div>
 	)
 }

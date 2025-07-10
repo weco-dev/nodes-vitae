@@ -1,9 +1,10 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import * as QRCode from 'qrcode'
-import { data, redirect, Form, useNavigation } from 'react-router'
+import { data, redirect, Form, Link, useNavigation } from 'react-router'
 import { z } from 'zod'
 import { ErrorList, OTPField } from '#app/components/forms.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { isCodeValid } from '#app/routes/_auth+/verify.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
@@ -133,85 +134,92 @@ export default function TwoFactorRoute({
 	const lastSubmissionIntent = fields.intent.value
 
 	return (
-		<div>
-			<div className="flex flex-col items-center gap-4">
-				<img alt="qr code" src={loaderData.qrCode} className="size-56" />
-				<p>Scan this QR code with your authenticator app.</p>
-				<p className="text-sm">
-					If you cannot scan the QR code, you can manually add this account to
-					your authenticator app using this code:
-				</p>
-				<div className="p-3">
-					<pre
-						className="text-sm break-all whitespace-pre-wrap"
-						aria-label="One-time Password URI"
-					>
-						{loaderData.otpUri}
-					</pre>
-				</div>
-				<p className="text-sm">
-					Once you've added the account, enter the code from your authenticator
-					app below. Once you enable 2FA, you will need to enter a code from
-					your authenticator app every time you log in or perform important
-					actions. Do not lose access to your authenticator app, or you will
-					lose access to your account.
-				</p>
-				<div className="flex w-full max-w-xs flex-col justify-center gap-4">
-					<Form method="POST" {...getFormProps(form)} className="flex-1">
-						<div className="flex items-center justify-center">
-							<OTPField
-								labelProps={{
-									htmlFor: fields.code.id,
-									children: 'Code',
-								}}
-								inputProps={{
-									...getInputProps(fields.code, { type: 'text' }),
-									autoFocus: true,
-									autoComplete: 'one-time-code',
-								}}
-								errors={fields.code.errors}
-							/>
-						</div>
+		<div className="flex min-h-svh w-full justify-start">
+			<div className="w-full max-w-[70%]">
+				<div className="flex flex-col gap-12">
+					<div className="text-left">
+						<h1 className="text-xl font-semibold">Verifica 2FA</h1>
+						<p className="text-muted-foreground">
+							Scansiona il codice QR con la tua app di autenticazione
+						</p>
+					</div>
 
-						<div className="min-h-[32px] px-4 pt-1 pb-3">
-							<ErrorList id={form.errorId} errors={form.errors} />
-						</div>
+					<hr className="border-muted-foreground/20" />
 
-						<div className="flex justify-between gap-4">
-							<StatusButton
-								className="w-full"
-								status={
-									pendingIntent === 'verify'
-										? 'pending'
-										: lastSubmissionIntent === 'verify'
-											? (form.status ?? 'idle')
-											: 'idle'
-								}
-								type="submit"
-								name="intent"
-								value="verify"
+					<div className="flex flex-col items-start gap-4">
+						<img alt="qr code" src={loaderData.qrCode} className="size-56" />
+						<p className="text-left">
+							Scansiona questo codice QR con la tua app di autenticazione.
+						</p>
+						<p className="text-muted-foreground text-left text-sm">
+							Se non puoi scansionare il codice QR, puoi aggiungere manualmente
+							questo account alla tua app di autenticazione usando questo
+							codice:
+						</p>
+						<div className="bg-muted rounded-lg p-3">
+							<pre
+								className="text-center text-sm break-all whitespace-pre-wrap"
+								aria-label="One-time Password URI"
 							>
-								Submit
-							</StatusButton>
-							<StatusButton
-								className="w-full"
-								variant="secondary"
-								status={
-									pendingIntent === 'cancel'
-										? 'pending'
-										: lastSubmissionIntent === 'cancel'
-											? (form.status ?? 'idle')
-											: 'idle'
-								}
-								type="submit"
-								name="intent"
-								value="cancel"
-								disabled={isPending}
-							>
-								Cancel
-							</StatusButton>
+								{loaderData.otpUri}
+							</pre>
 						</div>
-					</Form>
+						<p className="text-muted-foreground text-left text-sm">
+							Una volta aggiunto l'account, inserisci il codice dalla tua app di
+							autenticazione qui sotto. Una volta abilitato il 2FA, dovrai
+							inserire un codice dalla tua app di autenticazione ogni volta che
+							accedi o esegui azioni importanti.
+						</p>
+						<div className="my-4 flex w-full flex-col">
+							<Form method="POST" {...getFormProps(form)} className="flex-1">
+								<div className="flex">
+									<OTPField
+										labelProps={{
+											htmlFor: fields.code.id,
+											children: 'Codice',
+										}}
+										inputProps={{
+											...getInputProps(fields.code, { type: 'text' }),
+											autoFocus: true,
+											autoComplete: 'one-time-code',
+										}}
+										errors={fields.code.errors}
+									/>
+								</div>
+								<div className="ml-0">
+									<ErrorList id={form.errorId} errors={form.errors} />
+								</div>
+
+								<div className="max-w-sm">
+									<StatusButton
+										className="w-full"
+										status={
+											pendingIntent === 'verify'
+												? 'pending'
+												: lastSubmissionIntent === 'verify'
+													? (form.status ?? 'idle')
+													: 'idle'
+										}
+										type="submit"
+										name="intent"
+										value="verify"
+									>
+										Verifica
+									</StatusButton>
+								</div>
+							</Form>
+						</div>
+						{/* torna alla pagina profilo */}
+						<div className="text-left text-sm">
+							<Link
+								to=".."
+								className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 transition-colors"
+							>
+								<Icon name="arrow-left" className="h-4 w-4" />
+								Torna alla pagina 2FA
+							</Link>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
