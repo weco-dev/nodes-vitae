@@ -9,10 +9,10 @@ export default defineConfig({
 	expect: {
 		timeout: 5 * 1000,
 	},
-	fullyParallel: true,
+	fullyParallel: false, // Disable parallel execution to avoid test interference
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: process.env.CI ? 1 : undefined,
+	workers: 1, // Force single worker to prevent database conflicts
 	reporter: 'html',
 	use: {
 		baseURL: `http://localhost:${PORT}/`,

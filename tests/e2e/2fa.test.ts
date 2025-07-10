@@ -10,11 +10,11 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	const user = await login({ password })
 	await page.goto('/dashboard/settings/profile')
 
-	await page.getByRole('link', { name: /enable 2fa/i }).click()
+	await page.getByRole('link', { name: /abilita 2fa/i }).click()
 
 	await expect(page).toHaveURL(`/dashboard/settings/profile/two-factor`)
 	const main = page.getByRole('main')
-	await main.getByRole('button', { name: /enable 2fa/i }).click()
+	await main.getByRole('button', { name: /abilita 2fa/i }).click()
 	const otpUriString = await main
 		.getByLabel(/One-Time Password URI/i)
 		.innerText()
@@ -31,12 +31,14 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 			})
 		).otp,
 	)
-	await main.getByRole('button', { name: /submit/i }).click()
+	await main.getByRole('button', { name: 'Submit', exact: true }).click()
 
-	await expect(main).toHaveText(/You have enabled two-factor authentication./i)
-	await expect(main.getByRole('link', { name: /disable 2fa/i })).toBeVisible()
+	await expect(main).toHaveText(/autenticazione 2fa attiva/i)
+	await expect(
+		main.getByRole('link', { name: /disabilita 2fa/i }),
+	).toBeVisible()
 
-	await page.getByRole('link', { name: user.name ?? user.username }).click()
+	await page.getByRole('button', { name: user.name ?? user.username }).click()
 	await page.getByRole('menuitem', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
 
@@ -44,9 +46,10 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	await expect(page).toHaveURL(`/login`)
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByLabel(/^password$/i).fill(password)
-	await page.getByRole('button', { name: /log in/i }).click()
+	await page.getByRole('button', { name: 'Login', exact: true }).click()
+	await expect(page).toHaveURL(/\/verify/)
 
-	await page.getByRole('textbox', { name: /code/i }).fill(
+	await page.getByRole('textbox', { name: /codice/i }).fill(
 		(
 			await generateTOTP({
 				...options,
@@ -56,9 +59,9 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 		).otp,
 	)
 
-	await page.getByRole('button', { name: /submit/i }).click()
+	await page.getByRole('button', { name: /verifica/i }).click()
 
 	await expect(
-		page.getByRole('link', { name: user.name ?? user.username }),
+		page.getByRole('button', { name: user.name ?? user.username }),
 	).toBeVisible()
 })

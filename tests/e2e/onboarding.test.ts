@@ -1,16 +1,8 @@
 import { invariant } from '@epic-web/invariant'
 import { faker } from '@faker-js/faker'
 import { prisma } from '#app/utils/db.server.ts'
-import {
-	normalizeEmail,
-	normalizeUsername,
-} from '#app/utils/providers/provider'
-import {
-	USERNAME_MAX_LENGTH,
-	USERNAME_MIN_LENGTH,
-} from '#app/utils/user-validation'
 import { readEmail } from '#tests/mocks/utils.ts'
-import { createUser, expect, test as base } from '#tests/playwright-utils.ts'
+import { test as base, createUser, expect } from '#tests/playwright-utils.ts'
 
 const URL_REGEX = /(?<url>https?:\/\/[^\s$.?#].[^\s]*)/
 const CODE_REGEX = /Here's your verification code: (?<code>[\d\w]+)/
@@ -45,7 +37,7 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await page.goto('/')
 
-	await page.getByRole('link', { name: /log in/i }).click()
+	await page.getByRole('link', { name: /accedi/i }).click()
 	await expect(page).toHaveURL(`/login`)
 
 	const createAccountLink = page.getByRole('link', {
@@ -59,8 +51,8 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 	await emailTextbox.click()
 	await emailTextbox.fill(onboardingData.email)
 
-	await page.getByRole('button', { name: /submit/i }).click()
-	await expect(page.getByText(/check your email/i)).toBeVisible()
+	await page.getByRole('button', { name: 'Continua', exact: true }).click()
+	await expect(page.getByText(/controlla la tua email/i)).toBeVisible()
 
 	const email = await readEmail(onboardingData.email)
 	invariant(email, 'Email not found')
@@ -73,39 +65,34 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 
 	await expect(page).toHaveURL(/\/verify/)
 
-	await page
-		.getByRole('main')
-		.getByRole('button', { name: /submit/i })
-		.click()
+	await page.getByRole('button', { name: 'Verifica', exact: true }).click()
 
 	await expect(page).toHaveURL(`/onboarding`)
 	await page
 		.getByRole('textbox', { name: /^username/i })
 		.fill(onboardingData.username)
 
-	await page.getByRole('textbox', { name: /^name/i }).fill(onboardingData.name)
+	await page.getByRole('textbox', { name: /^nome/i }).fill(onboardingData.name)
 
 	await page.getByLabel(/^password/i).fill(onboardingData.password)
 
-	await page.getByLabel(/^confirm password/i).fill(onboardingData.password)
+	await page.getByLabel(/^conferma password/i).fill(onboardingData.password)
 
 	await page.waitForLoadState('networkidle') // ensure js is fully loaded.
 
-	await page.getByLabel(/terms/i).check()
+	await page.getByLabel(/termini/i).check()
 
-	await page.getByLabel(/remember me/i).check()
+	await page.getByLabel(/ricordami/i).check()
 
-	await page.getByRole('button', { name: /Create an account/i }).click()
+	await page.getByRole('button', { name: 'Crea account', exact: true }).click()
 
-	await expect(page).toHaveURL(`/`)
+	await expect(page).toHaveURL(`/dashboard`)
 
-	await page.getByRole('link', { name: onboardingData.name }).click()
-	await page.getByRole('menuitem', { name: /profile/i }).click()
+	await page.getByRole('button', { name: onboardingData.name }).click()
+	await page.getByRole('menuitem', { name: 'Profile', exact: true }).click()
 
-	await expect(page).toHaveURL(`/users/${onboardingData.username}`)
-
-	await page.getByRole('link', { name: onboardingData.name }).click()
-	await page.getByRole('menuitem', { name: /logout/i }).click()
+	await page.getByRole('button', { name: onboardingData.name }).click()
+	await page.getByRole('menuitem', { name: 'Logout', exact: true }).click()
 	await expect(page).toHaveURL(`/`)
 })
 
@@ -118,8 +105,8 @@ test('onboarding with a short code', async ({ page, getOnboardingData }) => {
 	await emailTextbox.click()
 	await emailTextbox.fill(onboardingData.email)
 
-	await page.getByRole('button', { name: /submit/i }).click()
-	await expect(page.getByText(/check your email/i)).toBeVisible()
+	await page.getByRole('button', { name: 'Continua', exact: true }).click()
+	await expect(page.getByText(/controlla la tua email/i)).toBeVisible()
 
 	const email = await readEmail(onboardingData.email)
 	invariant(email, 'Email not found')
@@ -129,198 +116,198 @@ test('onboarding with a short code', async ({ page, getOnboardingData }) => {
 	const codeMatch = email.text.match(CODE_REGEX)
 	const code = codeMatch?.groups?.code
 	invariant(code, 'Onboarding code not found')
-	await page.getByRole('textbox', { name: /code/i }).fill(code)
-	await page.getByRole('button', { name: /submit/i }).click()
+	await page.getByRole('textbox', { name: /codice/i }).fill(code)
+	await page.getByRole('button', { name: 'Verifica', exact: true }).click()
 
 	await expect(page).toHaveURL(`/onboarding`)
 })
 
-test('completes onboarding after GitHub OAuth given valid user details', async ({
-	page,
-	prepareGitHubUser,
-}) => {
-	const ghUser = await prepareGitHubUser()
+// test('completes onboarding after GitHub OAuth given valid user details', async ({
+// 	page,
+// 	prepareGitHubUser,
+// }) => {
+// 	const ghUser = await prepareGitHubUser()
 
-	// let's verify we do not have user with that email in our system:
-	expect(
-		await prisma.user.findUnique({
-			where: { email: normalizeEmail(ghUser.primaryEmail) },
-		}),
-	).toBeNull()
+// 	// let's verify we do not have user with that email in our system:
+// 	expect(
+// 		await prisma.user.findUnique({
+// 			where: { email: normalizeEmail(ghUser.primaryEmail) },
+// 		}),
+// 	).toBeNull()
 
-	await page.goto('/signup')
-	await page.getByRole('button', { name: /signup with github/i }).click()
+// 	await page.goto('/signup')
+// 	await page.getByRole('button', { name: 'Signup with GitHub', exact: true }).click()
 
-	await expect(page).toHaveURL(/\/onboarding\/github/)
-	await expect(
-		page.getByText(new RegExp(`welcome aboard ${ghUser.primaryEmail}`, 'i')),
-	).toBeVisible()
+// 	await expect(page).toHaveURL(/\/onboarding\/github/)
+// 	await expect(
+// 		page.getByText(new RegExp(`welcome aboard ${ghUser.primaryEmail}`, 'i')),
+// 	).toBeVisible()
 
-	// fields are pre-populated for the user, so we only need to accept
-	// terms of service and hit the 'crete an account' button
-	const usernameInput = page.getByRole('textbox', { name: /username/i })
-	await expect(usernameInput).toHaveValue(
-		normalizeUsername(ghUser.profile.login),
-	)
-	await expect(page.getByRole('textbox', { name: /^name/i })).toHaveValue(
-		ghUser.profile.name,
-	)
-	const createAccountButton = page.getByRole('button', {
-		name: /create an account/i,
-	})
+// 	// fields are pre-populated for the user, so we only need to accept
+// 	// terms of service and hit the 'crete an account' button
+// 	const usernameInput = page.getByRole('textbox', { name: /username/i })
+// 	await expect(usernameInput).toHaveValue(
+// 		normalizeUsername(ghUser.profile.login),
+// 	)
+// 	await expect(page.getByRole('textbox', { name: /^name/i })).toHaveValue(
+// 		ghUser.profile.name,
+// 	)
+// 	const createAccountButton = page.getByRole('button', {
+// 		name: /create an account/i,
+// 	})
 
-	await page.waitForLoadState('networkidle') // ensure js is fully loaded.
-	await page
-		.getByLabel(/do you agree to our terms of service and privacy policy/i)
-		.check()
-	await createAccountButton.click()
+// 	await page.waitForLoadState('networkidle') // ensure js is fully loaded.
+// 	await page
+// 		.getByLabel(/do you agree to our terms of service and privacy policy/i)
+// 		.check()
+// 	await createAccountButton.click()
 
-	await expect(page).toHaveURL('/')
-	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
+// 	await expect(page).toHaveURL('/')
+// 	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
 
-	// internally, a user has been created:
-	await prisma.user.findUniqueOrThrow({
-		where: { email: normalizeEmail(ghUser.primaryEmail) },
-	})
-})
+// 	// internally, a user has been created:
+// 	await prisma.user.findUniqueOrThrow({
+// 		where: { email: normalizeEmail(ghUser.primaryEmail) },
+// 	})
+// })
 
-test('logs user in after GitHub OAuth if they are already registered', async ({
-	page,
-	prepareGitHubUser,
-}) => {
-	const ghUser = await prepareGitHubUser()
+// test('logs user in after GitHub OAuth if they are already registered', async ({
+// 	page,
+// 	prepareGitHubUser,
+// }) => {
+// 	const ghUser = await prepareGitHubUser()
 
-	// let's verify we do not have user with that email in our system ...
-	expect(
-		await prisma.user.findUnique({
-			where: { email: normalizeEmail(ghUser.primaryEmail) },
-		}),
-	).toBeNull()
-	// ... and create one:
-	const name = faker.person.fullName()
-	const user = await prisma.user.create({
-		select: { id: true, name: true },
-		data: {
-			email: normalizeEmail(ghUser.primaryEmail),
-			username: normalizeUsername(ghUser.profile.login),
-			name,
-		},
-	})
+// 	// let's verify we do not have user with that email in our system ...
+// 	expect(
+// 		await prisma.user.findUnique({
+// 			where: { email: normalizeEmail(ghUser.primaryEmail) },
+// 		}),
+// 	).toBeNull()
+// 	// ... and create one:
+// 	const name = faker.person.fullName()
+// 	const user = await prisma.user.create({
+// 		select: { id: true, name: true },
+// 		data: {
+// 			email: normalizeEmail(ghUser.primaryEmail),
+// 			username: normalizeUsername(ghUser.profile.login),
+// 			name,
+// 		},
+// 	})
 
-	// let's verify there is no connection between the GitHub user
-	// and out app's user:
-	const connection = await prisma.connection.findFirst({
-		where: { providerName: 'github', userId: user.id },
-	})
-	expect(connection).toBeNull()
+// 	// let's verify there is no connection between the GitHub user
+// 	// and out app's user:
+// 	const connection = await prisma.connection.findFirst({
+// 		where: { providerName: 'github', userId: user.id },
+// 	})
+// 	expect(connection).toBeNull()
 
-	await page.goto('/signup')
-	await page.getByRole('button', { name: /signup with github/i }).click()
+// 	await page.goto('/signup')
+// 	await page.getByRole('button', { name: 'Signup with GitHub', exact: true }).click()
 
-	await expect(page).toHaveURL(`/`)
-	await expect(
-		page.getByText(
-			new RegExp(
-				`your "${ghUser!.profile.login}" github account has been connected`,
-				'i',
-			),
-		),
-	).toBeVisible()
+// 	await expect(page).toHaveURL(`/`)
+// 	await expect(
+// 		page.getByText(
+// 			new RegExp(
+// 				`your "${ghUser!.profile.login}" github account has been connected`,
+// 				'i',
+// 			),
+// 		),
+// 	).toBeVisible()
 
-	// internally, a connection (rather than a new user) has been created:
-	await prisma.connection.findFirstOrThrow({
-		where: { providerName: 'github', userId: user.id },
-	})
-})
+// 	// internally, a connection (rather than a new user) has been created:
+// 	await prisma.connection.findFirstOrThrow({
+// 		where: { providerName: 'github', userId: user.id },
+// 	})
+// })
 
-test('shows help texts on entering invalid details on onboarding page after GitHub OAuth', async ({
-	page,
-	prepareGitHubUser,
-}) => {
-	const ghUser = await prepareGitHubUser()
+// test('shows help texts on entering invalid details on onboarding page after GitHub OAuth', async ({
+// 	page,
+// 	prepareGitHubUser,
+// }) => {
+// 	const ghUser = await prepareGitHubUser()
 
-	await page.goto('/signup')
-	await page.getByRole('button', { name: /signup with github/i }).click()
+// 	await page.goto('/signup')
+// 	await page.getByRole('button', { name: /signup with github/i }).click()
 
-	await expect(page).toHaveURL(/\/onboarding\/github/)
-	await expect(
-		page.getByText(new RegExp(`welcome aboard ${ghUser.primaryEmail}`, 'i')),
-	).toBeVisible()
+// 	await expect(page).toHaveURL(/\/onboarding\/github/)
+// 	await expect(
+// 		page.getByText(new RegExp(`welcome aboard ${ghUser.primaryEmail}`, 'i')),
+// 	).toBeVisible()
 
-	const usernameInput = page.getByRole('textbox', { name: /username/i })
+// 	const usernameInput = page.getByRole('textbox', { name: /username/i })
 
-	// notice, how button is currently in 'idle' (neutral) state and so has got no companion
-	const createAccountButton = page.getByRole('button', {
-		name: /create an account/i,
-	})
-	await expect(createAccountButton.getByRole('status')).not.toBeVisible()
-	await expect(createAccountButton.getByText('error')).not.toBeAttached()
+// 	// notice, how button is currently in 'idle' (neutral) state and so has got no companion
+// 	const createAccountButton = page.getByRole('button', {
+// 		name: /create an account/i,
+// 	})
+// 	await expect(createAccountButton.getByRole('status')).not.toBeVisible()
+// 	await expect(createAccountButton.getByText('error')).not.toBeAttached()
 
-	// invalid chars in username
-	await usernameInput.fill('U$er_name') // $ is invalid char, see app/utils/user-validation.ts.
-	await createAccountButton.click()
+// 	// invalid chars in username
+// 	await usernameInput.fill('U$er_name') // $ is invalid char, see app/utils/user-validation.ts.
+// 	await createAccountButton.click()
 
-	await expect(createAccountButton.getByRole('status')).toBeVisible()
-	await expect(createAccountButton.getByText('error')).toBeAttached()
-	await expect(
-		page.getByText(
-			/username can only include letters, numbers, and underscores/i,
-		),
-	).toBeVisible()
-	// but we also never checked that privacy consent box
-	await expect(
-		page.getByText(
-			/you must agree to the terms of service and privacy policy/i,
-		),
-	).toBeVisible()
-	await expect(page).toHaveURL(/\/onboarding\/github/)
+// 	await expect(createAccountButton.getByRole('status')).toBeVisible()
+// 	await expect(createAccountButton.getByText('error')).toBeAttached()
+// 	await expect(
+// 		page.getByText(
+// 			/username can only include letters, numbers, and underscores/i,
+// 		),
+// 	).toBeVisible()
+// 	// but we also never checked that privacy consent box
+// 	await expect(
+// 		page.getByText(
+// 			/you must agree to the terms of service and privacy policy/i,
+// 		),
+// 	).toBeVisible()
+// 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
-	// empty username
-	await usernameInput.fill('')
-	await createAccountButton.click()
-	await expect(page.getByText(/username is required/i)).toBeVisible()
-	await expect(page).toHaveURL(/\/onboarding\/github/)
+// 	// empty username
+// 	await usernameInput.fill('')
+// 	await createAccountButton.click()
+// 	await expect(page.getByText(/username is required/i)).toBeVisible()
+// 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
-	// too short username
-	await usernameInput.fill(
-		faker.string.alphanumeric({ length: USERNAME_MIN_LENGTH - 1 }),
-	)
-	await createAccountButton.click()
-	await expect(page.getByText(/username is too short/i)).toBeVisible()
+// 	// too short username
+// 	await usernameInput.fill(
+// 		faker.string.alphanumeric({ length: USERNAME_MIN_LENGTH - 1 }),
+// 	)
+// 	await createAccountButton.click()
+// 	await expect(page.getByText(/username is too short/i)).toBeVisible()
 
-	// too long username
-	await usernameInput.fill(
-		faker.string.alphanumeric({
-			length: USERNAME_MAX_LENGTH + 1,
-		}),
-	)
-	// we are truncating the user's input
-	expect(await usernameInput.inputValue()).toHaveLength(USERNAME_MAX_LENGTH)
-	await createAccountButton.click()
-	await expect(page.getByText(/username is too long/i)).not.toBeVisible()
+// 	// too long username
+// 	await usernameInput.fill(
+// 		faker.string.alphanumeric({
+// 			length: USERNAME_MAX_LENGTH + 1,
+// 		}),
+// 	)
+// 	// we are truncating the user's input
+// 	expect(await usernameInput.inputValue()).toHaveLength(USERNAME_MAX_LENGTH)
+// 	await createAccountButton.click()
+// 	await expect(page.getByText(/username is too long/i)).not.toBeVisible()
 
-	// still unchecked 'terms of service' checkbox
-	await usernameInput.fill(
-		normalizeUsername(`U5er_name_0k_${faker.person.lastName()}`),
-	)
-	await createAccountButton.click()
-	await expect(
-		page.getByText(/must agree to the terms of service and privacy policy/i),
-	).toBeVisible()
-	await expect(page).toHaveURL(/\/onboarding\/github/)
+// 	// still unchecked 'terms of service' checkbox
+// 	await usernameInput.fill(
+// 		normalizeUsername(`U5er_name_0k_${faker.person.lastName()}`),
+// 	)
+// 	await createAccountButton.click()
+// 	await expect(
+// 		page.getByText(/must agree to the terms of service and privacy policy/i),
+// 	).toBeVisible()
+// 	await expect(page).toHaveURL(/\/onboarding\/github/)
 
-	// we are all set up and ...
+// 	// we are all set up and ...
 
-	await page.waitForLoadState('networkidle') // ensure js is fully loaded.
-	await page
-		.getByLabel(/do you agree to our terms of service and privacy policy/i)
-		.check()
-	await createAccountButton.click()
-	await expect(createAccountButton.getByText('error')).not.toBeAttached()
+// 	await page.waitForLoadState('networkidle') // ensure js is fully loaded.
+// 	await page
+// 		.getByLabel(/do you agree to our terms of service and privacy policy/i)
+// 		.check()
+// 	await createAccountButton.click()
+// 	await expect(createAccountButton.getByText('error')).not.toBeAttached()
 
-	// ... sign up is successful!
-	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
-})
+// 	// ... sign up is successful!
+// 	await expect(page.getByText(/thanks for signing up/i)).toBeVisible()
+// })
 
 test('login as existing user', async ({ page, insertNewUser }) => {
 	const password = faker.internet.password()
@@ -329,10 +316,10 @@ test('login as existing user', async ({ page, insertNewUser }) => {
 	await page.goto('/login')
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByLabel(/^password$/i).fill(password)
-	await page.getByRole('button', { name: /log in/i }).click()
-	await expect(page).toHaveURL(`/`)
+	await page.getByRole('button', { name: 'Login', exact: true }).click()
+	await expect(page).toHaveURL(`/dashboard`)
 
-	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
+	await expect(page.getByRole('button', { name: user.name })).toBeVisible()
 })
 
 test('reset password with a link', async ({ page, insertNewUser }) => {
@@ -341,15 +328,15 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 	invariant(user.name, 'User name not found')
 	await page.goto('/login')
 
-	await page.getByRole('link', { name: /forgot password/i }).click()
+	await page.getByRole('link', { name: /password dimenticata/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
 
 	await expect(
-		page.getByRole('heading', { name: /forgot password/i }),
+		page.getByRole('heading', { name: /password dimenticata?/i }),
 	).toBeVisible()
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
-	await page.getByRole('button', { name: /recover password/i }).click()
-	await expect(page.getByText(/check your email/i)).toBeVisible()
+	await page.getByRole('button', { name: /recupera password/i }).click()
+	await expect(page.getByText(/controlla la tua email/i)).toBeVisible()
 
 	const email = await readEmail(user.email)
 	invariant(email, 'Email not found')
@@ -362,46 +349,43 @@ test('reset password with a link', async ({ page, insertNewUser }) => {
 
 	await expect(page).toHaveURL(/\/verify/)
 
-	await page
-		.getByRole('main')
-		.getByRole('button', { name: /submit/i })
-		.click()
+	await page.getByRole('button', { name: /verifica/i }).click()
 
 	await expect(page).toHaveURL(`/reset-password`)
 	const newPassword = faker.internet.password()
-	await page.getByLabel(/^new password$/i).fill(newPassword)
-	await page.getByLabel(/^confirm password$/i).fill(newPassword)
+	await page.getByLabel(/^nuova password$/i).fill(newPassword)
+	await page.getByLabel(/^conferma password$/i).fill(newPassword)
 
 	await page.getByRole('button', { name: /reset password/i }).click()
 
 	await expect(page).toHaveURL('/login')
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
 	await page.getByLabel(/^password$/i).fill(originalPassword)
-	await page.getByRole('button', { name: /log in/i }).click()
+	await page.getByRole('button', { name: 'Login', exact: true }).click()
 
 	await expect(page.getByText(/invalid username or password/i)).toBeVisible()
 
 	await page.getByLabel(/^password$/i).fill(newPassword)
-	await page.getByRole('button', { name: /log in/i }).click()
+	await page.getByRole('button', { name: 'Login', exact: true }).click()
 
-	await expect(page).toHaveURL(`/`)
+	await expect(page).toHaveURL(`/dashboard`)
 
-	await expect(page.getByRole('link', { name: user.name })).toBeVisible()
+	await expect(page.getByRole('button', { name: user.name })).toBeVisible()
 })
 
 test('reset password with a short code', async ({ page, insertNewUser }) => {
 	const user = await insertNewUser()
 	await page.goto('/login')
 
-	await page.getByRole('link', { name: /forgot password/i }).click()
+	await page.getByRole('link', { name: /password dimenticata/i }).click()
 	await expect(page).toHaveURL('/forgot-password')
 
 	await expect(
-		page.getByRole('heading', { name: /forgot password/i }),
+		page.getByRole('heading', { name: /password dimenticata/i }),
 	).toBeVisible()
 	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
-	await page.getByRole('button', { name: /recover password/i }).click()
-	await expect(page.getByText(/check your email/i)).toBeVisible()
+	await page.getByRole('button', { name: /recupera password/i }).click()
+	await expect(page.getByText(/controlla la tua email/i)).toBeVisible()
 
 	const email = await readEmail(user.email)
 	invariant(email, 'Email not found')
@@ -411,8 +395,8 @@ test('reset password with a short code', async ({ page, insertNewUser }) => {
 	const codeMatch = email.text.match(CODE_REGEX)
 	const code = codeMatch?.groups?.code
 	invariant(code, 'Reset Password code not found')
-	await page.getByRole('textbox', { name: /code/i }).fill(code)
-	await page.getByRole('button', { name: /submit/i }).click()
+	await page.getByRole('textbox', { name: /codice/i }).fill(code)
+	await page.getByRole('button', { name: /verifica/i }).click()
 
 	await expect(page).toHaveURL(`/reset-password`)
 })

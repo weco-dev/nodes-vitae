@@ -1,9 +1,7 @@
 import { GalleryVerticalEnd } from 'lucide-react'
 import { Outlet } from 'react-router'
-import { requireAnonymous } from '#app/utils/auth.server.ts'
 
-export async function loader({ request }: { request: Request }) {
-	await requireAnonymous(request)
+export async function loader() {
 	return {}
 }
 

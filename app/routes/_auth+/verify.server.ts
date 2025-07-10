@@ -56,7 +56,9 @@ export function getRedirectToUrl({
 }
 
 export async function requireRecentVerification(request: Request) {
+	console.log('::', 'entering requireRecentVerification')
 	const userId = await requireUserId(request)
+	console.log('::', userId)
 	const shouldReverify = await shouldRequestTwoFA(request)
 	if (shouldReverify) {
 		const reqUrl = new URL(request.url)

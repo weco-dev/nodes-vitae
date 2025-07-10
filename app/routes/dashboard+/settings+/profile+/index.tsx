@@ -244,7 +244,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 					</div>
 				</Link>
 
-				<Link
+				{/* <Link
 					to="connections"
 					className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-4 transition-colors"
 				>
@@ -257,7 +257,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 							Gestisci account collegati
 						</p>
 					</div>
-				</Link>
+				</Link> */}
 
 				<Link
 					to="passkeys"

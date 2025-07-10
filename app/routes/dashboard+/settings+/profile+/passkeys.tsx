@@ -181,6 +181,7 @@ export default function Passkeys({ loaderData }: Route.ComponentProps) {
 												value={passkey.id}
 											/>
 											<Button
+												aria-label="delete"
 												type="submit"
 												name="intent"
 												value="delete"
@@ -197,7 +198,7 @@ export default function Passkeys({ loaderData }: Route.ComponentProps) {
 						</div>
 					) : (
 						<div className="rounded-lg border p-4">
-							<div className="text-center">
+							<div className="text-left">
 								<p className="text-muted-foreground mb-3 text-sm">
 									Nessun passkey registrato
 								</p>
