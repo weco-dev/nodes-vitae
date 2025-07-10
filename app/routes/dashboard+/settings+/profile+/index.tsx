@@ -108,7 +108,10 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 								className="h-full w-full rounded-full object-cover"
 							/>
 						) : (
-							<Icon name="avatar" className="h-10 w-10 self-center" />
+							<Icon
+								name="avatar"
+								className="text-primary h-20 w-20 self-center"
+							/>
 						)}
 					</div>
 					<div className="flex-1">
@@ -365,7 +368,12 @@ function SignOutOfSessions({
 					</StatusButton>
 				</fetcher.Form>
 			) : (
-				<Icon name="avatar">This is your only session</Icon>
+				<div>
+					<p className="font-medium">Sessioni</p>
+					<p className="text-muted-foreground text-sm">
+						Questa è la tua unica sessione attiva.
+					</p>
+				</div>
 			)}
 		</div>
 	)
