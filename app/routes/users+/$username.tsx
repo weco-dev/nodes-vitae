@@ -87,7 +87,7 @@ export default function ProfileRoute() {
 									</Link>
 								</Button>
 								<Button asChild>
-									<Link to="/settings/profile" prefetch="intent">
+									<Link to="/dashboard/settings/profile" prefetch="intent">
 										Edit profile
 									</Link>
 								</Button>

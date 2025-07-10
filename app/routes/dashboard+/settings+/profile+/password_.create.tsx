@@ -23,7 +23,7 @@ async function requireNoPassword(userId: string) {
 		where: { userId },
 	})
 	if (password) {
-		throw redirect('/settings/profile/password')
+		throw redirect('/dashboard/settings/profile/password')
 	}
 }
 
@@ -75,7 +75,7 @@ export async function action({ request }: Route.ActionArgs) {
 		},
 	})
 
-	return redirect(`/settings/profile`, { status: 302 })
+	return redirect(`/dashboard/settings/profile`, { status: 302 })
 }
 
 export default function CreatePasswordRoute({
