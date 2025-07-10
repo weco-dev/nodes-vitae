@@ -22,7 +22,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 	const otpUri = new URL(otpUriString)
 	const options = Object.fromEntries(otpUri.searchParams)
 
-	await main.getByRole('textbox', { name: /code/i }).fill(
+	await main.getByRole('textbox', { name: /codice/i }).fill(
 		(
 			await generateTOTP({
 				...options,
@@ -31,7 +31,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 			})
 		).otp,
 	)
-	await main.getByRole('button', { name: 'Submit', exact: true }).click()
+	await main.getByRole('button', { name: 'Verifica', exact: true }).click()
 
 	await expect(main).toHaveText(/autenticazione 2fa attiva/i)
 	await expect(
