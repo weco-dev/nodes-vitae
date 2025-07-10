@@ -70,7 +70,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 	const response = await sendEmail({
 		to: user.email,
-		subject: `Epic Notes Password Reset`,
+		subject: `Vitae ESG Password Reset`,
 		react: (
 			<ForgotPasswordEmail onboardingUrl={verifyUrl.toString()} otp={otp} />
 		),
@@ -97,7 +97,7 @@ function ForgotPasswordEmail({
 		<E.Html lang="en" dir="ltr">
 			<E.Container>
 				<h1>
-					<E.Text>Epic Notes Password Reset</E.Text>
+					<E.Text>Vitae ESG Password Reset</E.Text>
 				</h1>
 				<p>
 					<E.Text>
@@ -114,7 +114,7 @@ function ForgotPasswordEmail({
 }
 
 export const meta: Route.MetaFunction = () => {
-	return [{ title: 'Password Recovery for Epic Notes' }]
+	return [{ title: 'Recupera Password | Vitae' }]
 }
 
 export default function ForgotPasswordRoute() {
@@ -131,22 +131,26 @@ export default function ForgotPasswordRoute() {
 	})
 
 	return (
-		<div className="container pt-20 pb-32">
-			<div className="flex flex-col justify-center">
-				<div className="text-center">
-					<h1 className="text-h1">Forgot Password</h1>
-					<p className="text-body-md text-muted-foreground mt-3">
-						No worries, we'll send you reset instructions.
+		<div className="flex min-h-full flex-col justify-center pt-20 pb-32">
+			<div className="mx-auto w-full max-w-md">
+				<div className="flex flex-col space-y-2 text-center">
+					<h1 className="text-2xl font-semibold tracking-tight">
+						Password dimenticata?
+					</h1>
+					<p className="text-muted-foreground text-sm">
+						Nessun problema, ti invieremo le istruzioni per recuperare la tua
+						password.
 					</p>
 				</div>
-				<div className="mx-auto mt-16 max-w-sm min-w-full sm:min-w-[368px]">
-					<forgotPassword.Form method="POST" {...getFormProps(form)}>
-						<HoneypotInputs />
-						<div>
+
+				<div className="mt-8">
+					<div className="mx-auto w-full max-w-md">
+						<forgotPassword.Form method="POST" {...getFormProps(form)}>
+							<HoneypotInputs />
 							<Field
 								labelProps={{
 									htmlFor: fields.usernameOrEmail.id,
-									children: 'Username or Email',
+									children: 'Username o Email',
 								}}
 								inputProps={{
 									autoFocus: true,
@@ -154,30 +158,33 @@ export default function ForgotPasswordRoute() {
 								}}
 								errors={fields.usernameOrEmail.errors}
 							/>
-						</div>
-						<ErrorList errors={form.errors} id={form.errorId} />
+							<ErrorList errors={form.errors} id={form.errorId} />
 
-						<div className="mt-6">
-							<StatusButton
-								className="w-full"
-								status={
-									forgotPassword.state === 'submitting'
-										? 'pending'
-										: (form.status ?? 'idle')
-								}
-								type="submit"
-								disabled={forgotPassword.state !== 'idle'}
+							<div className="pt-3">
+								<StatusButton
+									className="w-full"
+									status={
+										forgotPassword.state === 'submitting'
+											? 'pending'
+											: (form.status ?? 'idle')
+									}
+									type="submit"
+									disabled={forgotPassword.state !== 'idle'}
+								>
+									Recupera password
+								</StatusButton>
+							</div>
+						</forgotPassword.Form>
+
+						<div className="flex items-center justify-center gap-2 pt-6">
+							<Link
+								to="/login"
+								className="text-primary font-semibold hover:underline"
 							>
-								Recover password
-							</StatusButton>
+								← Torna al login
+							</Link>
 						</div>
-					</forgotPassword.Form>
-					<Link
-						to="/login"
-						className="text-body-sm mt-11 text-center font-bold"
-					>
-						Back to Login
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>

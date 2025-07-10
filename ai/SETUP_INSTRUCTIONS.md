@@ -195,15 +195,34 @@ fly secrets set SENTRY_DSN="your_sentry_dsn_from_project_settings" --app nodes-v
 fly secrets set SENTRY_DSN="your_sentry_dsn_from_project_settings" --app nodes-vitae-staging
 ```
 
-### **Set up Sentry build-time configuration (OPTIONAL)**
+### **Set up Sentry build-time configuration (REQUIRED)**
 
-> **Note**: This step is optional but recommended for enhanced features like
-> source maps, release tracking, and commit association.
+> **Note**: This step is mandatory for proper error monitoring and source map
+> uploads.
 
-1. Create internal integration at Sentry for auth token
-2. Add scopes: `Releases:Admin` and `Organization:Read`
-3. Get organization slug and project slug
-4. Add to GitHub Secrets:
+1. **Create an internal integration for the auth token:** To generate the auth
+   token, click
+   [here to create an internal integration](https://sentry.io/settings/integrations/)
+   (which grants the selected capabilities to the recipient, similar to how RBAC
+   works). Give it a name and add the scope for **Releases:Admin** and
+   **Organization:Read**. Press Save, and then generate the auth token at the
+   bottom of the page under "Tokens", and copy that to a secure location (this
+   becomes `SENTRY_AUTH_TOKEN`).
+2. **Get organization and project information:** Then visit the
+   [organization general settings page](https://sentry.io/settings/) and copy
+   the organization slug (`SENTRY_ORG`), and the slug name for your project
+   under Organization > Projects > Project > Name (`SENTRY_PROJECT`).
+3. **Set the environment variables on both staging and production apps:**
+
+   ```bash
+   # Production
+   fly secrets set SENTRY_AUTH_TOKEN=your_token SENTRY_ORG=weco-ita SENTRY_PROJECT=nodes-vitae --app nodes-vitae
+
+   # Staging
+   fly secrets set SENTRY_AUTH_TOKEN=your_token SENTRY_ORG=weco-ita SENTRY_PROJECT=nodes-vitae --app nodes-vitae-staging
+   ```
+
+4. **Add to GitHub Secrets:**
    - `SENTRY_AUTH_TOKEN` (required for source maps and releases)
    - `SENTRY_ORG` (set to `weco-ita`)
    - `SENTRY_PROJECT` (set to `nodes-vitae`)

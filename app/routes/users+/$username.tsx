@@ -71,7 +71,7 @@ export default function ProfileRoute() {
 					</p>
 					{isLoggedInUser ? (
 						<Form action="/logout" method="POST" className="mt-3">
-							<Button type="submit" variant="link" size="pill">
+							<Button type="submit" variant="link" size="sm">
 								<Icon name="exit" className="scale-125 max-md:scale-150">
 									Logout
 								</Icon>
@@ -87,7 +87,7 @@ export default function ProfileRoute() {
 									</Link>
 								</Button>
 								<Button asChild>
-									<Link to="/settings/profile" prefetch="intent">
+									<Link to="/dashboard/settings/profile" prefetch="intent">
 										Edit profile
 									</Link>
 								</Button>
@@ -109,10 +109,10 @@ export default function ProfileRoute() {
 export const meta: Route.MetaFunction = ({ data, params }) => {
 	const displayName = data?.user.name ?? params.username
 	return [
-		{ title: `${displayName} | Epic Notes` },
+		{ title: `${displayName} | Vitae ESG` },
 		{
 			name: 'description',
-			content: `Profile of ${displayName} on Epic Notes`,
+			content: `Profile of ${displayName} on Vitae ESG`,
 		},
 	]
 }

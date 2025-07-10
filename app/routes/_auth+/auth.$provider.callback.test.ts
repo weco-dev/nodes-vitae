@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import { SetCookie } from '@mjackson/headers'
 import { http } from 'msw'
 import { afterEach, expect, test } from 'vitest'
-import { twoFAVerificationType } from '#app/routes/settings+/profile.two-factor.tsx'
+import { twoFAVerificationType } from '#app/routes/dashboard+/settings+/profile+/two-factor'
 import { getSessionExpirationDate, sessionKey } from '#app/utils/auth.server.ts'
 import { GITHUB_PROVIDER_NAME } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
@@ -61,7 +61,7 @@ test('when a user is logged in, it creates the connection', async () => {
 		code: githubUser.code,
 	})
 	const response = await loader({ request, params: PARAMS, context: {} })
-	expect(response).toHaveRedirect('/settings/profile/connections')
+	expect(response).toHaveRedirect('/dashboard/settings/profile/connections')
 	await expect(response).toSendToast(
 		expect.objectContaining({
 			title: 'Connected',
@@ -97,7 +97,7 @@ test(`when a user is logged in and has already connected, it doesn't do anything
 		code: githubUser.code,
 	})
 	const response = await loader({ request, params: PARAMS, context: {} })
-	expect(response).toHaveRedirect('/settings/profile/connections')
+	expect(response).toHaveRedirect('/dashboard/settings/profile/connections')
 	await expect(response).toSendToast(
 		expect.objectContaining({
 			title: 'Already Connected',
@@ -156,7 +156,7 @@ test('gives an error if the account is already connected to another user', async
 		code: githubUser.code,
 	})
 	const response = await loader({ request, params: PARAMS, context: {} })
-	expect(response).toHaveRedirect('/settings/profile/connections')
+	expect(response).toHaveRedirect('/dashboard/settings/profile/connections')
 	await expect(response).toSendToast(
 		expect.objectContaining({
 			title: 'Already Connected',
