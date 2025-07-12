@@ -39,12 +39,16 @@
  */
 
 import { format } from 'date-fns'
-import { useLoaderData  } from 'react-router'
+import { Edit, Check, X } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { useLoaderData, useFetcher } from 'react-router'
 import { Badge } from '#app/components/ui/badge.tsx'
+import { Button } from '#app/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '#app/components/ui/card.tsx'
+import { Input } from '#app/components/ui/input.tsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '#app/components/ui/tabs.tsx'
 import { assessmentQuestions } from '#app/utils/assessment-questions.ts'
-import { getAssessmentById } from '#app/utils/assessment.server.ts'
+import { getAssessmentById, updateAssessmentTitle } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { type Route } from './+types/assessment.$id'
 
@@ -72,8 +76,48 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 	return { assessment: assessment!, answersBySection }
 }
 
+export async function action({ request, params }: Route.ActionArgs) {
+	const userId = await requireUserId(request)
+	const formData = await request.formData()
+	const intent = formData.get('intent')
+
+	switch (intent) {
+		case 'update-title': {
+			const title = formData.get('title') as string
+			if (!title || title.trim() === '') {
+				throw new Error('Title cannot be empty')
+			}
+			await updateAssessmentTitle(params.id, userId, title.trim())
+			return { success: true }
+		}
+		default:
+			throw new Error(`Unknown intent: ${intent}`)
+	}
+}
+
 export default function AssessmentDetailRoute() {
 	const { assessment, answersBySection } = useLoaderData<typeof loader>()
+	const fetcher = useFetcher()
+	const [isEditing, setIsEditing] = useState(false)
+	const [editTitle, setEditTitle] = useState(assessment.title || `Assessment #${assessment.id.slice(-6)}`)
+
+	const handleTitleUpdate = useCallback(() => {
+		if (editTitle.trim() === '') return
+		
+		void fetcher.submit(
+			{
+				intent: 'update-title',
+				title: editTitle.trim(),
+			},
+			{ method: 'POST' }
+		)
+		setIsEditing(false)
+	}, [fetcher, editTitle])
+
+	const handleCancelEdit = useCallback(() => {
+		setEditTitle(assessment.title || `Assessment #${assessment.id.slice(-6)}`)
+		setIsEditing(false)
+	}, [assessment.title, assessment.id])
 
 	return (
 		<div className="flex flex-1 flex-col">
@@ -82,9 +126,36 @@ export default function AssessmentDetailRoute() {
 					<div className="px-4 lg:px-6">
 						<div className="mb-6">
 							<div className="flex items-center justify-between mb-2">
-								<h1 className="text-2xl font-bold">
-									Assessment #{assessment.id.slice(-6)}
-								</h1>
+								{isEditing ? (
+									<div className="flex items-center gap-2 flex-1">
+										<Input
+											value={editTitle}
+											onChange={(e) => setEditTitle(e.target.value)}
+											className="text-2xl font-bold border-0 p-0 h-auto bg-transparent focus-visible:ring-0"
+											placeholder="Assessment title..."
+											onKeyDown={(e) => {
+												if (e.key === 'Enter') handleTitleUpdate()
+												if (e.key === 'Escape') handleCancelEdit()
+											}}
+											autoFocus
+										/>
+										<Button size="sm" variant="ghost" onClick={handleTitleUpdate}>
+											<Check className="h-4 w-4" />
+										</Button>
+										<Button size="sm" variant="ghost" onClick={handleCancelEdit}>
+											<X className="h-4 w-4" />
+										</Button>
+									</div>
+								) : (
+									<div className="flex items-center gap-2">
+										<h1 className="text-2xl font-bold">
+											{assessment.title || `Assessment #${assessment.id.slice(-6)}`}
+										</h1>
+										<Button size="sm" variant="ghost" onClick={() => setIsEditing(true)}>
+											<Edit className="h-4 w-4" />
+										</Button>
+									</div>
+								)}
 								<Badge
 									variant={
 										assessment.status === 'completed'

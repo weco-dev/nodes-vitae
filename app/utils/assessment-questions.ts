@@ -249,11 +249,12 @@ export interface QuestionConfig {
 }
 
 export const assessmentQuestions: QuestionConfig[] = [
+	// Environmental Impact (10 questions)
 	{
 		questionId: 'env-001',
 		name: 'water_usage',
 		type: 'radiogroup',
-		title: "How do you assess your vineyard's water usage?",
+		title: "How do you assess your vineyard's water usage efficiency?",
 		descriptions: [
 			'Consider irrigation systems, rainwater collection, and water recycling practices',
 			'Include both direct vineyard irrigation and winery operations water usage',
@@ -283,8 +284,312 @@ export const assessmentQuestions: QuestionConfig[] = [
 			'Erosion control',
 		],
 		isRequired: true,
+		score: 12,
+	},
+	{
+		questionId: 'env-003',
+		name: 'energy_sources',
+		type: 'radiogroup',
+		title: 'What percentage of your energy comes from renewable sources?',
+		descriptions: [
+			'Include solar, wind, and other renewable energy systems',
+			'Consider both vineyard operations and winery facilities',
+			'Account for grid purchases and on-site generation',
+		],
+		section: 'Environmental Impact',
+		choices: ['76-100%', '51-75%', '26-50%', '0-25%'],
+		isRequired: true,
 		score: 15,
 	},
+	{
+		questionId: 'env-004',
+		name: 'pesticide_use',
+		type: 'radiogroup',
+		title: 'How would you classify your pesticide and herbicide use?',
+		descriptions: [
+			'Consider organic, biodynamic, or integrated pest management approaches',
+			'Include frequency of application and types of chemicals used',
+			'Evaluate alternatives and reduction strategies implemented',
+		],
+		section: 'Environmental Impact',
+		choices: ['Organic/None', 'Minimal/IPM', 'Moderate', 'Conventional'],
+		isRequired: true,
+		score: 13,
+	},
+	{
+		questionId: 'env-005',
+		name: 'biodiversity_protection',
+		type: 'checkbox',
+		title: 'Which biodiversity conservation measures do you practice?',
+		descriptions: [
+			'Select all habitat preservation and enhancement activities',
+			'Include wildlife corridors and native species protection',
+			'Consider pollinator support and ecosystem services',
+		],
+		section: 'Environmental Impact',
+		choices: [
+			'Native plant restoration',
+			'Wildlife habitat creation',
+			'Pollinator gardens',
+			'Water feature preservation',
+			'Organic certification',
+		],
+		isRequired: false,
+		score: 11,
+	},
+	{
+		questionId: 'env-006',
+		name: 'carbon_footprint',
+		type: 'boolean',
+		title: 'Do you measure and track your carbon footprint?',
+		descriptions: [
+			'Consider greenhouse gas emissions from all operations',
+			'Include vineyard management, production, and transportation',
+			'Evaluate carbon offset or reduction programs',
+		],
+		section: 'Environmental Impact',
+		choices: ['Yes', 'No'],
+		isRequired: true,
+		score: 14,
+	},
+	{
+		questionId: 'env-007',
+		name: 'packaging_sustainability',
+		type: 'radiogroup',
+		title: 'How sustainable are your packaging materials?',
+		descriptions: [
+			'Consider bottle weight, cork alternatives, and label materials',
+			'Include recycling programs and packaging waste reduction',
+			'Evaluate lifecycle impact of packaging choices',
+		],
+		section: 'Environmental Impact',
+		choices: ['Fully sustainable', 'Mostly sustainable', 'Some efforts', 'Traditional'],
+		isRequired: true,
+		score: 9,
+	},
+	{
+		questionId: 'env-008',
+		name: 'transportation_impact',
+		type: 'rating',
+		title: 'Rate your efforts to reduce transportation environmental impact',
+		descriptions: [
+			'Consider local distribution networks and shipping efficiency',
+			'Include fuel-efficient vehicles and route optimization',
+			'Evaluate packaging density and transportation partnerships',
+		],
+		section: 'Environmental Impact',
+		rateMax: 10,
+		isRequired: false,
+		score: 8,
+	},
+	{
+		questionId: 'env-009',
+		name: 'climate_adaptation',
+		type: 'checkbox',
+		title: 'Which climate change adaptation strategies do you employ?',
+		descriptions: [
+			'Select all measures to adapt to changing climate conditions',
+			'Include varietal selection and planting timing adjustments',
+			'Consider infrastructure and operational modifications',
+		],
+		section: 'Environmental Impact',
+		choices: [
+			'Drought-resistant varietals',
+			'Flexible harvest timing',
+			'Temperature control systems',
+			'Soil moisture retention',
+			'Microclimate management',
+		],
+		isRequired: false,
+		score: 10,
+	},
+	{
+		questionId: 'env-010',
+		name: 'environmental_certifications',
+		type: 'checkbox',
+		title: 'Which environmental certifications do you hold?',
+		descriptions: [
+			'Select all current certifications and standards',
+			'Include organic, biodynamic, and sustainability programs',
+			'Consider third-party verified environmental standards',
+		],
+		section: 'Environmental Impact',
+		choices: [
+			'Organic (USDA/EU)',
+			'Biodynamic (Demeter)',
+			'Sustainable Wine (SIP/LIVE)',
+			'Carbon Neutral',
+			'Local sustainability program',
+		],
+		isRequired: false,
+		score: 16,
+	},
+
+	// Resource Management (5 questions)
+	{
+		questionId: 'res-001',
+		name: 'water_conservation',
+		type: 'rating',
+		title: 'Rate your water conservation and efficiency measures',
+		descriptions: [
+			'Consider drip irrigation, soil moisture monitoring, and recycling systems',
+			'Include rainwater harvesting and greywater reuse programs',
+			'Evaluate water usage tracking and reduction targets',
+		],
+		section: 'Resource Management',
+		rateMax: 10,
+		isRequired: true,
+		score: 14,
+	},
+	{
+		questionId: 'res-002',
+		name: 'energy_efficiency',
+		type: 'radiogroup',
+		title: 'How energy-efficient are your winery operations?',
+		descriptions: [
+			'Consider equipment efficiency and energy management systems',
+			'Include lighting, cooling, and processing energy use',
+			'Evaluate energy monitoring and reduction programs',
+		],
+		section: 'Resource Management',
+		choices: ['Highly efficient', 'Moderately efficient', 'Some efficiency', 'Standard'],
+		isRequired: true,
+		score: 13,
+	},
+	{
+		questionId: 'res-003',
+		name: 'waste_reduction',
+		type: 'checkbox',
+		title: 'Which waste reduction strategies do you implement?',
+		descriptions: [
+			'Select all waste minimization and diversion practices',
+			'Include pomace composting and byproduct utilization',
+			'Consider packaging waste and circular economy approaches',
+		],
+		section: 'Resource Management',
+		choices: [
+			'Grape pomace composting',
+			'Wastewater treatment',
+			'Packaging reduction',
+			'Recycling programs',
+			'Byproduct sales',
+		],
+		isRequired: true,
+		score: 12,
+	},
+	{
+		questionId: 'res-004',
+		name: 'supply_chain',
+		type: 'radiogroup',
+		title: 'How sustainable is your supply chain management?',
+		descriptions: [
+			'Consider supplier environmental and social standards',
+			'Include local sourcing and transportation efficiency',
+			'Evaluate supplier sustainability requirements and monitoring',
+		],
+		section: 'Resource Management',
+		choices: ['Fully integrated', 'Well managed', 'Basic standards', 'Minimal oversight'],
+		isRequired: false,
+		score: 11,
+	},
+	{
+		questionId: 'res-005',
+		name: 'resource_monitoring',
+		type: 'boolean',
+		title: 'Do you use technology to monitor resource usage?',
+		descriptions: [
+			'Consider smart sensors, IoT devices, and monitoring systems',
+			'Include water, energy, and material usage tracking',
+			'Evaluate data collection and analysis capabilities',
+		],
+		section: 'Resource Management',
+		isRequired: false,
+		score: 10,
+	},
+
+	// Waste & Emissions (5 questions)
+	{
+		questionId: 'was-001',
+		name: 'waste_management',
+		type: 'radiogroup',
+		title: 'How comprehensive is your waste management program?',
+		descriptions: [
+			'Consider solid waste, organic waste, and hazardous material handling',
+			'Include waste reduction, reuse, and recycling initiatives',
+			'Evaluate waste stream monitoring and diversion rates',
+		],
+		section: 'Waste & Emissions',
+		choices: ['Comprehensive', 'Good coverage', 'Basic program', 'Minimal'],
+		isRequired: true,
+		score: 13,
+	},
+	{
+		questionId: 'was-002',
+		name: 'emissions_reduction',
+		type: 'rating',
+		title: 'Rate your greenhouse gas emissions reduction efforts',
+		descriptions: [
+			'Consider scope 1, 2, and 3 emissions across operations',
+			'Include transportation, energy use, and production emissions',
+			'Evaluate reduction targets and progress tracking',
+		],
+		section: 'Waste & Emissions',
+		rateMax: 10,
+		isRequired: true,
+		score: 15,
+	},
+	{
+		questionId: 'was-003',
+		name: 'chemical_management',
+		type: 'radiogroup',
+		title: 'How do you manage agricultural chemicals and cleaners?',
+		descriptions: [
+			'Consider storage, application, and disposal practices',
+			'Include worker safety and environmental protection measures',
+			'Evaluate chemical reduction and alternative programs',
+		],
+		section: 'Waste & Emissions',
+		choices: ['Excellent controls', 'Good practices', 'Standard compliance', 'Basic handling'],
+		isRequired: true,
+		score: 12,
+	},
+	{
+		questionId: 'was-004',
+		name: 'air_quality',
+		type: 'boolean',
+		title: 'Do you monitor and manage air quality impacts?',
+		descriptions: [
+			'Consider dust control, emissions monitoring, and air quality management',
+			'Include equipment emissions and agricultural practices',
+			'Evaluate community impact and mitigation measures',
+		],
+		section: 'Waste & Emissions',
+		isRequired: false,
+		score: 9,
+	},
+	{
+		questionId: 'was-005',
+		name: 'circular_economy',
+		type: 'checkbox',
+		title: 'Which circular economy practices do you implement?',
+		descriptions: [
+			'Select all practices that create closed-loop systems',
+			'Include material reuse, sharing, and regenerative approaches',
+			'Consider partnerships and collaborative initiatives',
+		],
+		section: 'Waste & Emissions',
+		choices: [
+			'Material sharing with other wineries',
+			'Byproduct partnerships',
+			'Equipment sharing cooperatives',
+			'Community composting programs',
+			'Regenerative agriculture practices',
+		],
+		isRequired: false,
+		score: 11,
+	},
+
+	// Social Responsibility (5 questions)
 	{
 		questionId: 'soc-001',
 		name: 'worker_conditions',
@@ -293,41 +598,164 @@ export const assessmentQuestions: QuestionConfig[] = [
 		descriptions: [
 			'Consider workplace safety measures and training programs',
 			'Include fair wages, benefits, and working hours',
-			'Evaluate housing conditions if provided',
+			'Evaluate housing conditions if provided to workers',
 		],
 		section: 'Social Responsibility',
 		rateMax: 10,
 		isRequired: true,
-		score: 20,
+		score: 18,
 	},
 	{
-		questionId: 'gov-001',
-		name: 'transparency_reporting',
-		type: 'boolean',
-		title: 'Do you publish annual sustainability reports?',
+		questionId: 'soc-002',
+		name: 'fair_labor',
+		type: 'radiogroup',
+		title: 'How do you ensure fair labor practices?',
 		descriptions: [
-			'Consider public disclosure of environmental metrics',
-			'Include social impact and governance practices',
-			'Evaluate third-party certifications and audits',
+			'Consider wage equity, working conditions, and worker rights',
+			'Include seasonal worker treatment and contractor oversight',
+			'Evaluate compliance with labor standards and certifications',
 		],
-		section: 'Governance',
+		section: 'Social Responsibility',
+		choices: ['Exemplary', 'Above average', 'Meets standards', 'Basic compliance'],
 		isRequired: true,
-		score: 10,
+		score: 17,
 	},
 	{
-		questionId: 'gov-002',
-		name: 'improvement_plans',
-		type: 'text',
-		title: 'Describe your ESG improvement plans for next year',
+		questionId: 'soc-003',
+		name: 'diversity_inclusion',
+		type: 'checkbox',
+		title: 'Which diversity and inclusion practices do you implement?',
 		descriptions: [
-			'Outline specific, measurable goals',
-			'Include timeline and resource allocation',
-			'Consider stakeholder engagement strategies',
+			'Select all efforts to promote workplace diversity and inclusion',
+			'Include hiring practices, leadership development, and culture initiatives',
+			'Consider representation across all levels of the organization',
 		],
-		section: 'Governance',
+		section: 'Social Responsibility',
+		choices: [
+			'Diverse hiring practices',
+			'Leadership development programs',
+			'Cultural competency training',
+			'Equal opportunity policies',
+			'Mentorship programs',
+		],
 		isRequired: false,
-		score: 5,
+		score: 15,
 	},
+	{
+		questionId: 'soc-004',
+		name: 'training_development',
+		type: 'rating',
+		title: 'Rate your employee training and development programs',
+		descriptions: [
+			'Consider safety training, skill development, and career advancement',
+			'Include technical training and professional development opportunities',
+			'Evaluate training frequency, quality, and accessibility',
+		],
+		section: 'Social Responsibility',
+		rateMax: 10,
+		isRequired: true,
+		score: 14,
+	},
+	{
+		questionId: 'soc-005',
+		name: 'health_benefits',
+		type: 'radiogroup',
+		title: 'What level of health and wellness benefits do you provide?',
+		descriptions: [
+			'Consider health insurance, wellness programs, and mental health support',
+			'Include both full-time and seasonal worker benefits',
+			'Evaluate accessibility and comprehensiveness of programs',
+		],
+		section: 'Social Responsibility',
+		choices: ['Comprehensive', 'Good coverage', 'Basic benefits', 'Minimal'],
+		isRequired: true,
+		score: 16,
+	},
+
+	// Employee Relations (2 questions)
+	{
+		questionId: 'emp-001',
+		name: 'communication_feedback',
+		type: 'radiogroup',
+		title: 'How effective are your employee communication and feedback systems?',
+		descriptions: [
+			'Consider regular meetings, feedback mechanisms, and open communication',
+			'Include grievance procedures and conflict resolution processes',
+			'Evaluate employee satisfaction and engagement measurement',
+		],
+		section: 'Employee Relations',
+		choices: ['Excellent', 'Good', 'Adequate', 'Needs improvement'],
+		isRequired: true,
+		score: 12,
+	},
+	{
+		questionId: 'emp-002',
+		name: 'work_life_balance',
+		type: 'rating',
+		title: 'Rate your support for employee work-life balance',
+		descriptions: [
+			'Consider flexible scheduling, time off policies, and family support',
+			'Include seasonal work demands and overtime management',
+			'Evaluate employee retention and satisfaction related to balance',
+		],
+		section: 'Employee Relations',
+		rateMax: 10,
+		isRequired: false,
+		score: 11,
+	},
+
+	// Community Engagement (3 questions)
+	{
+		questionId: 'com-001',
+		name: 'community_involvement',
+		type: 'checkbox',
+		title: 'Which community engagement activities do you participate in?',
+		descriptions: [
+			'Select all ways you actively engage with your local community',
+			'Include economic, social, and environmental community benefits',
+			'Consider partnerships with local organizations and initiatives',
+		],
+		section: 'Community Engagement',
+		choices: [
+			'Local hiring preferences',
+			'Community event sponsorship',
+			'Educational programs',
+			'Environmental restoration projects',
+			'Local supplier partnerships',
+		],
+		isRequired: false,
+		score: 14,
+	},
+	{
+		questionId: 'com-002',
+		name: 'economic_impact',
+		type: 'rating',
+		title: 'Rate your positive economic impact on the local community',
+		descriptions: [
+			'Consider local employment, supplier relationships, and tourism',
+			'Include tax contributions and infrastructure investments',
+			'Evaluate multiplier effects and community economic development',
+		],
+		section: 'Community Engagement',
+		rateMax: 10,
+		isRequired: true,
+		score: 13,
+	},
+	{
+		questionId: 'com-003',
+		name: 'stakeholder_engagement',
+		type: 'radiogroup',
+		title: 'How do you engage with community stakeholders?',
+		descriptions: [
+			'Consider regular communication with neighbors, officials, and groups',
+			'Include feedback mechanisms and collaborative decision-making',
+			'Evaluate transparency and responsiveness to community concerns',
+		],
+		section: 'Community Engagement',
+		choices: ['Proactive engagement', 'Regular communication', 'Responsive to issues', 'Minimal contact'],
+		isRequired: true,
+		score: 12,
+	}
 ]
 
 /**
@@ -402,7 +830,7 @@ export function convertToSurveyJsFormat(questions: QuestionConfig[]) {
 					type: q.type,
 					name: q.name,
 					title: q.title,
-					isRequired: q.isRequired,
+					isRequired: false, // Change from q.isRequired to false for free navigation
 					
 					// Conditional properties based on question type
 					...(q.choices && { choices: q.choices }),
@@ -420,12 +848,12 @@ export function convertToSurveyJsFormat(questions: QuestionConfig[]) {
 		
 		/**
 		 * @property showProgressBar
-		 * @description Display progress indicator at top of survey
+		 * @description Disable built-in progress bar (using custom responsive component)
 		 * 
 		 * OPTIONS: 'top' | 'bottom' | 'both' | 'off'
-		 * CHOICE: 'top' for consistent header placement
+		 * CHOICE: 'off' since we use custom responsive progress bar
 		 */
-		showProgressBar: 'top',
+		showProgressBar: 'off',
 		
 		/**
 		 * @property goNextPageAutomatic
@@ -452,5 +880,22 @@ export function convertToSurveyJsFormat(questions: QuestionConfig[]) {
 		 * CHOICE: 'off' since progress bar provides position context
 		 */
 		showQuestionNumbers: 'off',
+		
+		/**
+		 * @property checkErrorsMode
+		 * @description Only validate on final submission for free navigation
+		 * 
+		 * OPTIONS: 'onNextPage' | 'onValueChanged' | 'onComplete'
+		 * CHOICE: 'onComplete' to allow free navigation between questions
+		 */
+		checkErrorsMode: 'onComplete',
+		
+		/**
+		 * @property showCompletedPage
+		 * @description Disable built-in completion page (we handle it ourselves)
+		 * 
+		 * RATIONALE: Custom completion flow with assessment results
+		 */
+		showCompletedPage: false,
 	}
 }

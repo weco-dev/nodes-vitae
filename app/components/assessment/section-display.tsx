@@ -91,7 +91,7 @@ export function SectionDisplay({
           <h3 className="text-lg font-semibold">{section}</h3>
         </div>
         <div className="text-right">
-          <p className="text-sm text-muted-foreground">Progress</p>
+          <p className="text-sm text-muted-foreground">Question</p>
           <p className="text-lg font-semibold">
             {currentQuestion} / {totalQuestions}
           </p>

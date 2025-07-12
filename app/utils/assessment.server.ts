@@ -196,6 +196,7 @@
  * @see {@link prisma/schema.prisma} for database schema
  */
 
+import { format } from 'date-fns'
 import { prisma } from './db.server.ts'
 
 export async function getUserOpenAssessment(userId: string) {
@@ -212,13 +213,32 @@ export async function createAssessment(userId: string) {
 		throw new Error('User already has an open assessment')
 	}
 
+	// Generate automatic title
+	const title = `Assessment on ${format(new Date(), 'dd MMM yyyy')}`
+
 	return prisma.assessment.create({
 		data: {
 			userId,
+			title, // Add generated title
 			status: 'open',
 			surveyData: JSON.stringify({}),
 		},
 		include: { answers: true },
+	})
+}
+
+// Add new function for title update
+export async function updateAssessmentTitle(
+	assessmentId: string,
+	userId: string,
+	title: string,
+) {
+	return prisma.assessment.update({
+		where: {
+			id: assessmentId,
+			userId, // Ensure user owns the assessment
+		},
+		data: { title },
 	})
 }
 

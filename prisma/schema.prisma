@@ -189,6 +189,7 @@ model Passkey {
 model Assessment {
   id               String    @id @default(cuid())
   userId           String
+  title            String?   // Optional title field
   status           String    @default("open") // open, completed, archived
   currentPageIndex Int       @default(0)
   surveyData       String    @default("{}") // JSON TEXT field

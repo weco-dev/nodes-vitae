@@ -17,29 +17,50 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 - Built with Vite as the build tool
 - SQLite database with Prisma ORM
 - Deployed on Fly.io with LiteFS for database replication
+- **NEW**: ESG Assessment feature with SurveyJS integration
 
 ```tree
 .
 ├── app/                     # Main application code
 │   ├── components/          # React components
+│   │   ├── assessment/      # **NEW** ESG Assessment components
+│   │   │   ├── survey-component.tsx     # SurveyJS wrapper with accordions
+│   │   │   └── section-display.tsx      # Progress indicator
 │   │   ├── ui/             # UI component library (Radix-based)
 │   │   │   ├── icons/      # Icon sprite and types
+│   │   │   ├── progress.tsx # **NEW** Progress bar component
 │   │   │   └── *.tsx       # UI components (button, card, etc.)
 │   │   ├── hooks/          # Custom React hooks
+│   │   ├── client-only.tsx # **NEW** SSR compatibility wrapper
+│   │   ├── app-sidebar.tsx # **ENHANCED** Added ESG Assessment nav
+│   │   ├── nav-main.tsx    # **ENHANCED** Dynamic assessment button
 │   │   └── *.tsx           # Application-specific components
 │   ├── routes/             # Route definitions and handlers
 │   │   ├── _auth+/         # Authentication routes
 │   │   ├── _marketing+/    # Marketing/landing pages
 │   │   ├── _seo+/          # SEO-related routes (robots, sitemap)
 │   │   ├── admin+/         # Admin panel routes
+│   │   ├── assessment+/    # **NEW** ESG Assessment workflow
+│   │   │   ├── _layout.tsx          # Authentication-protected layout
+│   │   │   ├── take.tsx             # Main assessment interface
+│   │   │   ├── review.tsx           # Pre-submission review
+│   │   │   └── complete.tsx         # Success confirmation
 │   │   ├── dashboard+/     # Main dashboard and settings
+│   │   │   ├── assessments.tsx      # **NEW** Assessment history
+│   │   │   ├── assessment.$id.tsx   # **NEW** Assessment details
+│   │   │   ├── assessment.$id.summary.tsx # **NEW** Results visualization
+│   │   │   ├── assessment.$id.export.tsx  # **NEW** CSV export
+│   │   │   └── settings+/  # User settings routes
 │   │   ├── resources+/     # Resource routes (API-like endpoints)
 │   │   └── users+/         # User profile and notes routes
 │   ├── utils/              # Utility functions and server-side code
 │   │   ├── providers/      # OAuth provider configurations
+│   │   ├── assessment.server.ts    # **NEW** Assessment backend utilities
+│   │   ├── assessment-questions.ts # **NEW** ESG question configuration
 │   │   ├── auth.server.ts  # Authentication utilities
 │   │   ├── db.server.ts    # Database connection and utilities
 │   │   ├── email.server.ts # Email sending utilities
+│   │   ├── misc.tsx        # **ENHANCED** Added useHydrated hook
 │   │   └── *.ts            # Other utility modules
 │   ├── assets/             # Static assets (favicons, images)
 │   ├── styles/             # CSS styles (Tailwind CSS)
@@ -47,10 +68,16 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 │   ├── entry.server.tsx    # Server-side entry point
 │   ├── root.tsx            # Root component and layout
 │   └── routes.ts           # Route configuration
+├── ai/                     # **NEW** AI development documentation
+│   ├── TODO.md            # Development task list
+│   ├── activities/        # Implementation activity logs
+│   │   └── 2025.07.11/    # ESG Assessment implementation docs
+│   └── guidelines/        # Development guidelines
 ├── prisma/                 # Database schema and migrations
 │   ├── migrations/         # Database migration files
+│   │   └── 20250711123650_add_assessment_models/ # **NEW** Assessment models
 │   ├── sql/               # Custom SQL queries
-│   ├── schema.prisma      # Prisma schema definition
+│   ├── schema.prisma      # **ENHANCED** Prisma schema with Assessment models
 │   └── seed.ts            # Database seeding script
 ├── tests/                 # Test files and utilities
 │   ├── e2e/               # End-to-end tests (Playwright)
@@ -70,7 +97,7 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 ├── build/                 # Production build output (generated)
 ├── server-build/          # Server build output (generated)
 ├── node_modules/          # Dependencies (generated)
-├── package.json           # Project configuration and dependencies
+├── package.json           # **ENHANCED** Project config with SurveyJS deps
 ├── vite.config.ts         # Vite build configuration
 ├── react-router.config.ts # React Router configuration
 ├── playwright.config.ts   # E2E test configuration
@@ -88,8 +115,9 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 
 ### Database & Storage
 - **SQLite** with **LiteFS** - Multi-region distributed database
-- **Prisma** - Type-safe database ORM
+- **Prisma** - Type-safe database ORM with Assessment models
 - **OpenImg/Tigris** - Image storage and optimization
+- **JSON Storage** - Assessment data and answers stored as JSON
 
 ### Authentication & Security
 - **Multi-factor authentication** with multiple providers:
@@ -107,6 +135,7 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 ### UI & Styling
 - **Tailwind CSS v4** - Utility-first styling
 - **Radix UI** - Accessible component primitives
+- **SurveyJS** - Advanced survey and form components
 - **Lucide React** - Icon library
 - **Sonner** - Toast notifications
 - **next-themes** - Theme management
@@ -131,27 +160,31 @@ This is an Epic Stack application built with Remix and React Router v7. The proj
 Routes use the flat-routes convention:
 - `_auth+/` - Layout routes (underscore prefix)
 - `dashboard+/` - Nested route segments (plus suffix)
+- `assessment+/` - **NEW** ESG assessment workflow routes
 - `$username.tsx` - Dynamic route segments (dollar prefix)
 - `users+/$username+/` - Nested dynamic routes
+- `assessment.$id.tsx` - **NEW** Dynamic assessment detail routes
 
 ### Component Organization
 - **UI components**: Place in `app/components/ui/` for reusable design system components
 - **Feature components**: Place in `app/components/` for application-specific components
+- **Assessment components**: Place in `app/components/assessment/` for ESG assessment features
 - **Route components**: Colocate with routes when specific to a single route
 - **Shared hooks**: Place in `app/components/hooks/` or `app/utils/`
 
 ## Database Schema
 
-The application uses a comprehensive user management system with:
+The application uses a comprehensive user management system with ESG assessment capabilities:
 - **User model** - Core user data with relations
 - **Authentication** - Multiple auth methods (password, OAuth, passkeys)
 - **Authorization** - Role-based permissions system
 - **Content** - Notes system with image attachments
 - **Sessions** - Secure session management
 - **Verification** - Email verification and TOTP
+- **Assessments** - **NEW** ESG assessment data and answers
 
 Key models:
-- `User` - Central user entity
+- `User` - Central user entity with assessment relations
 - `Password` - Bcrypt password storage
 - `Session` - User sessions
 - `Role` & `Permission` - RBAC system
@@ -159,6 +192,50 @@ Key models:
 - `Passkey` - WebAuthn credentials
 - `Note` & `NoteImage` - Content management
 - `Verification` - Email/TOTP verification
+- `Assessment` - **NEW** ESG assessments with status and progress tracking
+- `AssessmentAnswer` - **NEW** Individual question answers with metadata
+
+### Assessment Models Detail
+
+#### Assessment Model
+```sql
+model Assessment {
+  id               String    @id @default(cuid())
+  userId           String
+  status           String    @default("open") // open, completed, archived
+  currentPageIndex Int       @default(0)
+  surveyData       String    @default("{}")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  completedAt      DateTime?
+  
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers AssessmentAnswer[]
+  
+  @@index([userId])
+  @@index([userId, status])
+}
+```
+
+#### AssessmentAnswer Model
+```sql
+model AssessmentAnswer {
+  id           String   @id @default(cuid())
+  assessmentId String
+  questionId   String   // unique question identifier
+  questionName String   // SurveyJS question name
+  section      String   // question section grouping
+  answer       String   // JSON TEXT field for answer data
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  
+  @@index([assessmentId])
+  @@index([assessmentId, questionId])
+  @@unique([assessmentId, questionId])
+}
+```
 
 ## Development Workflow
 
@@ -274,8 +351,65 @@ export function ErrorBoundary() {
 ### Bundle Optimization
 - Tree-shaking enabled
 - Dynamic imports for code splitting
+- **Lazy loading** for SurveyJS components
 - Asset optimization with Vite
 - Source maps for production debugging
+
+### Assessment-Specific Optimizations
+- **Client-only rendering** for SurveyJS to prevent SSR issues
+- **Real-time auto-save** for assessment progress
+- **Database indexing** on userId and status for optimal queries
+- **Memory management** with proper cleanup of survey models
+
+## ESG Assessment Feature
+
+### Overview
+Comprehensive ESG (Environmental, Social, Governance) assessment system implemented with SurveyJS integration.
+
+### Key Components
+
+#### Frontend Components
+- **SurveyComponent** - SurveyJS wrapper with custom accordion integration
+- **SectionDisplay** - Progress indicator and section navigation
+- **ClientOnly** - SSR compatibility wrapper for hydration-sensitive components
+- **Progress** - Visual progress bars for assessment scoring
+
+#### Backend Services
+- **assessment.server.ts** - Complete assessment lifecycle management
+- **assessment-questions.ts** - ESG question configuration and SurveyJS formatting
+
+#### Route Structure
+- **assessment+/** - Assessment workflow (take, review, complete)
+- **dashboard+/assessment** - Assessment management and results
+
+#### Question Types Supported
+- Radio groups (single selection)
+- Checkboxes (multiple selection) 
+- Rating scales (numerical scoring)
+- Boolean (yes/no)
+- Text fields (open responses)
+
+#### Technical Features
+- Real-time auto-save during assessment
+- Progress persistence across sessions
+- Comprehensive error handling and recovery
+- CSV export functionality
+- Score calculation framework
+- Section-based result visualization
+
+### Dependencies Added
+```json
+{
+  "survey-react-ui": "^2.2.4",
+  "survey-core": "^2.2.4"
+}
+```
+
+### Security & Privacy
+- All assessment routes authentication-protected
+- Data properly scoped to authenticated users
+- Input validation on all user inputs
+- Cascade deletes for data cleanup
 
 ## Migration from Epic Stack
 
@@ -284,5 +418,6 @@ This project is based on Epic Stack and follows its conventions:
 - Follows Epic Stack's security patterns
 - Uses Epic Stack's deployment strategy
 - Maintains Epic Stack's testing approach
+- **Extended** with ESG assessment capabilities
 
 When updating, refer to Epic Stack documentation and migration guides to ensure compatibility with new features and security updates.

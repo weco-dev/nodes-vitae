@@ -418,8 +418,14 @@ export function SurveyComponent({
 
 		// Configure survey to trigger value changes on text input changes
 		survey.textUpdateMode = 'onTyping'
+		
+		// Configure navigation buttons only (no sidebar)
+		survey.showNavigationButtons = true
 
 		surveyRef.current = survey
+		
+		// Make survey model globally accessible for finalize button
+		;(window as any).surveyModel = survey
 
 		// Set initial data before adding event handlers
 		if (initialData && Object.keys(initialData).length > 0) {
@@ -442,6 +448,25 @@ export function SurveyComponent({
 				}
 			} catch (error) {
 				console.error('Error in onValueChanged:', error)
+			}
+		})
+
+		// Auto-save on Next Button Click
+		survey.onCurrentPageChanging.add((sender, _options) => {
+			// Save all answers on the current page before navigation
+			const currentPage = sender.currentPage
+			if (currentPage && onValueChangedRef.current) {
+				currentPage.questions.forEach((question: any) => {
+					const value = question.value
+					if (value !== undefined && value !== null && value !== '') {
+						const questionMeta = {
+							questionId: (question as any).questionId || question.name,
+							section: (question as any).section || 'Unknown',
+							score: (question as any).score || 0,
+						}
+						onValueChangedRef.current?.(question.name, value, questionMeta)
+					}
+				})
 			}
 		})
 
@@ -472,12 +497,16 @@ export function SurveyComponent({
 			try {
 				const question = options.question
 
+				// Add debug logging
+				console.log('Question descriptions:', question.descriptions)
+
 				if (
 					question &&
 					question.descriptions &&
 					Array.isArray(question.descriptions) &&
-					question.descriptions.every(
-						(desc: unknown) => typeof desc === 'string',
+					question.descriptions.length > 0 && // Check for non-empty array
+					question.descriptions?.every?.(
+						(desc: unknown) => typeof desc === 'string' && desc.trim() !== '', // Check for non-empty strings
 					)
 				) {
 					// Clean up previous accordion if exists

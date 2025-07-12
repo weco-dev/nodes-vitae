@@ -22,7 +22,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function AssessmentLayout() {
 	return (
 		<div className="min-h-screen bg-background">
-			<div className="container mx-auto max-w-4xl">
+			<div className="w-full lg:container lg:mx-auto lg:max-w-4xl">
 				<Outlet />
 			</div>
 		</div>
