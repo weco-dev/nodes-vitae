@@ -1,0 +1,288 @@
+---
+description: Epic Stack codebase structure and file organization guidelines
+globs: ["**/*"]
+alwaysApply: false
+---
+
+# Codebase Structure - Epic Stack
+
+## Project Overview
+
+This is an Epic Stack application built with Remix and React Router v7. The project follows Epic Stack conventions and uses modern web development practices.
+
+## Main Structure
+
+- Single application structure (not a monorepo)
+- Uses React Router v7 with Remix compatibility layer
+- Built with Vite as the build tool
+- SQLite database with Prisma ORM
+- Deployed on Fly.io with LiteFS for database replication
+
+```tree
+.
+├── app/                     # Main application code
+│   ├── components/          # React components
+│   │   ├── ui/             # UI component library (Radix-based)
+│   │   │   ├── icons/      # Icon sprite and types
+│   │   │   └── *.tsx       # UI components (button, card, etc.)
+│   │   ├── hooks/          # Custom React hooks
+│   │   └── *.tsx           # Application-specific components
+│   ├── routes/             # Route definitions and handlers
+│   │   ├── _auth+/         # Authentication routes
+│   │   ├── _marketing+/    # Marketing/landing pages
+│   │   ├── _seo+/          # SEO-related routes (robots, sitemap)
+│   │   ├── admin+/         # Admin panel routes
+│   │   ├── dashboard+/     # Main dashboard and settings
+│   │   ├── resources+/     # Resource routes (API-like endpoints)
+│   │   └── users+/         # User profile and notes routes
+│   ├── utils/              # Utility functions and server-side code
+│   │   ├── providers/      # OAuth provider configurations
+│   │   ├── auth.server.ts  # Authentication utilities
+│   │   ├── db.server.ts    # Database connection and utilities
+│   │   ├── email.server.ts # Email sending utilities
+│   │   └── *.ts            # Other utility modules
+│   ├── assets/             # Static assets (favicons, images)
+│   ├── styles/             # CSS styles (Tailwind CSS)
+│   ├── entry.client.tsx    # Client-side entry point
+│   ├── entry.server.tsx    # Server-side entry point
+│   ├── root.tsx            # Root component and layout
+│   └── routes.ts           # Route configuration
+├── prisma/                 # Database schema and migrations
+│   ├── migrations/         # Database migration files
+│   ├── sql/               # Custom SQL queries
+│   ├── schema.prisma      # Prisma schema definition
+│   └── seed.ts            # Database seeding script
+├── tests/                 # Test files and utilities
+│   ├── e2e/               # End-to-end tests (Playwright)
+│   ├── fixtures/          # Test fixtures and mock data
+│   ├── mocks/             # MSW mock handlers
+│   └── setup/             # Test setup and configuration
+├── other/                 # Build and deployment configuration
+│   ├── Dockerfile         # Docker configuration
+│   ├── litefs.yml         # LiteFS configuration
+│   ├── sly/               # Icon transformation utilities
+│   └── svg-icons/         # SVG icon source files
+├── server/                # Server configuration
+│   ├── dev-server.js      # Development server setup
+│   ├── index.ts           # Production server entry point
+│   └── utils/             # Server-side utilities
+├── public/                # Static public assets
+├── build/                 # Production build output (generated)
+├── server-build/          # Server build output (generated)
+├── node_modules/          # Dependencies (generated)
+├── package.json           # Project configuration and dependencies
+├── vite.config.ts         # Vite build configuration
+├── react-router.config.ts # React Router configuration
+├── playwright.config.ts   # E2E test configuration
+├── fly.toml              # Fly.io deployment configuration
+└── tsconfig.json         # TypeScript configuration
+```
+
+## Key Technologies
+
+### Core Framework
+- **React Router v7** - Web framework with SSR
+- **React 19** - UI library with latest features
+- **TypeScript** - Static typing throughout
+- **Vite** - Build tool and development server
+
+### Database & Storage
+- **SQLite** with **LiteFS** - Multi-region distributed database
+- **Prisma** - Type-safe database ORM
+- **OpenImg/Tigris** - Image storage and optimization
+
+### Authentication & Security
+- **Multi-factor authentication** with multiple providers:
+  - Email/password with bcrypt
+  - OAuth (GitHub configured)
+  - WebAuthn/Passkeys
+  - TOTP two-factor authentication
+- **Security features**:
+  - CSRF protection via remix-utils
+  - Content Security Policy
+  - Honeypot form protection
+  - Rate limiting
+  - Role-based access control
+
+### UI & Styling
+- **Tailwind CSS v4** - Utility-first styling
+- **Radix UI** - Accessible component primitives
+- **Lucide React** - Icon library
+- **Sonner** - Toast notifications
+- **next-themes** - Theme management
+
+### Testing & Quality
+- **Playwright** - End-to-end testing
+- **Vitest** - Unit testing
+- **MSW** - API mocking
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+
+## File Naming and Organization
+
+### Naming Conventions
+- **Routes**: Use flat-routes convention with `+` for layout routes
+- **Components**: PascalCase for component files (e.g., `UserProfile.tsx`)
+- **Utilities**: kebab-case for utility files (e.g., `auth.server.ts`)
+- **Tests**: Same name as file being tested with `.test.ts` suffix
+- **Server files**: Use `.server.ts` suffix for server-only code
+
+### Route Organization
+Routes use the flat-routes convention:
+- `_auth+/` - Layout routes (underscore prefix)
+- `dashboard+/` - Nested route segments (plus suffix)
+- `$username.tsx` - Dynamic route segments (dollar prefix)
+- `users+/$username+/` - Nested dynamic routes
+
+### Component Organization
+- **UI components**: Place in `app/components/ui/` for reusable design system components
+- **Feature components**: Place in `app/components/` for application-specific components
+- **Route components**: Colocate with routes when specific to a single route
+- **Shared hooks**: Place in `app/components/hooks/` or `app/utils/`
+
+## Database Schema
+
+The application uses a comprehensive user management system with:
+- **User model** - Core user data with relations
+- **Authentication** - Multiple auth methods (password, OAuth, passkeys)
+- **Authorization** - Role-based permissions system
+- **Content** - Notes system with image attachments
+- **Sessions** - Secure session management
+- **Verification** - Email verification and TOTP
+
+Key models:
+- `User` - Central user entity
+- `Password` - Bcrypt password storage
+- `Session` - User sessions
+- `Role` & `Permission` - RBAC system
+- `Connection` - OAuth provider connections
+- `Passkey` - WebAuthn credentials
+- `Note` & `NoteImage` - Content management
+- `Verification` - Email/TOTP verification
+
+## Development Workflow
+
+### Local Development
+```bash
+npm run dev          # Start development server with mocks
+npm run dev:no-mocks # Start without API mocks
+npm run setup        # Initial project setup
+```
+
+### Testing
+```bash
+npm run test         # Run unit tests (Vitest)
+npm run test:e2e     # Run E2E tests (Playwright)
+npm run coverage     # Generate test coverage
+```
+
+### Code Quality
+```bash
+npm run lint         # ESLint linting
+npm run format       # Prettier formatting
+npm run typecheck    # TypeScript type checking
+npm run validate     # Run all quality checks
+```
+
+### Database Management
+```bash
+npx prisma migrate dev    # Create and apply migrations
+npx prisma generate       # Generate Prisma client
+npx prisma studio        # Open database browser
+npx prisma db seed       # Seed development data
+```
+
+## Deployment
+
+### Fly.io Configuration
+- **App name**: `nodes-vitae`
+- **Primary region**: `fra` (Frankfurt)
+- **Database**: SQLite with LiteFS replication
+- **Monitoring**: Integrated with Sentry
+- **Health checks**: `/resources/healthcheck` and `/litefs/health`
+
+### Environment Variables
+- Database: `DATABASE_URL`
+- Authentication: `SESSION_SECRET`, OAuth provider keys
+- External services: `RESEND_API_KEY`, `SENTRY_DSN`
+- Development: `MOCKS=true` for local API mocking
+
+## Security Best Practices
+
+### Authentication Flow
+1. Email verification with code/link
+2. Username and password setup
+3. Optional 2FA and passkey registration
+4. Session-based authentication
+
+### Data Protection
+- Passwords hashed with bcrypt
+- CSRF tokens on all forms
+- Honeypot fields for bot protection
+- Rate limiting on sensitive endpoints
+- Secure cookie configuration
+
+## Common Patterns
+
+### Route Data Loading
+```typescript
+// Use loaders for server-side data fetching
+export async function loader({ request }: LoaderFunctionArgs) {
+  const userId = await requireUserId(request)
+  return json({ user: await getUserById(userId) })
+}
+```
+
+### Form Handling
+```typescript
+// Use Conform for type-safe forms
+import { conform, useForm } from '@conform-to/react'
+import { parseWithZod } from '@conform-to/zod'
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData()
+  const submission = parseWithZod(formData, { schema: UserSchema })
+  // Handle form submission
+}
+```
+
+### Authentication Guards
+```typescript
+// Protect routes requiring authentication
+export async function loader({ request }: LoaderFunctionArgs) {
+  await requireUserId(request) // Throws if not authenticated
+  // Protected route logic
+}
+```
+
+### Error Handling
+```typescript
+// Use error boundaries for graceful error handling
+export function ErrorBoundary() {
+  return <GeneralErrorBoundary />
+}
+```
+
+## Performance Considerations
+
+### Caching Strategy
+- In-memory caching with LRU cache
+- SQLite-based persistent caching
+- HTTP caching headers for static assets
+- Image optimization with OpenImg
+
+### Bundle Optimization
+- Tree-shaking enabled
+- Dynamic imports for code splitting
+- Asset optimization with Vite
+- Source maps for production debugging
+
+## Migration from Epic Stack
+
+This project is based on Epic Stack and follows its conventions:
+- Uses Epic Stack's authentication system
+- Follows Epic Stack's security patterns
+- Uses Epic Stack's deployment strategy
+- Maintains Epic Stack's testing approach
+
+When updating, refer to Epic Stack documentation and migration guides to ensure compatibility with new features and security updates.

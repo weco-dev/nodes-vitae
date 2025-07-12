@@ -126,6 +126,8 @@
     "sonner": "^2.0.5",
     "source-map-support": "^0.5.21",
     "spin-delay": "^2.0.1",
+    "survey-core": "^2.2.4",
+    "survey-react-ui": "^2.2.4",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.5",
     "vaul": "^1.1.2",

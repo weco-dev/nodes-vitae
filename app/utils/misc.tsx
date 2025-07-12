@@ -1,3 +1,60 @@
+/**
+ * @fileoverview Miscellaneous Utilities - Collection of shared utility functions and hooks
+ * 
+ * ==================================================================================
+ * UTILITY COLLECTION OVERVIEW
+ * ==================================================================================
+ * 
+ * This module contains a comprehensive collection of utility functions and custom
+ * React hooks used throughout the Vitae application. Includes styling utilities,
+ * image handling, state management hooks, and form interaction helpers.
+ * 
+ * KEY UTILITIES:
+ * 1. CSS class merging and conditional styling (cn function)
+ * 2. Image source generation for user avatars and content
+ * 3. Hydration detection for SSR compatibility
+ * 4. Form submission state management
+ * 5. Loading state delays and optimistic UI patterns
+ * 
+ * PERFORMANCE FEATURES:
+ * - Spin delay for preventing loading flicker
+ * - Optimistic UI updates during form submissions
+ * - Efficient class name merging with Tailwind CSS
+ * - Image optimization endpoint integration
+ * 
+ * SSR COMPATIBILITY:
+ * - useHydrated hook for client-side only rendering
+ * - Safe client-side state initialization
+ * - Prevention of hydration mismatches
+ * 
+ * @version 1.0.0
+ * @author Vitae Development Team
+ * @since 1.0.0
+ * @requires clsx
+ * @requires openimg/react
+ * @requires react
+ * @requires react-router
+ * @requires spin-delay
+ * @requires tailwind-merge
+ * 
+ * @example
+ * ```tsx
+ * // CSS class merging
+ * const className = cn('base-class', condition && 'conditional-class')
+ * 
+ * // Hydration detection
+ * const hydrated = useHydrated()
+ * 
+ * // Image source generation
+ * const avatarSrc = getUserImgSrc(user.imageKey)
+ * 
+ * // Form submission state
+ * const isPending = useIsPending()
+ * ```
+ * 
+ * @see {@link app/components/client-only.tsx} for useHydrated usage
+ */
+
 import { clsx, type ClassValue } from 'clsx'
 import { type GetSrcArgs, defaultGetSrc } from 'openimg/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -289,4 +346,13 @@ export async function downloadFile(url: string, retries: number = 0) {
 		if (retries > MAX_RETRIES) throw e
 		return downloadFile(url, retries + 1)
 	}
+}
+
+/**
+ * Hook to check if the component is hydrated (client-side rendered)
+ */
+export function useHydrated() {
+	const [hydrated, setHydrated] = useState(false)
+	useEffect(() => setHydrated(true), [])
+	return hydrated
 }

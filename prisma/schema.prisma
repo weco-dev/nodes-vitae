@@ -27,6 +27,7 @@ model User {
   sessions    Session[]
   connections Connection[]
   passkey     Passkey[]
+  assessments Assessment[]
 }
 
 model Note {
@@ -183,4 +184,38 @@ model Passkey {
   transports     String? // Stored as comma-separated values
 
   @@index(userId)
+}
+
+model Assessment {
+  id               String    @id @default(cuid())
+  userId           String
+  status           String    @default("open") // open, completed, archived
+  currentPageIndex Int       @default(0)
+  surveyData       String    @default("{}") // JSON TEXT field
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  completedAt      DateTime?
+
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers AssessmentAnswer[]
+
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model AssessmentAnswer {
+  id           String   @id @default(cuid())
+  assessmentId String
+  questionId   String   // unique question identifier
+  questionName String   // SurveyJS question name
+  section      String   // question section grouping
+  answer       String   // JSON TEXT field for answer data
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@index([assessmentId])
+  @@index([assessmentId, questionId])
+  @@unique([assessmentId, questionId])
 }

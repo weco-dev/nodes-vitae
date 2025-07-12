@@ -1,6 +1,24 @@
+/**
+ * @fileoverview Main application sidebar component that provides navigation structure
+ * 
+ * This component renders the primary navigation sidebar for the Vitae application,
+ * including main navigation items, document links, settings, and user information.
+ * It uses a collapsible offcanvas sidebar pattern for responsive design.
+ * 
+ * Key features:
+ * - Responsive collapsible sidebar
+ * - Structured navigation sections (main, documents, settings)
+ * - Brand logo and application title
+ * - User profile section in footer
+ * 
+ * @author Vitae Development Team
+ * @since 1.0.0
+ */
+
 import {
 	IconCamera,
 	IconChartBar,
+	IconClipboardCheck,
 	IconDashboard,
 	IconDatabase,
 	IconFileAi,
@@ -41,6 +59,11 @@ const data = {
 			title: 'Dashboard',
 			url: '#',
 			icon: IconDashboard,
+		},
+		{
+			title: 'ESG Assessment',
+			url: '/dashboard/assessments',
+			icon: IconClipboardCheck,
 		},
 		{
 			title: 'Lifecycle',
