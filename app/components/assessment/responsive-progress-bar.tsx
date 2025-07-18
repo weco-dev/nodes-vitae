@@ -129,7 +129,6 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef, useEffect, useCallback } from 'react'
-import { useAssessmentNavigation } from '#app/components/hooks/use-assessment-navigation.ts'
 import { cn } from '#app/utils/misc.tsx'
 
 interface ResponsiveProgressBarProps {
@@ -143,6 +142,11 @@ interface ResponsiveProgressBarProps {
 	answeredQuestions: Set<string>
 	onPageChange: (index: number) => void
 	className?: string
+	isNavigating?: boolean
+	onNavigatePrevious?: () => void
+	onNavigateNext?: () => void
+	canNavigatePrevious?: boolean
+	canNavigateNext?: boolean
 }
 
 export function ResponsiveProgressBar({
@@ -151,23 +155,12 @@ export function ResponsiveProgressBar({
 	answeredQuestions,
 	onPageChange,
 	className,
+	isNavigating = false,
+	onNavigatePrevious,
+	onNavigateNext,
+	canNavigatePrevious = false,
+	canNavigateNext = false,
 }: ResponsiveProgressBarProps) {
-	// Use centralized navigation hook
-	const {
-		currentPageIndex,
-		isNavigating,
-		navigate,
-		navigatePrevious,
-		navigateNext,
-		canNavigatePrevious,
-		canNavigateNext,
-	} = useAssessmentNavigation(
-		currentIndex,
-		questions.length,
-		async (index: number) => {
-			await onPageChange(index)
-		},
-	)
 
 	// Refs for scroll containers
 	const mobileScrollRef = useRef<HTMLDivElement>(null)
@@ -186,7 +179,7 @@ export function ResponsiveProgressBar({
 			const dots = scrollContainer.querySelectorAll(
 				'button[aria-label*="Question"]',
 			)
-			const currentDot = dots[currentPageIndex] as HTMLElement
+			const currentDot = dots[currentIndex] as HTMLElement
 			if (currentDot) {
 				currentDot.scrollIntoView({
 					behavior: 'smooth',
@@ -195,22 +188,22 @@ export function ResponsiveProgressBar({
 				})
 			}
 		}
-	}, [currentPageIndex, isNavigating])
+	}, [currentIndex, isNavigating])
 
 	// Auto-scroll with delay to ensure DOM is updated
 	useEffect(() => {
 		const timer = setTimeout(scrollToCurrentDot, 100)
 		return () => clearTimeout(timer)
-	}, [currentPageIndex, scrollToCurrentDot])
+	}, [currentIndex, scrollToCurrentDot])
 
 	// Navigation handlers
 	const handleDotClick = useCallback(
 		(index: number) => {
 			if (!isNavigating) {
-				navigate(index, 'progress-bar')
+				onPageChange(index)
 			}
 		},
-		[navigate, isNavigating],
+		[onPageChange, isNavigating],
 	)
 
 	// Calculate completion percentages
@@ -232,7 +225,7 @@ export function ResponsiveProgressBar({
 	const totalPercentage = Math.round((allAnswered / questions.length) * 100)
 	const getProgressDotStatus = (index: number, questionId: string) => {
 		const isAnswered = answeredQuestions.has(questionId)
-		const isCurrent = index === currentPageIndex
+		const isCurrent = index === currentIndex
 
 		if (isAnswered && isCurrent) return 'answered-current'
 		if (isAnswered) return 'answered'
@@ -264,7 +257,7 @@ export function ResponsiveProgressBar({
 			<div className="block lg:hidden">
 				<div className="flex items-center gap-2">
 					<button
-						onClick={navigatePrevious}
+						onClick={onNavigatePrevious}
 						disabled={!canNavigatePrevious || isNavigating}
 						className={cn(
 							'flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
@@ -300,7 +293,7 @@ export function ResponsiveProgressBar({
 					</div>
 
 					<button
-						onClick={navigateNext}
+						onClick={onNavigateNext}
 						disabled={!canNavigateNext || isNavigating}
 						className={cn(
 							'flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
@@ -315,7 +308,7 @@ export function ResponsiveProgressBar({
 				{/* Mobile progress indicator */}
 				<div className="mt-2 flex flex-col items-center gap-1">
 					<div className="text-muted-foreground text-xs">
-						Question {currentPageIndex + 1} of {questions.length}
+						Question {currentIndex + 1} of {questions.length}
 						{isNavigating && ' (navigating...)'}
 					</div>
 					<div className="text-muted-foreground text-xs">
@@ -328,7 +321,7 @@ export function ResponsiveProgressBar({
 			<div className="hidden lg:block">
 				<div className="mb-4 flex items-center gap-4">
 					<button
-						onClick={navigatePrevious}
+						onClick={onNavigatePrevious}
 						disabled={!canNavigatePrevious || isNavigating}
 						className={cn(
 							'flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
@@ -364,7 +357,7 @@ export function ResponsiveProgressBar({
 					</div>
 
 					<button
-						onClick={navigateNext}
+						onClick={onNavigateNext}
 						disabled={!canNavigateNext || isNavigating}
 						className={cn(
 							'flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
@@ -379,7 +372,7 @@ export function ResponsiveProgressBar({
 				{/* Desktop progress text */}
 				<div className="text-muted-foreground flex items-center justify-between text-sm">
 					<div>
-						Question {currentPageIndex + 1} of {questions.length}
+						Question {currentIndex + 1} of {questions.length}
 						{isNavigating && ' (navigating...)'}
 					</div>
 					<div>

@@ -225,7 +225,7 @@ e, resume, complete)
  */
 
 import { AlertCircle } from 'lucide-react'
-import { lazy, Suspense, useState, useCallback, useEffect } from 'react'
+import { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react'
 import { redirect, useFetcher, useLoaderData } from 'react-router'
 import { ResponsiveProgressBar } from '#app/components/assessment/responsive-progress-bar.tsx'
 import { SectionDisplay } from '#app/components/assessment/section-display.tsx'
@@ -411,10 +411,15 @@ export default function AssessmentTake() {
 			// Update survey model
 			const surveyModel = (window as any).surveyModel
 			if (surveyModel) {
+				isProgrammaticNavigation.current = true
 				surveyModel.currentPageNo = pageIndex
 				setCurrentSection(questions[pageIndex]?.section || '')
 				setShowValidation(false)
 				setMissingQuestions([])
+				// Reset flag after a brief delay to allow SurveyJS events to process
+				setTimeout(() => {
+					isProgrammaticNavigation.current = false
+				}, 100)
 			}
 
 			// Check again if aborted before server request
@@ -433,14 +438,21 @@ export default function AssessmentTake() {
 					{ method: 'POST' }
 				)
 
+				// Set a maximum timeout to prevent infinite waiting
+				const timeoutId = setTimeout(() => {
+					reject(new Error('Navigation timeout'))
+				}, 2000)
+
 				// Monitor for completion or abortion
 				const checkCompletion = () => {
 					if (signal?.aborted) {
+						clearTimeout(timeoutId)
 						reject(new Error('Navigation aborted'))
 						return
 					}
 
 					if (fetcher.state === 'idle') {
+						clearTimeout(timeoutId)
 						resolve(void 0)
 					} else {
 						setTimeout(checkCompletion, 50)
@@ -462,6 +474,7 @@ export default function AssessmentTake() {
 	const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
 		new Set(),
 	)
+	const isProgrammaticNavigation = useRef(false)
 
 	// Initialize answered questions from assessment data
 	useEffect(() => {
@@ -555,6 +568,11 @@ export default function AssessmentTake() {
 
 	const handlePageChanged = useCallback(
 		(pageIndex: number, surveyData: any) => {
+			// Skip if this is a programmatic navigation (already handled by navigation hook)
+			if (isProgrammaticNavigation.current) {
+				return
+			}
+
 			// Update current section
 			const currentQuestion = questions[pageIndex]
 			if (currentQuestion) {
@@ -644,8 +662,12 @@ export default function AssessmentTake() {
 	useEffect(() => {
 		if (assessment.currentPageIndex > 0 && (window as any).surveyModel) {
 			setTimeout(() => {
+				isProgrammaticNavigation.current = true
 				;(window as any).surveyModel.currentPageNo = assessment.currentPageIndex
 				setCurrentSection(questions[assessment.currentPageIndex]?.section || '')
+				setTimeout(() => {
+					isProgrammaticNavigation.current = false
+				}, 100)
 			}, 500) // Delay to ensure survey is initialized
 		}
 	}, [assessment.currentPageIndex, questions])
@@ -690,8 +712,12 @@ export default function AssessmentTake() {
 											const surveyModel = (window as any).surveyModel
 											const question = surveyModel?.getQuestionByName(q.name)
 											if (question) {
+												isProgrammaticNavigation.current = true
 												surveyModel.currentPage = question.page
 												setShowValidation(false)
+												setTimeout(() => {
+													isProgrammaticNavigation.current = false
+												}, 100)
 											}
 										}}
 									>
@@ -710,6 +736,11 @@ export default function AssessmentTake() {
 				answeredQuestions={answeredQuestions}
 				onPageChange={assessmentNavigation.navigate}
 				className="mb-6"
+				isNavigating={assessmentNavigation.isNavigating}
+				onNavigatePrevious={assessmentNavigation.navigatePrevious}
+				onNavigateNext={assessmentNavigation.navigateNext}
+				canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
+				canNavigateNext={assessmentNavigation.canNavigateNext}
 			/>
 
 			<SectionDisplay

@@ -77,8 +77,26 @@ export function useAssessmentNavigation(
 					})
 				}
 			} catch (error) {
-				if (error instanceof Error && error.name === 'AbortError') {
-					// Navigation was cancelled, don't update state
+				if (error instanceof Error && (error.name === 'AbortError' || error.message === 'Navigation aborted')) {
+					// Navigation was cancelled, reset navigation state
+					setNavigationState({
+						isNavigating: false,
+						currentPageIndex: navigationState.currentPageIndex,
+						pendingPageIndex: null,
+						abortController: null,
+					})
+					return
+				}
+
+				if (error instanceof Error && error.message === 'Navigation timeout') {
+					// Navigation timed out, log warning but reset state
+					console.warn('Navigation timed out, resetting state')
+					setNavigationState({
+						isNavigating: false,
+						currentPageIndex: navigationState.currentPageIndex,
+						pendingPageIndex: null,
+						abortController: null,
+					})
 					return
 				}
 
