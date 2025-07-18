@@ -14,6 +14,7 @@
     "dev": "cross-env NODE_ENV=development MOCKS=true node ./server/dev-server.js",
     "dev:no-mocks": "cross-env NODE_ENV=development node ./server/dev-server.js",
     "format": "prettier --write .",
+    "import-questions": "tsx scripts/import-questions.ts",
     "lint": "eslint .",
     "setup": "npm run build && prisma migrate deploy && prisma generate --sql && playwright install",
     "start": "NODE_OPTIONS='--import ./instrumentation.server.mjs' cross-env NODE_ENV=production node .",
@@ -177,7 +178,8 @@
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-icons-spritesheet": "^3.0.1",
-    "vitest": "^3.1.3"
+    "vitest": "^3.1.3",
+    "xlsx": "^0.18.5"
   },
   "engines": {
     "node": "22"

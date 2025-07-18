@@ -1,0 +1,3 @@
+- All guidelines in ai/guidelines/guidelines-epicstack-core.md
+- The CSS file needs to use the variables defined in tailwind.css
+- When I need some new colors I need to add them in tailwind.css
