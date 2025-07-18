@@ -11,24 +11,8 @@
  * around the SurveyJS framework.
  *
  * KEY FEATURES:
- * 1. Assessment lifecycle manageme	// Add useEffect to navigate to last answered question on mount
-	useEffect(() => {
-		if (assessment.currentPageIndex > 0 && (window as any).surveyModel) {
-			setTimeout(() => {
-				(window as any).surveyModel.currentPageNo = assessment.currentPageIndex
-				setCurrentSection(questions[assessment.currentPageIndex]?.section || '')
-			}, 500) // Delay to ensure survey is initialized
-		}
-	}, [assessment.currentPageIndex, questions])
-
-	// Cleanup timeout on unmount
-	useEffect(() => {
-		return () => {
-			if (navigationTimeoutRef.current) {
-				clearTimeout(navigationTimeoutRef.current)
-			}
-		}
-	}, [])e, resume, complete)
+ * 1. Assessment lifecycle manageme
+e, resume, complete)
  * 2. Real-time answer persistence to prevent data loss
  * 3. Progress tracking with section-based navigation
  * 4. Lazy-loaded survey component for performance
@@ -241,11 +225,12 @@
  */
 
 import { AlertCircle } from 'lucide-react'
-import { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react'
+import { lazy, Suspense, useState, useCallback, useEffect } from 'react'
 import { redirect, useFetcher, useLoaderData } from 'react-router'
 import { ResponsiveProgressBar } from '#app/components/assessment/responsive-progress-bar.tsx'
 import { SectionDisplay } from '#app/components/assessment/section-display.tsx'
 import { ClientOnly } from '#app/components/client-only.tsx'
+import { useAssessmentNavigation } from '#app/components/hooks/use-assessment-navigation.ts'
 import { Alert, AlertDescription } from '#app/components/ui/alert.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Skeleton } from '#app/components/ui/skeleton.tsx'
@@ -413,8 +398,59 @@ export default function AssessmentTake() {
 	const fetcher = useFetcher()
 	console.log('📊 Fetcher state:', fetcher.state)
 
-	// Add debouncing refs
-	const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+	// Centralized navigation system
+	const assessmentNavigation = useAssessmentNavigation(
+		assessment.currentPageIndex,
+		questions.length,
+		async (pageIndex: number, signal?: AbortSignal) => {
+			// Check if navigation was aborted
+			if (signal?.aborted) {
+				throw new Error('Navigation aborted')
+			}
+
+			// Update survey model
+			const surveyModel = (window as any).surveyModel
+			if (surveyModel) {
+				surveyModel.currentPageNo = pageIndex
+				setCurrentSection(questions[pageIndex]?.section || '')
+				setShowValidation(false)
+				setMissingQuestions([])
+			}
+
+			// Check again if aborted before server request
+			if (signal?.aborted) {
+				throw new Error('Navigation aborted')
+			}
+
+			// Save progress to server
+			return new Promise((resolve, reject) => {
+				void fetcher.submit(
+					{
+						intent: 'save-progress',
+						currentPageIndex: String(pageIndex),
+						surveyData: JSON.stringify(surveyModel?.data || {}),
+					},
+					{ method: 'POST' }
+				)
+
+				// Monitor for completion or abortion
+				const checkCompletion = () => {
+					if (signal?.aborted) {
+						reject(new Error('Navigation aborted'))
+						return
+					}
+
+					if (fetcher.state === 'idle') {
+						resolve(void 0)
+					} else {
+						setTimeout(checkCompletion, 50)
+					}
+				}
+
+				checkCompletion()
+			})
+		}
+	)
 
 	const [currentSection, setCurrentSection] = useState(
 		questions[assessment.currentPageIndex]?.section ||
@@ -595,56 +631,6 @@ export default function AssessmentTake() {
 		}
 	}, [fetcher])
 
-	const handleProgressBarNavigation = useCallback(
-		(pageIndex: number) => {
-			// Debounce navigation to prevent rapid clicks
-			if (navigationTimeoutRef.current) {
-				clearTimeout(navigationTimeoutRef.current)
-			}
-
-			navigationTimeoutRef.current = setTimeout(() => {
-				console.log('🔄 Progress bar navigation to question:', pageIndex)
-				// Navigate survey to specific question
-				const surveyModel = (window as any).surveyModel
-				if (surveyModel) {
-					surveyModel.currentPageNo = pageIndex
-					setCurrentSection(questions[pageIndex]?.section || '')
-
-					// Clear validation state when navigating
-					setShowValidation(false)
-					setMissingQuestions([])
-				}
-				navigationTimeoutRef.current = null
-			}, 150) // Small delay to debounce rapid clicks
-		},
-		[questions],
-	)
-
-	// Add section navigation handler
-	const handleSectionNavigation = useCallback(
-		(questionIndex: number) => {
-			// Debounce navigation to prevent rapid clicks
-			if (navigationTimeoutRef.current) {
-				clearTimeout(navigationTimeoutRef.current)
-			}
-
-			navigationTimeoutRef.current = setTimeout(() => {
-				console.log('🔄 Section navigation to question:', questionIndex)
-				// Navigate survey to specific question
-				const surveyModel = (window as any).surveyModel
-				if (surveyModel) {
-					surveyModel.currentPageNo = questionIndex
-					setCurrentSection(questions[questionIndex]?.section || '')
-
-					// Clear validation state when navigating
-					setShowValidation(false)
-					setMissingQuestions([])
-				}
-				navigationTimeoutRef.current = null
-			}, 150) // Small delay to debounce rapid clicks
-		},
-		[questions],
-	)
 
 	// Handle validation response
 	useEffect(() => {
@@ -720,18 +706,19 @@ export default function AssessmentTake() {
 
 			<ResponsiveProgressBar
 				questions={questions}
-				currentIndex={assessment.currentPageIndex}
+				currentIndex={assessmentNavigation.currentPageIndex}
 				answeredQuestions={answeredQuestions}
-				onPageChange={handleProgressBarNavigation}
+				onPageChange={assessmentNavigation.navigate}
 				className="mb-6"
 			/>
 
 			<SectionDisplay
 				section={currentSection}
-				currentQuestion={assessment.currentPageIndex + 1}
+				currentQuestion={assessmentNavigation.currentPageIndex + 1}
 				totalQuestions={questions.length}
 				questions={questions}
-				onSectionChange={handleSectionNavigation}
+				onSectionChange={assessmentNavigation.navigate}
+				isNavigating={assessmentNavigation.isNavigating}
 			/>
 
 			<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">
@@ -752,6 +739,7 @@ export default function AssessmentTake() {
 								onValueChanged={handleValueChanged}
 								onPageChanged={handlePageChanged}
 								onComplete={handleComplete}
+								isNavigating={assessmentNavigation.isNavigating}
 							/>
 						</Suspense>
 					)}

@@ -352,6 +352,8 @@ interface SurveyComponentProps {
 	onValueChanged?: (name: string, value: any, questionMeta: any) => void
 	onPageChanged?: (pageIndex: number, surveyData: any) => void
 	onComplete?: (surveyData: any) => void
+	isNavigating?: boolean
+	onNavigationStateChange?: (isNavigating: boolean) => void
 }
 
 function QuestionAccordion({ descriptions }: { descriptions: string[] }) {
@@ -375,6 +377,8 @@ export function SurveyComponent({
 	onValueChanged,
 	onPageChanged,
 	onComplete,
+	isNavigating = false,
+	onNavigationStateChange: _onNavigationStateChange,
 }: SurveyComponentProps) {
 	console.log('🎯 SurveyComponent render called')
 	const surveyRef = useRef<Model | null>(null)
@@ -419,8 +423,8 @@ export function SurveyComponent({
 		// Configure survey to trigger value changes on text input changes
 		survey.textUpdateMode = 'onTyping'
 
-		// Configure navigation buttons only (no sidebar)
-		survey.showNavigationButtons = true
+		// Configure navigation buttons based on navigation state
+		survey.showNavigationButtons = !isNavigating
 
 		surveyRef.current = survey
 
@@ -452,7 +456,13 @@ export function SurveyComponent({
 		})
 
 		// Auto-save on Next Button Click
-		survey.onCurrentPageChanging.add((sender, _options) => {
+		survey.onCurrentPageChanging.add((sender, options) => {
+			// Prevent survey navigation during centralized navigation
+			if (isNavigating) {
+				options.allow = false
+				return
+			}
+			
 			// Save all answers on the current page before navigation
 			const currentPage = sender.currentPage
 			if (currentPage && onValueChangedRef.current) {
@@ -473,7 +483,8 @@ export function SurveyComponent({
 		// Handle page changes
 		survey.onCurrentPageChanged.add((sender) => {
 			try {
-				if (onPageChangedRef.current) {
+				if (!isNavigating && onPageChangedRef.current) {
+					// Only process if not currently navigating through centralized system
 					onPageChangedRef.current(sender.currentPageNo, sender.data)
 				}
 			} catch (error) {
@@ -589,6 +600,13 @@ export function SurveyComponent({
 			}
 		}
 	}, [initialData])
+
+	// Update navigation buttons when navigation state changes
+	useEffect(() => {
+		if (surveyRef.current) {
+			surveyRef.current.showNavigationButtons = !isNavigating
+		}
+	}, [isNavigating])
 
 	// Don't render if survey isn't properly initialized
 	if (!isInitialized || !surveyRef.current) {

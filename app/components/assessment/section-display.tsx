@@ -30,6 +30,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '#app/components/ui/select'
+import { cn } from '#app/utils/misc.tsx'
 
 interface SectionDisplayProps {
 	section: string
@@ -41,7 +42,8 @@ interface SectionDisplayProps {
 		title: string
 		isRequired: boolean
 	}>
-	onSectionChange: (sectionIndex: number) => void
+	onSectionChange: (sectionIndex: number) => Promise<void> | void
+	isNavigating?: boolean
 }
 
 export function SectionDisplay({
@@ -50,6 +52,7 @@ export function SectionDisplay({
 	totalQuestions,
 	questions,
 	onSectionChange,
+	isNavigating = false,
 }: SectionDisplayProps) {
 	// Extract unique sections and their first question indices
 	const sections = questions.reduce(
@@ -70,10 +73,16 @@ export function SectionDisplay({
 		}>,
 	)
 
-	const handleSectionChange = (sectionName: string) => {
-		const selectedSection = sections.find((s) => s.section === sectionName)
-		if (selectedSection) {
-			onSectionChange(selectedSection.firstQuestionIndex)
+	const handleSectionChange = async (sectionName: string) => {
+		if (!isNavigating) {
+			const selectedSection = sections.find((s) => s.section === sectionName)
+			if (selectedSection) {
+				try {
+					await onSectionChange(selectedSection.firstQuestionIndex)
+				} catch (error) {
+					console.error('Section navigation failed:', error)
+				}
+			}
 		}
 	}
 
@@ -84,8 +93,8 @@ export function SectionDisplay({
 					<p className="text-muted-foreground mb-2 text-sm">
 						Navigate to Section
 					</p>
-					<Select value={section} onValueChange={handleSectionChange}>
-						<SelectTrigger className="w-full">
+					<Select value={section} onValueChange={handleSectionChange} disabled={isNavigating}>
+						<SelectTrigger className={cn('w-full', isNavigating && 'animate-pulse cursor-not-allowed opacity-50')}>
 							<SelectValue placeholder="Select section..." />
 						</SelectTrigger>
 						<SelectContent>

@@ -129,6 +129,7 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef, useEffect, useCallback } from 'react'
+import { useAssessmentNavigation } from '#app/components/hooks/use-assessment-navigation.ts'
 import { cn } from '#app/utils/misc.tsx'
 
 interface ResponsiveProgressBarProps {
@@ -151,21 +152,41 @@ export function ResponsiveProgressBar({
 	onPageChange,
 	className,
 }: ResponsiveProgressBarProps) {
-	// Add refs for scroll containers
+	// Use centralized navigation hook
+	const {
+		currentPageIndex,
+		isNavigating,
+		navigate,
+		navigatePrevious,
+		navigateNext,
+		canNavigatePrevious,
+		canNavigateNext,
+	} = useAssessmentNavigation(
+		currentIndex,
+		questions.length,
+		async (index: number) => {
+			await onPageChange(index)
+		},
+	)
+
+	// Refs for scroll containers
 	const mobileScrollRef = useRef<HTMLDivElement>(null)
 	const desktopScrollRef = useRef<HTMLDivElement>(null)
 
-	// Add scroll function
+	// Auto-scroll to current dot - only when not navigating
 	const scrollToCurrentDot = useCallback(() => {
+		if (isNavigating) return // Don't scroll during navigation
+
 		const scrollContainer =
 			window.innerWidth >= 1024
 				? desktopScrollRef.current
 				: mobileScrollRef.current
+
 		if (scrollContainer) {
 			const dots = scrollContainer.querySelectorAll(
 				'button[aria-label*="Question"]',
 			)
-			const currentDot = dots[currentIndex] as HTMLElement
+			const currentDot = dots[currentPageIndex] as HTMLElement
 			if (currentDot) {
 				currentDot.scrollIntoView({
 					behavior: 'smooth',
@@ -174,29 +195,23 @@ export function ResponsiveProgressBar({
 				})
 			}
 		}
-	}, [currentIndex])
+	}, [currentPageIndex, isNavigating])
 
-	// Add useEffect for auto-scroll
+	// Auto-scroll with delay to ensure DOM is updated
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			scrollToCurrentDot()
-		}, 100) // Small delay to ensure DOM is updated
-
+		const timer = setTimeout(scrollToCurrentDot, 100)
 		return () => clearTimeout(timer)
-	}, [currentIndex, scrollToCurrentDot])
+	}, [currentPageIndex, scrollToCurrentDot])
 
 	// Navigation handlers
-	const handlePrevious = () => {
-		if (currentIndex > 0) {
-			onPageChange(currentIndex - 1)
-		}
-	}
-
-	const handleNext = () => {
-		if (currentIndex < questions.length - 1) {
-			onPageChange(currentIndex + 1)
-		}
-	}
+	const handleDotClick = useCallback(
+		(index: number) => {
+			if (!isNavigating) {
+				navigate(index, 'progress-bar')
+			}
+		},
+		[navigate, isNavigating],
+	)
 
 	// Calculate completion percentages
 	const mandatoryAnswered = questions
@@ -217,7 +232,7 @@ export function ResponsiveProgressBar({
 	const totalPercentage = Math.round((allAnswered / questions.length) * 100)
 	const getProgressDotStatus = (index: number, questionId: string) => {
 		const isAnswered = answeredQuestions.has(questionId)
-		const isCurrent = index === currentIndex
+		const isCurrent = index === currentPageIndex
 
 		if (isAnswered && isCurrent) return 'answered-current'
 		if (isAnswered) return 'answered'
@@ -226,17 +241,20 @@ export function ResponsiveProgressBar({
 	}
 
 	const getProgressDotStyles = (status: string) => {
+		const baseStyles =
+			'focus:ring-primary/50 h-4 w-4 flex-shrink-0 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none'
+
 		switch (status) {
 			case 'answered':
-				return 'bg-green-500 border-green-500 text-white hover:bg-green-600'
+				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600`
 			case 'answered-current':
-				return 'bg-green-500 border-green-500 text-white hover:bg-green-600 ring-4 ring-primary/30'
+				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600 ring-4 ring-primary/30`
 			case 'current':
-				return 'bg-transparent border-primary text-primary ring-4 ring-primary/30'
+				return `${baseStyles} bg-transparent border-primary text-primary ring-4 ring-primary/30`
 			case 'unanswered':
-				return 'bg-transparent border-gray-300 text-gray-400 hover:bg-gray-50'
+				return `${baseStyles} bg-transparent border-gray-300 text-gray-400 hover:bg-gray-50`
 			default:
-				return 'bg-transparent border-gray-300 text-gray-400'
+				return `${baseStyles} bg-transparent border-gray-300 text-gray-400`
 		}
 	}
 
@@ -246,9 +264,12 @@ export function ResponsiveProgressBar({
 			<div className="block lg:hidden">
 				<div className="flex items-center gap-2">
 					<button
-						onClick={handlePrevious}
-						disabled={currentIndex === 0}
-						className="flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						onClick={navigatePrevious}
+						disabled={!canNavigatePrevious || isNavigating}
+						className={cn(
+							'flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
+							isNavigating && 'animate-pulse',
+						)}
 						aria-label="Previous question"
 					>
 						<ChevronLeft className="h-5 w-5" />
@@ -264,10 +285,11 @@ export function ResponsiveProgressBar({
 								return (
 									<button
 										key={question.questionId}
-										onClick={() => onPageChange(index)}
+										onClick={() => handleDotClick(index)}
+										disabled={isNavigating}
 										className={cn(
-											'focus:ring-primary/50 h-4 w-4 flex-shrink-0 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none',
 											getProgressDotStyles(status),
+											isNavigating && 'animate-pulse cursor-not-allowed',
 										)}
 										title={`${question.section}: ${question.title}`}
 										aria-label={`Question ${index + 1} - ${status}`}
@@ -278,9 +300,12 @@ export function ResponsiveProgressBar({
 					</div>
 
 					<button
-						onClick={handleNext}
-						disabled={currentIndex === questions.length - 1}
-						className="flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						onClick={navigateNext}
+						disabled={!canNavigateNext || isNavigating}
+						className={cn(
+							'flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
+							isNavigating && 'animate-pulse',
+						)}
 						aria-label="Next question"
 					>
 						<ChevronRight className="h-5 w-5" />
@@ -290,7 +315,8 @@ export function ResponsiveProgressBar({
 				{/* Mobile progress indicator */}
 				<div className="mt-2 flex flex-col items-center gap-1">
 					<div className="text-muted-foreground text-xs">
-						Question {currentIndex + 1} of {questions.length}
+						Question {currentPageIndex + 1} of {questions.length}
+						{isNavigating && ' (navigating...)'}
 					</div>
 					<div className="text-muted-foreground text-xs">
 						Mandatory: {mandatoryPercentage}% | Total: {totalPercentage}%
@@ -302,9 +328,12 @@ export function ResponsiveProgressBar({
 			<div className="hidden lg:block">
 				<div className="mb-4 flex items-center gap-4">
 					<button
-						onClick={handlePrevious}
-						disabled={currentIndex === 0}
-						className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						onClick={navigatePrevious}
+						disabled={!canNavigatePrevious || isNavigating}
+						className={cn(
+							'flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
+							isNavigating && 'animate-pulse',
+						)}
 						aria-label="Previous question"
 					>
 						<ChevronLeft className="h-6 w-6" />
@@ -320,10 +349,11 @@ export function ResponsiveProgressBar({
 								return (
 									<button
 										key={question.questionId}
-										onClick={() => onPageChange(index)}
+										onClick={() => handleDotClick(index)}
+										disabled={isNavigating}
 										className={cn(
-											'focus:ring-primary/50 h-4 w-4 flex-shrink-0 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none',
 											getProgressDotStyles(status),
+											isNavigating && 'animate-pulse cursor-not-allowed',
 										)}
 										title={`${question.section}: ${question.title}`}
 										aria-label={`Question ${index + 1} - ${status}`}
@@ -334,9 +364,12 @@ export function ResponsiveProgressBar({
 					</div>
 
 					<button
-						onClick={handleNext}
-						disabled={currentIndex === questions.length - 1}
-						className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						onClick={navigateNext}
+						disabled={!canNavigateNext || isNavigating}
+						className={cn(
+							'flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50',
+							isNavigating && 'animate-pulse',
+						)}
 						aria-label="Next question"
 					>
 						<ChevronRight className="h-6 w-6" />
@@ -346,7 +379,8 @@ export function ResponsiveProgressBar({
 				{/* Desktop progress text */}
 				<div className="text-muted-foreground flex items-center justify-between text-sm">
 					<div>
-						Question {currentIndex + 1} of {questions.length}
+						Question {currentPageIndex + 1} of {questions.length}
+						{isNavigating && ' (navigating...)'}
 					</div>
 					<div>
 						Mandatory: {mandatoryPercentage}% ({mandatoryAnswered}/
