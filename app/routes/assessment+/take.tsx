@@ -397,6 +397,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function AssessmentTake() {
 	console.log('🏠 AssessmentTake component render')
 	const { assessment, surveyJson, questions } = useLoaderData<typeof loader>()
+	console.log('🎯 Assessment currentPageIndex:', assessment.currentPageIndex)
 	const fetcher = useFetcher()
 	console.log('📊 Fetcher state:', fetcher.state)
 
@@ -437,7 +438,7 @@ export default function AssessmentTake() {
 						currentPageIndex: String(pageIndex),
 						surveyData: JSON.stringify(surveyModel?.data || {}),
 					},
-					{ method: 'POST' }
+					{ method: 'POST' },
 				)
 
 				// Set a maximum timeout to prevent infinite waiting
@@ -463,7 +464,7 @@ export default function AssessmentTake() {
 
 				checkCompletion()
 			})
-		}
+		},
 	)
 
 	const [currentSection, setCurrentSection] = useState(
@@ -651,7 +652,6 @@ export default function AssessmentTake() {
 		}
 	}, [fetcher])
 
-
 	// Handle validation response
 	useEffect(() => {
 		if (fetcher.data?.missingQuestions) {
@@ -659,20 +659,6 @@ export default function AssessmentTake() {
 			setShowValidation(true)
 		}
 	}, [fetcher.data])
-
-	// Add useEffect to navigate to last answered question on mount
-	useEffect(() => {
-		if (assessment.currentPageIndex > 0 && (window as any).surveyModel) {
-			setTimeout(() => {
-				isProgrammaticNavigation.current = true
-				;(window as any).surveyModel.currentPageNo = assessment.currentPageIndex
-				setCurrentSection(questions[assessment.currentPageIndex]?.section || '')
-				setTimeout(() => {
-					isProgrammaticNavigation.current = false
-				}, 100)
-			}, 500) // Delay to ensure survey is initialized
-		}
-	}, [assessment.currentPageIndex, questions])
 
 	return (
 		<div className="p-4 py-4 lg:px-0 lg:py-8">
@@ -769,6 +755,7 @@ export default function AssessmentTake() {
 							<SurveyComponent
 								surveyJson={surveyJson}
 								initialData={assessment.surveyData}
+								initialPageIndex={assessment.currentPageIndex}
 								onValueChanged={handleValueChanged}
 								onPageChanged={handlePageChanged}
 								onComplete={handleComplete}

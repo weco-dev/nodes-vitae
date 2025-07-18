@@ -322,6 +322,7 @@
  * <SurveyComponent
  *   surveyJson={convertToSurveyJsFormat(assessmentQuestions)}
  *   initialData={existingAnswers}
+ *   initialPageIndex={lastQuestionIndex}
  *   onValueChanged={handleAnswerPersistence}
  *   onPageChanged={handleProgressTracking}
  *   onComplete={handleAssessmentCompletion}
@@ -349,6 +350,7 @@ import 'survey-core/survey-core.min.css'
 interface SurveyComponentProps {
 	surveyJson: any
 	initialData?: Record<string, any>
+	initialPageIndex?: number
 	onValueChanged?: (name: string, value: any, questionMeta: any) => void
 	onPageChanged?: (pageIndex: number, surveyData: any) => void
 	onComplete?: (surveyData: any) => void
@@ -374,6 +376,7 @@ function QuestionAccordion({ descriptions }: { descriptions: string[] }) {
 export function SurveyComponent({
 	surveyJson,
 	initialData = {},
+	initialPageIndex = 0,
 	onValueChanged,
 	onPageChanged,
 	onComplete,
@@ -436,6 +439,12 @@ export function SurveyComponent({
 			survey.data = initialData
 		}
 
+		// Set initial page index if provided
+		if (initialPageIndex > 0) {
+			console.log('🎯 Setting initial page index to:', initialPageIndex)
+			survey.currentPageNo = initialPageIndex
+		}
+
 		// Handle value changes
 		survey.onValueChanged.add((sender, options) => {
 			console.log('📊 Survey value changed:', options.name, options.value)
@@ -462,7 +471,7 @@ export function SurveyComponent({
 				options.allow = false
 				return
 			}
-			
+
 			// Save all answers on the current page before navigation
 			const currentPage = sender.currentPage
 			if (currentPage && onValueChangedRef.current) {
