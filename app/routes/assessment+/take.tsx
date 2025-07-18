@@ -201,9 +201,10 @@ e, resume, complete)
  *    - Predictive prefetching
  *    - Service worker caching
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author ESG Assessment Team
  * @since 2025-07-11
+ * @updated 2025-07-18 - Integrated centralized navigation hook to prevent ping pong effects
  * @requires react
  * @requires react-router
  * @requires #app/components/assessment/survey-component
@@ -220,6 +221,7 @@ e, resume, complete)
  * ```
  *
  * @see {@link app/components/assessment/survey-component.tsx} for UI component
+ * @see {@link app/components/hooks/use-assessment-navigation.ts} for navigation state management
  * @see {@link app/utils/assessment.server.ts} for backend operations
  * @see {@link app/utils/assessment-questions.ts} for question configuration
  */

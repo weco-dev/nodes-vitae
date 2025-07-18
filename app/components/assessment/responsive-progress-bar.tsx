@@ -42,14 +42,17 @@
  * ==================================================================================
  *
  * USAGE IN ASSESSMENT FLOW:
- * Parent Route (take.tsx) → Current page state → ResponsiveProgressBar →
- * User navigation → onPageChange callback → Update survey model → State sync
+ * Parent Route (take.tsx) → useAssessmentNavigation hook → ResponsiveProgressBar →
+ * User navigation → Navigation hook → Server sync → UI update → State sync
  *
  * DATA FLOW REQUIREMENTS:
  * - questions: Array of question metadata with sections and IDs
  * - currentIndex: Zero-based index of active question
  * - answeredQuestions: Set of question IDs that have been completed
  * - onPageChange: Callback function for navigation events
+ * - isNavigating: Boolean flag from navigation hook to prevent conflicts
+ * - Navigation handlers: onNavigatePrevious, onNavigateNext from navigation hook
+ * - Navigation state: canNavigatePrevious, canNavigateNext from navigation hook
  *
  * PROGRESS CALCULATION LOGIC:
  * ```tsx
@@ -92,38 +95,52 @@
  * - Conditional rendering for mobile vs desktop layouts
  * - Memoized style calculations for progress dots
  * - Efficient DOM updates through React's reconciliation
+ * - Auto-scroll behavior with navigation state awareness
  *
  * INTERACTION HANDLING:
  * - Event delegation for progress dot clicks
- * - Debounced navigation to prevent rapid state changes
+ * - Navigation state prevents rapid state changes and conflicts
+ * - Disabled states during navigation operations
  * - Lightweight hover effects without layout thrashing
+ * - Smooth scrolling to current dot with proper timing
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author ESG Assessment Team
  * @since 2025-07-12
+ * @updated 2025-07-18 - Added navigation hook integration and ping pong effect prevention
  * @requires react
  * @requires lucide-react
  * @requires #app/utils/misc (cn utility)
  *
  * @example
  * ```tsx
- * // Usage in assessment route
+ * // Usage in assessment route with navigation hook
+ * const navigation = useAssessmentNavigation(...)
+ * 
  * <ResponsiveProgressBar
  *   questions={assessmentQuestions}
- *   currentIndex={currentPageIndex}
+ *   currentIndex={navigation.currentPageIndex}
  *   answeredQuestions={new Set(['q1', 'q3', 'q5'])}
- *   onPageChange={(index) => setCurrentPage(index)}
+ *   onPageChange={navigation.navigate}
+ *   isNavigating={navigation.isNavigating}
+ *   onNavigatePrevious={navigation.navigatePrevious}
+ *   onNavigateNext={navigation.navigateNext}
+ *   canNavigatePrevious={navigation.canNavigatePrevious}
+ *   canNavigateNext={navigation.canNavigateNext}
  *   className="mb-6"
  * />
  *
- * // Results in adaptive progress bar showing:
+ * // Results in adaptive progress bar with:
  * // - Mobile: Scrollable dots with arrows
- * // - Desktop: Grid layout with progress stats
+ * // - Desktop: Horizontal scrollable layout with progress stats
  * // - Visual indicators for completion status
  * // - Interactive navigation to any question
+ * // - Ping pong effect prevention during navigation
+ * // - Smooth auto-scroll to current question
  * ```
  *
  * @see {@link app/routes/assessment+/take.tsx} for implementation context
+ * @see {@link app/components/hooks/use-assessment-navigation.ts} for navigation state management
  * @see {@link app/components/assessment/section-display.tsx} for related progress components
  */
 
