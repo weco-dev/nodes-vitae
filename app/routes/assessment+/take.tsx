@@ -11,7 +11,24 @@
  * around the SurveyJS framework.
  *
  * KEY FEATURES:
- * 1. Assessment lifecycle management (create, resume, complete)
+ * 1. Assessment lifecycle manageme	// Add useEffect to navigate to last answered question on mount
+	useEffect(() => {
+		if (assessment.currentPageIndex > 0 && (window as any).surveyModel) {
+			setTimeout(() => {
+				(window as any).surveyModel.currentPageNo = assessment.currentPageIndex
+				setCurrentSection(questions[assessment.currentPageIndex]?.section || '')
+			}, 500) // Delay to ensure survey is initialized
+		}
+	}, [assessment.currentPageIndex, questions])
+
+	// Cleanup timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (navigationTimeoutRef.current) {
+				clearTimeout(navigationTimeoutRef.current)
+			}
+		}
+	}, [])e, resume, complete)
  * 2. Real-time answer persistence to prevent data loss
  * 3. Progress tracking with section-based navigation
  * 4. Lazy-loaded survey component for performance
@@ -224,7 +241,7 @@
  */
 
 import { AlertCircle } from 'lucide-react'
-import { lazy, Suspense, useState, useCallback, useEffect } from 'react'
+import { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react'
 import { redirect, useFetcher, useLoaderData } from 'react-router'
 import { ResponsiveProgressBar } from '#app/components/assessment/responsive-progress-bar.tsx'
 import { SectionDisplay } from '#app/components/assessment/section-display.tsx'
@@ -395,6 +412,10 @@ export default function AssessmentTake() {
 	const { assessment, surveyJson, questions } = useLoaderData<typeof loader>()
 	const fetcher = useFetcher()
 	console.log('📊 Fetcher state:', fetcher.state)
+
+	// Add debouncing refs
+	const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
 	const [currentSection, setCurrentSection] = useState(
 		questions[assessment.currentPageIndex]?.section ||
 			questions[0]?.section ||
@@ -402,27 +423,37 @@ export default function AssessmentTake() {
 	)
 	const [showValidation, setShowValidation] = useState(false)
 	const [missingQuestions, setMissingQuestions] = useState<any[]>([])
-	const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set())
-	
+	const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
+		new Set(),
+	)
+
 	// Initialize answered questions from assessment data
 	useEffect(() => {
 		const answered = new Set<string>()
-		
+
 		// Initialize from initial survey data (from loader)
 		if (assessment.surveyData && typeof assessment.surveyData === 'object') {
-			Object.keys(assessment.surveyData).forEach(fieldName => {
+			Object.keys(assessment.surveyData).forEach((fieldName) => {
 				const value = assessment.surveyData![fieldName]
 				// Check if value is considered "answered" (not empty/null/undefined)
-				const hasValue = value !== undefined && 
-					value !== null && 
+				const hasValue =
+					value !== undefined &&
+					value !== null &&
 					value !== '' &&
 					!((value as any)?.length === 0) &&
-					!(typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value as Record<string, any>).length === 0)
-				
+					!(
+						typeof value === 'object' &&
+						value !== null &&
+						!Array.isArray(value) &&
+						Object.keys(value as Record<string, any>).length === 0
+					)
+
 				if (hasValue) {
-					const question = questions.find(q => {
+					const question = questions.find((q) => {
 						// Find matching question by comparing with assessmentQuestions
-						const fullQuestion = assessmentQuestions.find(aq => aq.questionId === q.questionId)
+						const fullQuestion = assessmentQuestions.find(
+							(aq) => aq.questionId === q.questionId,
+						)
 						return fullQuestion?.name === fieldName
 					})
 					if (question) {
@@ -431,30 +462,38 @@ export default function AssessmentTake() {
 				}
 			})
 		}
-		
+
 		setAnsweredQuestions(answered)
 	}, [questions, assessment.surveyData])
 
 	const handleValueChanged = useCallback(
 		(name: string, value: any, questionMeta: any) => {
 			console.log('🚀 handleValueChanged called:', name, value)
-			
+
 			// Update answered questions immediately for UI feedback
-			const question = questions.find(q => {
-				const fullQuestion = assessmentQuestions.find(aq => aq.questionId === q.questionId)
+			const question = questions.find((q) => {
+				const fullQuestion = assessmentQuestions.find(
+					(aq) => aq.questionId === q.questionId,
+				)
 				return fullQuestion?.name === name
 			})
-			
+
 			if (question) {
-				setAnsweredQuestions(prev => {
+				setAnsweredQuestions((prev) => {
 					const newSet = new Set(prev)
 					// Check if value is considered "answered" (not empty/null/undefined)
-					const hasValue = value !== undefined && 
-						value !== null && 
-						value !== '' && 
+					const hasValue =
+						value !== undefined &&
+						value !== null &&
+						value !== '' &&
 						!(Array.isArray(value) && value.length === 0) &&
-						!(typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value).length === 0)
-					
+						!(
+							typeof value === 'object' &&
+							value !== null &&
+							!Array.isArray(value) &&
+							Object.keys(value).length === 0
+						)
+
 					if (hasValue) {
 						newSet.add(question.questionId)
 					} else {
@@ -463,7 +502,7 @@ export default function AssessmentTake() {
 					return newSet
 				})
 			}
-			
+
 			// Existing save logic
 			void fetcher.submit(
 				{
@@ -485,21 +524,29 @@ export default function AssessmentTake() {
 			if (currentQuestion) {
 				setCurrentSection(currentQuestion.section)
 			}
-			
+
 			// Update answered questions from survey data
 			const answered = new Set<string>()
-			Object.keys(surveyData || {}).forEach(fieldName => {
+			Object.keys(surveyData || {}).forEach((fieldName) => {
 				const value = surveyData[fieldName]
 				// Check if value is considered "answered" (not empty/null/undefined)
-				const hasValue = value !== undefined && 
-					value !== null && 
+				const hasValue =
+					value !== undefined &&
+					value !== null &&
 					value !== '' &&
 					!((value as any)?.length === 0) &&
-					!(typeof value === 'object' && value !== null && !Array.isArray(value) && Object.keys(value as Record<string, any>).length === 0)
-				
+					!(
+						typeof value === 'object' &&
+						value !== null &&
+						!Array.isArray(value) &&
+						Object.keys(value as Record<string, any>).length === 0
+					)
+
 				if (hasValue) {
-					const question = questions.find(q => {
-						const fullQuestion = assessmentQuestions.find(aq => aq.questionId === q.questionId)
+					const question = questions.find((q) => {
+						const fullQuestion = assessmentQuestions.find(
+							(aq) => aq.questionId === q.questionId,
+						)
 						return fullQuestion?.name === fieldName
 					})
 					if (question) {
@@ -548,16 +595,56 @@ export default function AssessmentTake() {
 		}
 	}, [fetcher])
 
-	const handleProgressBarNavigation = useCallback((pageIndex: number) => {
-		const surveyModel = (window as any).surveyModel
-		if (surveyModel) {
-			surveyModel.currentPageNo = pageIndex
-			
-			// Clear validation state when navigating
-			setShowValidation(false)
-			setMissingQuestions([])
-		}
-	}, [])
+	const handleProgressBarNavigation = useCallback(
+		(pageIndex: number) => {
+			// Debounce navigation to prevent rapid clicks
+			if (navigationTimeoutRef.current) {
+				clearTimeout(navigationTimeoutRef.current)
+			}
+
+			navigationTimeoutRef.current = setTimeout(() => {
+				console.log('🔄 Progress bar navigation to question:', pageIndex)
+				// Navigate survey to specific question
+				const surveyModel = (window as any).surveyModel
+				if (surveyModel) {
+					surveyModel.currentPageNo = pageIndex
+					setCurrentSection(questions[pageIndex]?.section || '')
+
+					// Clear validation state when navigating
+					setShowValidation(false)
+					setMissingQuestions([])
+				}
+				navigationTimeoutRef.current = null
+			}, 150) // Small delay to debounce rapid clicks
+		},
+		[questions],
+	)
+
+	// Add section navigation handler
+	const handleSectionNavigation = useCallback(
+		(questionIndex: number) => {
+			// Debounce navigation to prevent rapid clicks
+			if (navigationTimeoutRef.current) {
+				clearTimeout(navigationTimeoutRef.current)
+			}
+
+			navigationTimeoutRef.current = setTimeout(() => {
+				console.log('🔄 Section navigation to question:', questionIndex)
+				// Navigate survey to specific question
+				const surveyModel = (window as any).surveyModel
+				if (surveyModel) {
+					surveyModel.currentPageNo = questionIndex
+					setCurrentSection(questions[questionIndex]?.section || '')
+
+					// Clear validation state when navigating
+					setShowValidation(false)
+					setMissingQuestions([])
+				}
+				navigationTimeoutRef.current = null
+			}, 150) // Small delay to debounce rapid clicks
+		},
+		[questions],
+	)
 
 	// Handle validation response
 	useEffect(() => {
@@ -566,6 +653,16 @@ export default function AssessmentTake() {
 			setShowValidation(true)
 		}
 	}, [fetcher.data])
+
+	// Add useEffect to navigate to last answered question on mount
+	useEffect(() => {
+		if (assessment.currentPageIndex > 0 && (window as any).surveyModel) {
+			setTimeout(() => {
+				;(window as any).surveyModel.currentPageNo = assessment.currentPageIndex
+				setCurrentSection(questions[assessment.currentPageIndex]?.section || '')
+			}, 500) // Delay to ensure survey is initialized
+		}
+	}, [assessment.currentPageIndex, questions])
 
 	return (
 		<div className="p-4 py-4 lg:px-0 lg:py-8">
@@ -579,10 +676,7 @@ export default function AssessmentTake() {
 					</p>
 				</div>
 				<div className="flex flex-col items-start gap-2 lg:items-end lg:text-right">
-					<Button
-						onClick={handleFinalize}
-						size="default"
-					>
+					<Button onClick={handleFinalize} size="default">
 						Finalize Assessment
 					</Button>
 					{missingQuestions.length > 0 && (
@@ -636,6 +730,8 @@ export default function AssessmentTake() {
 				section={currentSection}
 				currentQuestion={assessment.currentPageIndex + 1}
 				totalQuestions={questions.length}
+				questions={questions}
+				onSectionChange={handleSectionNavigation}
 			/>
 
 			<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">

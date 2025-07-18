@@ -1,14 +1,14 @@
 /**
  * @fileoverview ResponsiveProgressBar - Adaptive navigation and progress tracking for ESG assessments
- * 
+ *
  * ==================================================================================
  * COMPONENT OVERVIEW
  * ==================================================================================
- * 
+ *
  * This component provides a responsive progress tracking and navigation interface for
  * multi-page ESG (Environmental, Social, Governance) assessments. It adapts between
  * mobile and desktop layouts to provide optimal user experience across all devices.
- * 
+ *
  * KEY FEATURES:
  * 1. Adaptive layout: Horizontal scrollable view on mobile, grid layout on desktop
  * 2. Visual progress indicators: Color-coded dots showing completion status
@@ -16,41 +16,41 @@
  * 4. Interactive navigation: Click any dot to jump to specific questions
  * 5. Directional controls: Previous/Next arrows for sequential navigation
  * 6. Accessibility support: ARIA labels, keyboard navigation, focus management
- * 
+ *
  * ==================================================================================
  * VISUAL DESIGN SYSTEM
  * ==================================================================================
- * 
+ *
  * PROGRESS DOT STATES:
  * - Answered: Green background (bg-green-500) - Question completed
  * - Answered + Current: Green with ring (ring-4 ring-primary/30) - Active completed question
  * - Current: Transparent with primary border + ring - Active unanswered question
  * - Unanswered: Gray background (bg-gray-300) - Not yet visited/answered
- * 
+ *
  * RESPONSIVE BREAKPOINTS:
  * - Mobile (< lg): Horizontal scrollable container with navigation arrows
  * - Desktop (>= lg): Flexible grid layout with centered progress dots
- * 
+ *
  * INTERACTIVE STATES:
  * - Hover effects on all clickable elements
  * - Disabled states for navigation arrows at boundaries
  * - Focus indicators for keyboard navigation
  * - Tooltips showing question titles and sections
- * 
+ *
  * ==================================================================================
  * INTEGRATION PATTERNS
  * ==================================================================================
- * 
+ *
  * USAGE IN ASSESSMENT FLOW:
  * Parent Route (take.tsx) → Current page state → ResponsiveProgressBar →
  * User navigation → onPageChange callback → Update survey model → State sync
- * 
+ *
  * DATA FLOW REQUIREMENTS:
  * - questions: Array of question metadata with sections and IDs
  * - currentIndex: Zero-based index of active question
  * - answeredQuestions: Set of question IDs that have been completed
  * - onPageChange: Callback function for navigation events
- * 
+ *
  * PROGRESS CALCULATION LOGIC:
  * ```tsx
  * // Mandatory completion percentage
@@ -58,53 +58,53 @@
  *   .filter(q => q.isRequired)
  *   .filter(q => answeredQuestions.has(q.questionId)).length
  * const mandatoryPercentage = (mandatoryAnswered / mandatoryTotal) * 100
- * 
- * // Total completion percentage  
+ *
+ * // Total completion percentage
  * const allAnswered = questions.filter(q => answeredQuestions.has(q.questionId)).length
  * const totalPercentage = (allAnswered / questions.length) * 100
  * ```
- * 
+ *
  * ==================================================================================
  * ACCESSIBILITY CONSIDERATIONS
  * ==================================================================================
- * 
+ *
  * KEYBOARD NAVIGATION:
  * - Tab order: Previous arrow → Progress dots → Next arrow
  * - Enter/Space: Activate navigation buttons and progress dots
  * - Arrow keys: Sequential navigation through progress dots
- * 
+ *
  * SCREEN READER SUPPORT:
  * - aria-label attributes on all interactive elements
  * - Descriptive button labels indicating current state
  * - Progress announcements when navigating between questions
- * 
+ *
  * VISUAL ACCESSIBILITY:
  * - High contrast colors for progress indicators
  * - Focus rings meet WCAG 2.1 requirements
  * - Text sizing follows accessible typography guidelines
  * - Color coding supplemented with visual patterns (borders, sizes)
- * 
+ *
  * ==================================================================================
  * PERFORMANCE OPTIMIZATIONS
  * ==================================================================================
- * 
+ *
  * RENDERING EFFICIENCY:
  * - Conditional rendering for mobile vs desktop layouts
  * - Memoized style calculations for progress dots
  * - Efficient DOM updates through React's reconciliation
- * 
+ *
  * INTERACTION HANDLING:
  * - Event delegation for progress dot clicks
  * - Debounced navigation to prevent rapid state changes
  * - Lightweight hover effects without layout thrashing
- * 
+ *
  * @version 1.0.0
  * @author ESG Assessment Team
  * @since 2025-07-12
  * @requires react
  * @requires lucide-react
  * @requires #app/utils/misc (cn utility)
- * 
+ *
  * @example
  * ```tsx
  * // Usage in assessment route
@@ -115,19 +115,20 @@
  *   onPageChange={(index) => setCurrentPage(index)}
  *   className="mb-6"
  * />
- * 
+ *
  * // Results in adaptive progress bar showing:
  * // - Mobile: Scrollable dots with arrows
  * // - Desktop: Grid layout with progress stats
  * // - Visual indicators for completion status
  * // - Interactive navigation to any question
  * ```
- * 
+ *
  * @see {@link app/routes/assessment+/take.tsx} for implementation context
  * @see {@link app/components/assessment/section-display.tsx} for related progress components
  */
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useRef, useEffect, useCallback } from 'react'
 import { cn } from '#app/utils/misc.tsx'
 
 interface ResponsiveProgressBarProps {
@@ -150,6 +151,40 @@ export function ResponsiveProgressBar({
 	onPageChange,
 	className,
 }: ResponsiveProgressBarProps) {
+	// Add refs for scroll containers
+	const mobileScrollRef = useRef<HTMLDivElement>(null)
+	const desktopScrollRef = useRef<HTMLDivElement>(null)
+
+	// Add scroll function
+	const scrollToCurrentDot = useCallback(() => {
+		const scrollContainer =
+			window.innerWidth >= 1024
+				? desktopScrollRef.current
+				: mobileScrollRef.current
+		if (scrollContainer) {
+			const dots = scrollContainer.querySelectorAll(
+				'button[aria-label*="Question"]',
+			)
+			const currentDot = dots[currentIndex] as HTMLElement
+			if (currentDot) {
+				currentDot.scrollIntoView({
+					behavior: 'smooth',
+					inline: 'center',
+					block: 'nearest',
+				})
+			}
+		}
+	}, [currentIndex])
+
+	// Add useEffect for auto-scroll
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			scrollToCurrentDot()
+		}, 100) // Small delay to ensure DOM is updated
+
+		return () => clearTimeout(timer)
+	}, [currentIndex, scrollToCurrentDot])
+
 	// Navigation handlers
 	const handlePrevious = () => {
 		if (currentIndex > 0) {
@@ -183,7 +218,7 @@ export function ResponsiveProgressBar({
 	const getProgressDotStatus = (index: number, questionId: string) => {
 		const isAnswered = answeredQuestions.has(questionId)
 		const isCurrent = index === currentIndex
-		
+
 		if (isAnswered && isCurrent) return 'answered-current'
 		if (isAnswered) return 'answered'
 		if (isCurrent) return 'current'
@@ -219,7 +254,10 @@ export function ResponsiveProgressBar({
 						<ChevronLeft className="h-5 w-5" />
 					</button>
 
-					<div className="flex-1 overflow-x-auto">
+					<div
+						ref={mobileScrollRef}
+						className="scrollbar-hide flex-1 overflow-x-auto"
+					>
 						<div className="flex min-w-max gap-2 px-2 py-3">
 							{questions.map((question, index) => {
 								const status = getProgressDotStatus(index, question.questionId)
@@ -260,47 +298,52 @@ export function ResponsiveProgressBar({
 				</div>
 			</div>
 
-			{/* Desktop: Grid layout with arrows */}
+			{/* Desktop: Horizontal scroll with larger arrows */}
 			<div className="hidden lg:block">
 				<div className="mb-4 flex items-center gap-4">
 					<button
 						onClick={handlePrevious}
 						disabled={currentIndex === 0}
-						className="flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
 						aria-label="Previous question"
 					>
 						<ChevronLeft className="h-6 w-6" />
 					</button>
 
-					<div className="flex flex-1 flex-wrap justify-center gap-2">
-						{questions.map((question, index) => {
-							const status = getProgressDotStatus(index, question.questionId)
-							return (
-								<button
-									key={question.questionId}
-									onClick={() => onPageChange(index)}
-									className={cn(
-										'focus:ring-primary/50 h-4 w-4 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none',
-										getProgressDotStyles(status),
-									)}
-									title={`${question.section}: ${question.title}`}
-									aria-label={`Question ${index + 1} - ${status}`}
-								/>
-							)
-						})}
+					<div
+						ref={desktopScrollRef}
+						className="scrollbar-hide flex-1 overflow-x-auto"
+					>
+						<div className="flex min-w-max gap-3 px-4 py-3">
+							{questions.map((question, index) => {
+								const status = getProgressDotStatus(index, question.questionId)
+								return (
+									<button
+										key={question.questionId}
+										onClick={() => onPageChange(index)}
+										className={cn(
+											'focus:ring-primary/50 h-4 w-4 flex-shrink-0 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none',
+											getProgressDotStyles(status),
+										)}
+										title={`${question.section}: ${question.title}`}
+										aria-label={`Question ${index + 1} - ${status}`}
+									/>
+								)
+							})}
+						</div>
 					</div>
 
 					<button
 						onClick={handleNext}
 						disabled={currentIndex === questions.length - 1}
-						className="flex-shrink-0 rounded-full p-1 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+						className="flex-shrink-0 rounded-full p-2 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
 						aria-label="Next question"
 					>
 						<ChevronRight className="h-6 w-6" />
 					</button>
 				</div>
 
-				{/* Desktop progress text - UPDATED with dual percentages */}
+				{/* Desktop progress text */}
 				<div className="text-muted-foreground flex items-center justify-between text-sm">
 					<div>
 						Question {currentIndex + 1} of {questions.length}

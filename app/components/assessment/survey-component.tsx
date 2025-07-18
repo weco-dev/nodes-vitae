@@ -1,33 +1,33 @@
 /**
  * @fileoverview SurveyComponent - Enterprise-grade React wrapper for SurveyJS with real-time persistence
- * 
+ *
  * ==================================================================================
  * ARCHITECTURAL OVERVIEW
  * ==================================================================================
- * 
- * This component is the core UI component for the ESG (Environmental, Social, Governance) 
+ *
+ * This component is the core UI component for the ESG (Environmental, Social, Governance)
  * assessment system. It wraps SurveyJS library to provide:
- * 
+ *
  * 1. Real-time answer persistence to prevent data loss
  * 2. Dynamic help content injection via React portals
  * 3. Progress tracking across multi-page surveys
  * 4. Robust error handling and recovery mechanisms
  * 5. Memory-efficient lifecycle management
- * 
+ *
  * The component is designed to handle complex assessment workflows where users may:
  * - Navigate away and return to continue surveys
  * - Experience network interruptions during completion
  * - Require contextual help for complex questions
  * - Need immediate feedback on input validation
- * 
+ *
  * ==================================================================================
  * TECHNICAL ARCHITECTURE
  * ==================================================================================
- * 
+ *
  * DATA FLOW:
- * Parent Route (take.tsx) 
+ * Parent Route (take.tsx)
  *   ↓ (surveyJson, initialData, callbacks)
- * SurveyComponent 
+ * SurveyComponent
  *   ↓ (creates SurveyJS Model)
  * SurveyJS Library
  *   ↓ (onValueChanged, onPageChanged, onComplete events)
@@ -36,27 +36,27 @@
  * Backend API Actions
  *   ↓ (database persistence)
  * Prisma ORM → PostgreSQL/SQLite
- * 
+ *
  * STATE MANAGEMENT STRATEGY:
  * - Local state: Component initialization and UI state
  * - SurveyJS state: Form data and current page tracking
  * - Server state: Persistent storage via Remix actions
  * - Error state: Isolated error boundaries for each operation
- * 
+ *
  * PERFORMANCE CHARACTERISTICS:
  * - Lazy initialization prevents unnecessary re-renders
  * - Callback stability via useRef eliminates effect dependencies
  * - Accordion injection is on-demand per question
  * - Memory cleanup prevents React root leaks
- * 
+ *
  * ==================================================================================
  * INTEGRATION PATTERNS & USAGE EXAMPLES
  * ==================================================================================
- * 
+ *
  * BASIC USAGE:
  * ```tsx
  * import { SurveyComponent } from '#app/components/assessment/survey-component'
- * 
+ *
  * function AssessmentPage() {
  *   const surveyConfig = {
  *     pages: [{
@@ -77,7 +77,7 @@
  *       }]
  *     }]
  *   }
- * 
+ *
  *   return (
  *     <SurveyComponent
  *       surveyJson={surveyConfig}
@@ -89,7 +89,7 @@
  *   )
  * }
  * ```
- * 
+ *
  * ADVANCED USAGE WITH ERROR HANDLING:
  * ```tsx
  * const handleValueChanged = useCallback(async (name, value, questionMeta) => {
@@ -110,7 +110,7 @@
  *   }
  * }, [fetcher])
  * ```
- * 
+ *
  * SURVEY JSON STRUCTURE REQUIREMENTS:
  * ```json
  * {
@@ -137,11 +137,11 @@
  *   "progressBarType": "pages"
  * }
  * ```
- * 
+ *
  * ==================================================================================
  * COMPONENT LIFECYCLE & INTERNAL MECHANICS
  * ==================================================================================
- * 
+ *
  * INITIALIZATION SEQUENCE:
  * 1. Component mounts → useEffect triggered
  * 2. Survey JSON validation → Check for required structure
@@ -150,83 +150,83 @@
  * 5. Initial data population → survey.data = initialData
  * 6. Accordion setup → onAfterRenderQuestion handler
  * 7. Initialization flag set → setIsInitialized(true)
- * 
+ *
  * EVENT HANDLING FLOW:
- * 
+ *
  * VALUE CHANGE EVENT:
- * User Input → SurveyJS Model → onValueChanged event → Extract metadata → 
+ * User Input → SurveyJS Model → onValueChanged event → Extract metadata →
  * Call parent callback → HTTP request → Database update → UI feedback
- * 
+ *
  * PAGE CHANGE EVENT:
  * Navigation Action → SurveyJS Model → onCurrentPageChanged → Update section state →
  * Call parent callback → Save progress → Update progress indicators
- * 
+ *
  * COMPLETION EVENT:
  * Submit Action → SurveyJS Model → onComplete → Final data extraction →
  * Call parent callback → Mark as completed → Redirect to summary
- * 
+ *
  * ACCORDION INJECTION MECHANISM:
  * Question Render → onAfterRenderQuestion → Check for descriptions →
- * Create DOM container → createRoot → Mount QuestionAccordion → 
+ * Create DOM container → createRoot → Mount QuestionAccordion →
  * Store root reference → Cleanup on unmount
- * 
+ *
  * ==================================================================================
  * ERROR SCENARIOS & RECOVERY STRATEGIES
  * ==================================================================================
- * 
+ *
  * HANDLED ERROR CONDITIONS:
- * 
+ *
  * 1. INVALID SURVEY JSON:
  *    - Detection: Missing pages array or malformed structure
  *    - Recovery: Console error + early return, no survey creation
  *    - User Experience: Shows loading state indefinitely
  *    - Fix: Validate survey JSON in parent component before passing
- * 
+ *
  * 2. CALLBACK EXECUTION FAILURES:
  *    - Detection: try-catch blocks around all event handlers
  *    - Recovery: Error logging + continued operation
  *    - User Experience: Survey continues working, data may not persist
  *    - Fix: Implement retry mechanisms in parent callbacks
- * 
+ *
  * 3. ACCORDION INJECTION FAILURES:
  *    - Detection: DOM manipulation errors in onAfterRenderQuestion
  *    - Recovery: Continue without help content
  *    - User Experience: Questions display without accordion help
  *    - Fix: Validate question.descriptions structure
- * 
+ *
  * 4. MEMORY LEAKS:
  *    - Detection: Unmount cleanup in useEffect return function
  *    - Recovery: Dispose survey model + unmount React roots
  *    - User Experience: No visible impact
  *    - Fix: Ensure all roots are properly tracked and cleaned
- * 
+ *
  * ==================================================================================
  * PERFORMANCE OPTIMIZATION TECHNIQUES
  * ==================================================================================
- * 
+ *
  * CALLBACK STABILIZATION:
  * ```tsx
  * // WRONG - causes survey recreation on every callback change
  * useEffect(() => {
  *   survey.onValueChanged.add(onValueChanged)
  * }, [onValueChanged])
- * 
+ *
  * // CORRECT - stable references prevent effect re-execution
  * const onValueChangedRef = useRef(onValueChanged)
  * onValueChangedRef.current = onValueChanged
- * 
+ *
  * useEffect(() => {
  *   survey.onValueChanged.add((sender, options) => {
  *     onValueChangedRef.current?.(options.name, options.value)
  *   })
  * }, []) // Empty dependency array
  * ```
- * 
+ *
  * ACCORDION ROOT MANAGEMENT:
  * ```tsx
  * // Track all React roots for proper cleanup
  * const accordionRootsRef = useRef<Map<string, Root>>(new Map())
- * 
+ *
  * // Cleanup previous accordion before creating new one
  * const existingRoot = accordionRootsRef.current.get(question.name)
  * if (existingRoot) {
@@ -234,7 +234,7 @@
  *   accordionRootsRef.current.delete(question.name)
  * }
  * ```
- * 
+ *
  * INITIALIZATION GUARDS:
  * ```tsx
  * // Prevent multiple survey creation
@@ -243,32 +243,32 @@
  *   return
  * }
  * ```
- * 
+ *
  * ==================================================================================
  * DEBUGGING & TROUBLESHOOTING GUIDE
  * ==================================================================================
- * 
+ *
  * COMMON ISSUES & SOLUTIONS:
- * 
+ *
  * ISSUE: Survey recreated on every render
  * SYMPTOMS: Console shows "Creating new survey model" repeatedly
  * SOLUTION: Check callback dependencies in parent component
- * 
+ *
  * ISSUE: Accordions not showing
  * SYMPTOMS: Questions display without help content
  * DEBUG: Check question.descriptions array in survey JSON
  * SOLUTION: Ensure descriptions is array of strings, max 3 items
- * 
+ *
  * ISSUE: Answers not saving
  * SYMPTOMS: Data lost on page refresh
  * DEBUG: Check network tab for failed POST requests
  * SOLUTION: Verify parent onValueChanged callback implementation
- * 
+ *
  * ISSUE: Memory leaks
  * SYMPTOMS: Page becomes slow after multiple survey interactions
  * DEBUG: Check React DevTools for leaked components
  * SOLUTION: Verify accordionRootsRef cleanup in useEffect return
- * 
+ *
  * CONSOLE LOGGING GUIDE:
  * - "🎯 SurveyComponent render called" - Component render
  * - "🔄 SurveyComponent useEffect triggered" - Initialization start
@@ -276,38 +276,38 @@
  * - "📝 Survey model created" - Survey successfully created
  * - "📊 Survey value changed" - Answer updated
  * - "🔄 Calling onValueChanged callback" - Parent callback triggered
- * 
+ *
  * ==================================================================================
  * FUTURE ENHANCEMENT OPPORTUNITIES
  * ==================================================================================
- * 
+ *
  * 1. TYPE SAFETY IMPROVEMENTS:
  *    - Replace 'any' types with proper TypeScript interfaces
  *    - Add generic types for survey data structure
  *    - Implement strict typing for question metadata
- * 
+ *
  * 2. ACCESSIBILITY ENHANCEMENTS:
  *    - Add ARIA labels for screen readers
  *    - Implement keyboard navigation for accordions
  *    - Add focus management for dynamic content
- * 
+ *
  * 3. PERFORMANCE OPTIMIZATIONS:
  *    - Implement question-level memoization
  *    - Add virtual scrolling for long surveys
  *    - Optimize DOM manipulation in accordion injection
- * 
+ *
  * 4. ADVANCED FEATURES:
  *    - Offline support with IndexedDB
  *    - Real-time collaboration
  *    - Conditional question logic
  *    - Custom validation rules
- * 
+ *
  * 5. MONITORING & ANALYTICS:
  *    - User interaction tracking
  *    - Performance metrics
  *    - Error reporting integration
  *    - Completion rate analysis
- * 
+ *
  * @version 1.0.0
  * @author ESG Assessment Team
  * @since 2025-07-11
@@ -316,7 +316,7 @@
  * @requires survey-core
  * @requires survey-react-ui
  * @requires #app/components/ui/accordion
- * 
+ *
  * @example
  * // Basic usage in assessment flow
  * <SurveyComponent
@@ -326,7 +326,7 @@
  *   onPageChanged={handleProgressTracking}
  *   onComplete={handleAssessmentCompletion}
  * />
- * 
+ *
  * @see {@link app/routes/assessment+/take.tsx} for usage example
  * @see {@link app/utils/assessment-questions.ts} for survey JSON structure
  * @see {@link app/utils/assessment.server.ts} for backend persistence
@@ -418,12 +418,12 @@ export function SurveyComponent({
 
 		// Configure survey to trigger value changes on text input changes
 		survey.textUpdateMode = 'onTyping'
-		
+
 		// Configure navigation buttons only (no sidebar)
 		survey.showNavigationButtons = true
 
 		surveyRef.current = survey
-		
+
 		// Make survey model globally accessible for finalize button
 		;(window as any).surveyModel = survey
 
@@ -497,18 +497,24 @@ export function SurveyComponent({
 			try {
 				const question = options.question
 
-				// Add debug logging
-				console.log('Question descriptions:', question.descriptions)
+				console.log(
+					'🔍 Question rendering:',
+					question.name,
+					'descriptions:',
+					question.descriptions,
+				)
 
 				if (
 					question &&
 					question.descriptions &&
 					Array.isArray(question.descriptions) &&
-					question.descriptions.length > 0 && // Check for non-empty array
-					question.descriptions?.every?.(
-						(desc: unknown) => typeof desc === 'string' && desc.trim() !== '', // Check for non-empty strings
+					question.descriptions.length > 0 &&
+					question.descriptions.every(
+						(desc: unknown) => typeof desc === 'string' && desc.trim() !== '',
 					)
 				) {
+					console.log('✅ Valid descriptions found, injecting...')
+
 					// Clean up previous accordion if exists
 					const existingRoot = accordionRootsRef.current.get(question.name)
 					if (existingRoot) {
@@ -538,9 +544,14 @@ export function SurveyComponent({
 							/>,
 						)
 					}
+				} else {
+					console.log(
+						'❌ Invalid or empty descriptions:',
+						question.descriptions,
+					)
 				}
 			} catch (error) {
-				console.error('Error in accordion injection:', error)
+				console.error('❌ Error in accordion injection:', error)
 			}
 		})
 
