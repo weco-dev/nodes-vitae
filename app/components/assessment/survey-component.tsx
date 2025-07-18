@@ -337,6 +337,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import ReactMarkdown from 'react-markdown'
 import { Model } from 'survey-core'
 import { Survey } from 'survey-react-ui'
 import {
@@ -361,12 +362,117 @@ interface SurveyComponentProps {
 function QuestionAccordion({ descriptions }: { descriptions: string[] }) {
 	const limitedDescriptions = descriptions.slice(0, 3)
 
+	// Helper function to extract title from description
+	const extractTitle = (description: string, index: number): string => {
+		// Remove markdown formatting for title extraction
+		const cleanDescription = description.replace(/[*_`#>]/g, '').trim()
+
+		// Try to find a natural break point for the title
+		const sentences = cleanDescription.split(/[.!?]+/)
+		if (
+			sentences.length > 1 &&
+			sentences[0] &&
+			sentences[0].length > 0 &&
+			sentences[0].length < 80
+		) {
+			return sentences[0].trim()
+		}
+
+		// If no good sentence break, take first 50 characters
+		if (cleanDescription.length > 50) {
+			return cleanDescription.substring(0, 50).trim() + '...'
+		}
+
+		// If still too short, use the full clean description
+		if (cleanDescription.length > 0) {
+			return cleanDescription
+		}
+
+		// Fallback to generic title
+		return `More Info ${index + 1}`
+	}
+
 	return (
-		<Accordion type="single" collapsible className="mt-2 mb-4 w-full">
+		<Accordion
+			type="single"
+			collapsible
+			className="mt-2 mb-4 w-full rounded-md border"
+		>
 			{limitedDescriptions.map((desc, index) => (
-				<AccordionItem key={index} value={`item-${index}`}>
-					<AccordionTrigger>More Info {index + 1}</AccordionTrigger>
-					<AccordionContent>{desc}</AccordionContent>
+				<AccordionItem
+					key={index}
+					value={`item-${index}`}
+					className="border-b last:border-b-0"
+				>
+					<AccordionTrigger className="hover:bg-muted/50 px-4 py-3 text-left">
+						<div className="w-full text-left text-sm font-medium break-words whitespace-normal">
+							<ReactMarkdown
+								components={{
+									p: ({ children }) => <span>{children}</span>,
+									strong: ({ children }) => (
+										<strong className="font-semibold">{children}</strong>
+									),
+									em: ({ children }) => <em className="italic">{children}</em>,
+									code: ({ children }) => (
+										<code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">
+											{children}
+										</code>
+									),
+								}}
+							>
+								{extractTitle(desc, index)}
+							</ReactMarkdown>
+						</div>
+					</AccordionTrigger>
+					<AccordionContent className="px-4 pt-0 pb-3">
+						<div className="text-muted-foreground overflow-wrap-anywhere text-sm break-words whitespace-normal">
+							<ReactMarkdown
+								components={{
+									// Custom components for better styling
+									p: ({ children }) => (
+										<p className="mb-2 break-words whitespace-normal last:mb-0">
+											{children}
+										</p>
+									),
+									ul: ({ children }) => (
+										<ul className="mb-2 ml-4 list-disc break-words last:mb-0">
+											{children}
+										</ul>
+									),
+									ol: ({ children }) => (
+										<ol className="mb-2 ml-4 list-decimal break-words last:mb-0">
+											{children}
+										</ol>
+									),
+									li: ({ children }) => (
+										<li className="mb-1 break-words whitespace-normal">
+											{children}
+										</li>
+									),
+									strong: ({ children }) => (
+										<strong className="font-semibold break-words">
+											{children}
+										</strong>
+									),
+									em: ({ children }) => (
+										<em className="break-words italic">{children}</em>
+									),
+									code: ({ children }) => (
+										<code className="bg-muted rounded px-1 py-0.5 font-mono text-xs break-words">
+											{children}
+										</code>
+									),
+									blockquote: ({ children }) => (
+										<blockquote className="border-muted border-l-4 pl-4 break-words italic">
+											{children}
+										</blockquote>
+									),
+								}}
+							>
+								{desc}
+							</ReactMarkdown>
+						</div>
+					</AccordionContent>
 				</AccordionItem>
 			))}
 		</Accordion>
@@ -517,19 +623,31 @@ export function SurveyComponent({
 			try {
 				const question = options.question
 
+				// Get descriptions from the original survey JSON
+				let descriptions: string[] = []
+
+				// Find the question in the original survey JSON
+				for (const page of surveyJson.pages) {
+					for (const element of page.elements) {
+						if (element.name === question.name) {
+							descriptions = element.descriptions || []
+							break
+						}
+					}
+				}
+
 				console.log(
 					'🔍 Question rendering:',
 					question.name,
 					'descriptions:',
-					question.descriptions,
+					descriptions,
 				)
 
 				if (
-					question &&
-					question.descriptions &&
-					Array.isArray(question.descriptions) &&
-					question.descriptions.length > 0 &&
-					question.descriptions.every(
+					descriptions &&
+					Array.isArray(descriptions) &&
+					descriptions.length > 0 &&
+					descriptions.every(
 						(desc: unknown) => typeof desc === 'string' && desc.trim() !== '',
 					)
 				) {
@@ -559,16 +677,24 @@ export function SurveyComponent({
 						const root = createRoot(accordionContainer)
 						accordionRootsRef.current.set(question.name, root)
 						root.render(
-							<QuestionAccordion
-								descriptions={question.descriptions as string[]}
-							/>,
+							<QuestionAccordion descriptions={descriptions as string[]} />,
 						)
+						console.log('✅ Accordion injected successfully')
+					} else {
+						console.log('❌ Could not find question title element')
+						// Alternative: append to the main element
+						if (options.htmlElement) {
+							options.htmlElement.appendChild(accordionContainer)
+							const root = createRoot(accordionContainer)
+							accordionRootsRef.current.set(question.name, root)
+							root.render(
+								<QuestionAccordion descriptions={descriptions as string[]} />,
+							)
+							console.log('✅ Accordion appended to question element')
+						}
 					}
 				} else {
-					console.log(
-						'❌ Invalid or empty descriptions:',
-						question.descriptions,
-					)
+					console.log('❌ Invalid or empty descriptions:', descriptions)
 				}
 			} catch (error) {
 				console.error('❌ Error in accordion injection:', error)
