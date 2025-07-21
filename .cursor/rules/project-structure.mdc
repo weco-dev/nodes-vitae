@@ -24,9 +24,10 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 ├── app/                     # Main application code
 │   ├── components/          # React components
 │   │   ├── assessment/      # ESG Assessment components
+│   │   │   ├── assessment-navigation.tsx    # Unified navigation and progress component
 │   │   │   ├── survey-component.tsx         # SurveyJS wrapper with real-time persistence
-│   │   │   ├── responsive-progress-bar.tsx  # Adaptive progress navigation
-│   │   │   └── section-display.tsx          # Section indicators and navigation
+│   │   │   ├── responsive-progress-bar.tsx  # Enhanced adaptive progress navigation
+│   │   │   └── section-display.tsx          # Legacy section navigation (being phased out)
 │   │   ├── ui/             # UI component library (Radix-based)
 │   │   │   ├── icons/      # Icon sprite and types
 │   │   │   ├── progress.tsx # Progress bar component
@@ -53,6 +54,8 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   │   ├── tooltip.tsx # Tooltips
 │   │   │   └── utils.tsx   # UI utilities
 │   │   ├── hooks/          # Custom React hooks
+│   │   │   ├── use-assessment-navigation.ts # Navigation state management
+│   │   │   └── use-mobile.ts                # Mobile breakpoint detection
 │   │   ├── client-only.tsx # SSR compatibility wrapper
 │   │   ├── app-sidebar.tsx # Navigation sidebar with collapsible sections
 │   │   ├── nav-main.tsx    # Dynamic assessment navigation
@@ -476,8 +479,11 @@ export function ErrorBoundary() {
 - **Real-time auto-save** for assessment progress  
 - **Database indexing** on userId and status for optimal queries
 - **Memory management** with proper cleanup of survey models
-- **Responsive progress navigation** with mobile/desktop adaptations
+- **Enhanced responsive navigation** with unified component architecture ⭐ **IMPROVED**
 - **Lazy loading** of assessment components for better performance
+- **Navigation state optimization** with abort controllers and conflict prevention ⭐ **NEW**
+- **Auto-scroll performance** with intersection observers and smooth scrolling ⭐ **NEW**
+- **Touch interaction optimization** for mobile assessment completion ⭐ **NEW**
 
 ## ESG Assessment Feature
 
@@ -487,18 +493,38 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 ### Key Components
 
 #### Frontend Components
+- **AssessmentNavigation** (`app/components/assessment/assessment-navigation.tsx`) ⭐ **NEW**
+  - Unified navigation combining progress bar and section selection
+  - Mobile-optimized horizontal scrollable view with touch controls
+  - Desktop grid layout with visual progress indicators
+  - Auto-scroll functionality for current question visibility
+  - Integrated section dropdown with smart positioning
 - **SurveyComponent** (`app/components/assessment/survey-component.tsx`)
   - SurveyJS wrapper with custom accordion integration
   - Real-time auto-save functionality
   - Error handling and recovery
-- **ResponsiveProgressBar** (`app/components/assessment/responsive-progress-bar.tsx`)
-  - Adaptive progress navigation for mobile/desktop
-  - Current issue: Desktop shows multiple rows instead of single row
+  - Enterprise-grade React wrapper with memory management
+- **ResponsiveProgressBar** (`app/components/assessment/responsive-progress-bar.tsx`) ⭐ **ENHANCED**
+  - Enhanced adaptive progress navigation
+  - Dual progress metrics (mandatory vs. total questions)
+  - Interactive progress dots with color-coded completion states
+  - Accessibility support with ARIA labels
 - **SectionDisplay** (`app/components/assessment/section-display.tsx`)
-  - Progress indicator and section navigation
-  - Current issue: Missing section selector dropdown
+  - Legacy section navigation component (being phased out)
+  - Basic section dropdown functionality
 - **ClientOnly** (`app/components/client-only.tsx`)
   - SSR compatibility wrapper for hydration-sensitive components
+
+#### Custom Hooks
+- **useAssessmentNavigation** (`app/components/hooks/use-assessment-navigation.ts`) ⭐ **NEW**
+  - Centralized navigation state management
+  - Prevents navigation conflicts during async operations
+  - Abort controller pattern for canceling pending operations
+  - Proper cleanup on component unmount
+  - Ping pong effect prevention during rapid user interactions
+- **useMobile** (`app/components/hooks/use-mobile.ts`)
+  - Mobile breakpoint detection utility
+  - Responsive design support
 
 #### Backend Services
 - **assessment.server.ts** (`app/utils/assessment.server.ts`)
@@ -512,7 +538,7 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 
 #### Route Structure
 - **assessment+/** - Assessment workflow
-  - `take.tsx` - Main assessment interface with current UI issues
+  - `take.tsx` - Main assessment interface with enhanced navigation system ⭐ **ENHANCED**
   - `review.tsx` - Assessment review interface
   - `complete.tsx` - Success confirmation
 - **dashboard+/assessment** - Assessment management
@@ -529,18 +555,23 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 - **Real-time auto-save** during assessment completion
 - **Progress persistence** across sessions with `currentPageIndex`
 - **Comprehensive error handling** and recovery mechanisms
-- **Responsive design** with mobile/desktop adaptations
-- **Section-based navigation** with progress indicators
+- **Enhanced responsive design** with mobile-first approach ⭐ **IMPROVED**
+- **Unified navigation system** with progress indicators and section selection ⭐ **NEW**
 - **Accordion help system** with multiple descriptions per question
+- **State management** with conflict prevention and abort controllers ⭐ **NEW**
+- **Auto-scroll functionality** for current question visibility ⭐ **NEW**
+- **Touch-optimized controls** for mobile devices ⭐ **NEW**
+- **Dual progress metrics** (mandatory vs. total questions) ⭐ **NEW**
 
-### Current Issues (July 18, 2025)
-Based on `ai/activities/2025.07.18/activity-02/01.issue-statement.md`:
+### Recent Improvements (July 21, 2025)
+Based on recent commits (24114fb - 1f0e143):
 
-1. **Desktop Progress Bar**: Shows 3 rows of dots instead of single row
-2. **Section Navigation**: Missing section selector dropdown
-3. **Scroll Behavior**: Selected question not always visible in progress bar
-4. **Question Navigation**: Doesn't navigate to last selected question
-5. **Description Display**: Accordion descriptions not showing properly
+1. **AssessmentNavigation Component**: NEW unified navigation system combining progress bar and section selection
+2. **Enhanced State Management**: NEW `useAssessmentNavigation` hook prevents navigation conflicts
+3. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
+4. **Better Progress Tracking**: Dual progress metrics (mandatory vs. total questions)
+5. **Auto-scroll Functionality**: Current question visibility in progress navigation
+6. **Ping Pong Effect Prevention**: Sophisticated navigation state management with abort controllers
 
 ### Dependencies Added
 ```json
