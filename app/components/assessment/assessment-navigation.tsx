@@ -233,7 +233,14 @@ export function AssessmentNavigation({
 						<div
 							ref={mobileScrollRef}
 							className="flex flex-1 gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
-							style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+							style={{
+								scrollbarWidth: 'none',
+								msOverflowStyle: 'none',
+								maskImage:
+									'linear-gradient(to right, transparent 0px, black 8px, black calc(100% - 8px), transparent 100%)',
+								WebkitMaskImage:
+									'linear-gradient(to right, transparent 0px, black 8px, black calc(100% - 8px), transparent 100%)',
+							}}
 						>
 							{questions.map((question, index) => {
 								const isAnswered = answeredQuestions.has(question.questionId)
@@ -314,7 +321,14 @@ export function AssessmentNavigation({
 					<div
 						ref={desktopScrollRef}
 						className="flex flex-1 gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
-						style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+						style={{
+							scrollbarWidth: 'none',
+							msOverflowStyle: 'none',
+							maskImage:
+								'linear-gradient(to right, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%)',
+							WebkitMaskImage:
+								'linear-gradient(to right, transparent 0px, black 12px, black calc(100% - 12px), transparent 100%)',
+						}}
 					>
 						{questions.map((question, index) => {
 							const isAnswered = answeredQuestions.has(question.questionId)
