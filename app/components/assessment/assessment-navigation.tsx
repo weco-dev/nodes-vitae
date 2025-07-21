@@ -281,9 +281,9 @@ export function AssessmentNavigation({
 							onClick={onNavigatePrevious}
 							disabled={!canNavigatePrevious || isNavigating}
 							className={cn(
-								'shrink-0 rounded-full border p-1.5 sm:p-2 transition-colors touch-manipulation',
+								'shrink-0 touch-manipulation rounded-full border p-1.5 transition-colors sm:p-2',
 								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
-								'active:scale-95 active:bg-muted/80',
+								'active:bg-muted/80 active:scale-95',
 								(!canNavigatePrevious || isNavigating) &&
 									'cursor-not-allowed opacity-50',
 							)}
@@ -295,7 +295,7 @@ export function AssessmentNavigation({
 						{/* Progress Dots */}
 						<div
 							ref={mobileScrollRef}
-							className="flex flex-1 gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 [&::-webkit-scrollbar]:hidden"
+							className="flex flex-1 gap-1.5 overflow-x-auto px-1 py-2 sm:gap-2 [&::-webkit-scrollbar]:hidden"
 							style={{
 								scrollbarWidth: 'none',
 								msOverflowStyle: 'none',
@@ -315,7 +315,7 @@ export function AssessmentNavigation({
 										onClick={() => !isNavigating && onPageChange(index)}
 										disabled={isNavigating}
 										className={cn(
-											'h-5 w-5 sm:h-6 sm:w-6 shrink-0 rounded-full transition-all duration-200 touch-manipulation',
+											'h-5 w-5 shrink-0 touch-manipulation rounded-full transition-all duration-200 sm:h-6 sm:w-6',
 											'hover:scale-110 focus:scale-110 focus:outline-none active:scale-95',
 											'focus:ring-primary/50 focus:ring-2 focus:ring-offset-1',
 											'border-2',
@@ -349,9 +349,9 @@ export function AssessmentNavigation({
 							onClick={onNavigateNext}
 							disabled={!canNavigateNext || isNavigating}
 							className={cn(
-								'shrink-0 rounded-full border p-1.5 sm:p-2 transition-colors touch-manipulation',
+								'shrink-0 touch-manipulation rounded-full border p-1.5 transition-colors sm:p-2',
 								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
-								'active:scale-95 active:bg-muted/80',
+								'active:bg-muted/80 active:scale-95',
 								(!canNavigateNext || isNavigating) &&
 									'cursor-not-allowed opacity-50',
 							)}
@@ -453,16 +453,17 @@ export function AssessmentNavigation({
 			{/* Bottom Progress Bar */}
 			<div className="mt-3 sm:mt-4">
 				{/* Mobile: Stacked Progress Info */}
-				<div className="sm:hidden space-y-2">
+				<div className="space-y-2 sm:hidden">
 					<div className="flex items-center justify-between text-xs">
 						<span className="font-medium">
-							{Math.round((answeredQuestions.size / totalQuestions) * 100)}% completed
+							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
+							completed
 						</span>
 						<span className="text-muted-foreground">
 							{currentQuestion} / {totalQuestions}
 						</span>
 					</div>
-					<div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+					<div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
 						<div
 							className="h-full rounded-full bg-green-500 transition-all duration-300 ease-in-out"
 							style={{
@@ -484,7 +485,7 @@ export function AssessmentNavigation({
 							Question {currentQuestion} / {totalQuestions}
 						</div>
 					</div>
-					<div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+					<div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
 						<div
 							className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-in-out"
 							style={{
