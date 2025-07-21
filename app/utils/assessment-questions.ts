@@ -393,7 +393,7 @@ export const assessmentQuestions: QuestionConfig[] = [
 		name: 'question_S1.3.1',
 		type: 'radiogroup' as const,
 		title:
-			"Il corpus documentale, [così come definito al punto precedente], contiente la trattazione di almeno le seguenti tematiche in materia di diritti umani e gestione responsabile della manodopera: Nel corpus documentale l'impresa ha incluso una politica e previsto delle procedure per prevenire il lavoro forzato e per assicurarsi che lavoratrici e lavoratori siano reclutati e assunti in modo etico?",
+			"Nel corpus documentale l'impresa ha incluso una politica e previsto delle procedure per prevenire il lavoro forzato e per assicurarsi che lavoratrici e lavoratori siano reclutati e assunti in modo etico?",
 		descriptions: [],
 		section: 'SEZIONE I | Impegnarsi',
 		choices: [
