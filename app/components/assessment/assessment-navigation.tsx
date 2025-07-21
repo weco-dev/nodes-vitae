@@ -1,0 +1,398 @@
+/**
+ * @fileoverview AssessmentNavigation - Unified navigation and progress component
+ *
+ * ==================================================================================
+ * COMPONENT OVERVIEW
+ * ==================================================================================
+ *
+ * This component combines section navigation and progress tracking into a unified
+ * interface for ESG assessments. It integrates the functionality of both
+ * SectionDisplay and ResponsiveProgressBar components.
+ *
+ * KEY FEATURES:
+ * 1. Section dropdown navigation with progress indicators
+ * 2. Interactive progress dots with left/right navigation arrows
+ * 3. Responsive design for mobile and desktop
+ * 4. Consistent styling with the app's design system
+ * 5. Auto-scroll functionality for current question visibility
+ *
+ * @version 1.0.0
+ * @author ESG Assessment Team
+ * @since 2025-07-21
+ * @requires react
+ * @requires lucide-react
+ * @requires #app/components/ui/button
+ * @requires #app/components/ui/icon
+ * @requires #app/components/ui/select
+ */
+
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useRef, useEffect, useCallback } from 'react'
+import { Button } from '#app/components/ui/button'
+import { Icon } from '#app/components/ui/icon'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '#app/components/ui/select'
+import { cn } from '#app/utils/misc.tsx'
+
+interface AssessmentNavigationProps {
+	// Section navigation props
+	section: string
+	currentQuestion: number
+	totalQuestions: number
+	questions: Array<{
+		questionId: string
+		section: string
+		title: string
+		isRequired: boolean
+	}>
+	onSectionChange: (sectionIndex: number) => Promise<void> | void
+
+	// Progress bar props
+	currentIndex: number
+	answeredQuestions: Set<string>
+	onPageChange: (index: number) => void
+
+	// Navigation props
+	isNavigating?: boolean
+	onNavigatePrevious?: () => Promise<void> | void
+	onNavigateNext?: () => Promise<void> | void
+	canNavigatePrevious?: boolean
+	canNavigateNext?: boolean
+
+	// Styling
+	className?: string
+}
+
+export function AssessmentNavigation({
+	section,
+	currentQuestion,
+	totalQuestions,
+	questions,
+	onSectionChange,
+	currentIndex,
+	answeredQuestions,
+	onPageChange,
+	isNavigating = false,
+	onNavigatePrevious,
+	onNavigateNext,
+	canNavigatePrevious = false,
+	canNavigateNext = false,
+	className,
+}: AssessmentNavigationProps) {
+	// Refs for scroll containers
+	const mobileScrollRef = useRef<HTMLDivElement>(null)
+	const desktopScrollRef = useRef<HTMLDivElement>(null)
+
+	// Extract unique sections and their first question indices
+	const sections = questions.reduce(
+		(acc, question, index) => {
+			if (!acc.find((s) => s.section === question.section)) {
+				acc.push({
+					section: question.section,
+					firstQuestionIndex: index,
+					label: question.section || 'Unknown Section',
+				})
+			}
+			return acc
+		},
+		[] as Array<{
+			section: string
+			firstQuestionIndex: number
+			label: string
+		}>,
+	)
+
+	// Handle section navigation
+	const handleSectionChange = async (sectionName: string) => {
+		if (!isNavigating) {
+			const selectedSection = sections.find((s) => s.section === sectionName)
+			if (selectedSection) {
+				try {
+					await onSectionChange(selectedSection.firstQuestionIndex)
+				} catch (error) {
+					console.error('Section navigation failed:', error)
+				}
+			}
+		}
+	}
+
+	// Auto-scroll to current dot
+	const scrollToCurrentDot = useCallback(() => {
+		if (isNavigating) return // Don't scroll during navigation
+
+		const scrollContainer =
+			window.innerWidth >= 1024
+				? desktopScrollRef.current
+				: mobileScrollRef.current
+
+		if (scrollContainer) {
+			const dots = scrollContainer.querySelectorAll(
+				'button[aria-label*="Question"]',
+			)
+			const currentDot = dots[currentIndex] as HTMLElement
+			if (currentDot) {
+				currentDot.scrollIntoView({
+					behavior: 'smooth',
+					block: 'nearest',
+					inline: 'center',
+				})
+			}
+		}
+	}, [currentIndex, isNavigating])
+
+	// Auto-scroll when current index changes
+	useEffect(() => {
+		const timer = setTimeout(scrollToCurrentDot, 100)
+		return () => clearTimeout(timer)
+	}, [scrollToCurrentDot])
+
+	return (
+		<div className={cn('bg-muted mb-6 rounded-lg p-4', className)}>
+			{/* Section Navigation Header */}
+			<div className="mb-4">
+				<div className="flex items-center gap-2">
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={onNavigatePrevious}
+						disabled={!canNavigatePrevious || isNavigating}
+						className={cn(
+							'shrink-0',
+							isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+						)}
+					>
+						<Icon name="arrow-left" className="h-4 w-4" />
+						<span className="hidden sm:inline">Previous</span>
+					</Button>
+					<Select
+						value={section}
+						onValueChange={handleSectionChange}
+						disabled={isNavigating}
+					>
+						<SelectTrigger
+							className={cn(
+								'flex-1',
+								isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+							)}
+						>
+							<SelectValue placeholder="Select section..." />
+						</SelectTrigger>
+						<SelectContent>
+							{sections.map((sectionItem) => (
+								<SelectItem
+									key={sectionItem.section}
+									value={sectionItem.section}
+								>
+									{sectionItem.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={onNavigateNext}
+						disabled={!canNavigateNext || isNavigating}
+						className={cn(
+							'shrink-0',
+							isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+						)}
+					>
+						<span className="hidden sm:inline">Next</span>
+						<Icon name="arrow-right" className="h-4 w-4" />
+					</Button>
+				</div>
+			</div>
+
+			{/* Progress Bar Section */}
+			<div>
+				{/* Mobile Layout */}
+				<div className="lg:hidden">
+					<div className="flex items-center gap-4">
+						{/* Left Arrow */}
+						<button
+							onClick={onNavigatePrevious}
+							disabled={!canNavigatePrevious || isNavigating}
+							className={cn(
+								'shrink-0 rounded-full border p-2 transition-colors',
+								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+								(!canNavigatePrevious || isNavigating) &&
+									'cursor-not-allowed opacity-50',
+							)}
+							aria-label="Previous question"
+						>
+							<ChevronLeft className="h-5 w-5" />
+						</button>
+
+						{/* Progress Dots */}
+						<div
+							ref={mobileScrollRef}
+							className="flex flex-1 gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
+							style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+						>
+							{questions.map((question, index) => {
+								const isAnswered = answeredQuestions.has(question.questionId)
+								const isCurrent = index === currentIndex
+
+								return (
+									<button
+										key={question.questionId}
+										onClick={() => !isNavigating && onPageChange(index)}
+										disabled={isNavigating}
+										className={cn(
+											'h-6 w-6 shrink-0 rounded-full transition-all duration-200',
+											'hover:scale-110 focus:scale-110 focus:outline-none',
+											'focus:ring-primary/50 focus:ring-2 focus:ring-offset-2',
+											'border-2',
+											isNavigating && 'cursor-not-allowed opacity-50',
+											{
+												// Answered question
+												'border-green-500 bg-green-500 hover:bg-green-600':
+													isAnswered && !isCurrent,
+												// Current answered question
+												'ring-primary/30 border-green-500 bg-green-500 ring-4':
+													isAnswered && isCurrent,
+												// Current unanswered question
+												'border-primary ring-primary/30 bg-transparent ring-4':
+													!isAnswered && isCurrent,
+												// Unanswered question
+												'border-gray-300 bg-gray-300 hover:bg-gray-400':
+													!isAnswered && !isCurrent,
+											},
+										)}
+										aria-label={`Question ${index + 1}: ${question.title} - ${
+											isAnswered ? 'Answered' : 'Not answered'
+										}${isCurrent ? ' (Current)' : ''}`}
+										title={`${question.section}: ${question.title}`}
+									></button>
+								)
+							})}
+						</div>
+
+						{/* Right Arrow */}
+						<button
+							onClick={onNavigateNext}
+							disabled={!canNavigateNext || isNavigating}
+							className={cn(
+								'shrink-0 rounded-full border p-2 transition-colors',
+								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+								(!canNavigateNext || isNavigating) &&
+									'cursor-not-allowed opacity-50',
+							)}
+							aria-label="Next question"
+						>
+							<ChevronRight className="h-5 w-5" />
+						</button>
+					</div>
+				</div>
+			</div>
+
+			{/* Desktop Layout */}
+			<div className="hidden lg:block">
+				<div className="flex items-center gap-4">
+					{/* Left Arrow */}
+					<button
+						onClick={onNavigatePrevious}
+						disabled={!canNavigatePrevious || isNavigating}
+						className={cn(
+							'shrink-0 rounded-full border p-2 transition-colors',
+							'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+							(!canNavigatePrevious || isNavigating) &&
+								'cursor-not-allowed opacity-50',
+						)}
+						aria-label="Previous question"
+					>
+						<ChevronLeft className="h-6 w-6" />
+					</button>
+
+					{/* Progress Dots */}
+					<div
+						ref={desktopScrollRef}
+						className="flex flex-1 gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
+						style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+					>
+						{questions.map((question, index) => {
+							const isAnswered = answeredQuestions.has(question.questionId)
+							const isCurrent = index === currentIndex
+
+							return (
+								<button
+									key={question.questionId}
+									onClick={() => !isNavigating && onPageChange(index)}
+									disabled={isNavigating}
+									className={cn(
+										'h-6 w-6 shrink-0 rounded-full transition-all duration-200',
+										'hover:scale-110 focus:scale-110 focus:outline-none',
+										'focus:ring-primary/50 focus:ring-2 focus:ring-offset-2',
+										'border-2',
+										isNavigating && 'cursor-not-allowed opacity-50',
+										{
+											// Answered question
+											'border-green-500 bg-green-500 hover:bg-green-600':
+												isAnswered && !isCurrent,
+											// Current answered question
+											'ring-primary/30 border-green-500 bg-green-500 ring-4':
+												isAnswered && isCurrent,
+											// Current unanswered question
+											'border-primary ring-primary/30 bg-transparent ring-4':
+												!isAnswered && isCurrent,
+											// Unanswered question
+											'border-gray-300 bg-gray-300 hover:bg-gray-400':
+												!isAnswered && !isCurrent,
+										},
+									)}
+									aria-label={`Question ${index + 1}: ${question.title} - ${
+										isAnswered ? 'Answered' : 'Not answered'
+									}${isCurrent ? ' (Current)' : ''}`}
+									title={`${question.section}: ${question.title}`}
+								></button>
+							)
+						})}
+					</div>
+
+					{/* Right Arrow */}
+					<button
+						onClick={onNavigateNext}
+						disabled={!canNavigateNext || isNavigating}
+						className={cn(
+							'shrink-0 rounded-full border p-2 transition-colors',
+							'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+							(!canNavigateNext || isNavigating) &&
+								'cursor-not-allowed opacity-50',
+						)}
+						aria-label="Next question"
+					>
+						<ChevronRight className="h-6 w-6" />
+					</button>
+				</div>
+			</div>
+
+			{/* Bottom Progress Bar */}
+			<div className="mt-4">
+				<div className="mb-2 flex items-center justify-between">
+					<div className="text-sm font-medium">
+						Progress{' '}
+						{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
+						completed
+					</div>
+					<div className="text-sm font-medium">
+						Question {currentQuestion} / {totalQuestions}
+					</div>
+				</div>
+				<div className="h-2 w-full rounded-full bg-gray-200">
+					<div
+						className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-in-out"
+						style={{
+							width: `${Math.round((answeredQuestions.size / totalQuestions) * 100)}%`,
+						}}
+					></div>
+				</div>
+			</div>
+		</div>
+	)
+}

@@ -229,8 +229,7 @@ e, resume, complete)
 import { AlertCircle } from 'lucide-react'
 import { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react'
 import { redirect, useFetcher, useLoaderData } from 'react-router'
-import { ResponsiveProgressBar } from '#app/components/assessment/responsive-progress-bar.tsx'
-import { SectionDisplay } from '#app/components/assessment/section-display.tsx'
+import { AssessmentNavigation } from '#app/components/assessment/assessment-navigation.tsx'
 import { ClientOnly } from '#app/components/client-only.tsx'
 import { useAssessmentNavigation } from '#app/components/hooks/use-assessment-navigation.ts'
 import { Alert, AlertDescription } from '#app/components/ui/alert.tsx'
@@ -718,26 +717,20 @@ export default function AssessmentTake() {
 				</Alert>
 			)}
 
-			<ResponsiveProgressBar
-				questions={questions}
-				currentIndex={assessmentNavigation.currentPageIndex}
-				answeredQuestions={answeredQuestions}
-				onPageChange={assessmentNavigation.navigate}
-				className="mb-6"
-				isNavigating={assessmentNavigation.isNavigating}
-				onNavigatePrevious={assessmentNavigation.navigatePrevious}
-				onNavigateNext={assessmentNavigation.navigateNext}
-				canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
-				canNavigateNext={assessmentNavigation.canNavigateNext}
-			/>
-
-			<SectionDisplay
+			<AssessmentNavigation
 				section={currentSection}
 				currentQuestion={assessmentNavigation.currentPageIndex + 1}
 				totalQuestions={questions.length}
 				questions={questions}
 				onSectionChange={assessmentNavigation.navigate}
+				currentIndex={assessmentNavigation.currentPageIndex}
+				answeredQuestions={answeredQuestions}
+				onPageChange={assessmentNavigation.navigate}
 				isNavigating={assessmentNavigation.isNavigating}
+				onNavigatePrevious={assessmentNavigation.navigatePrevious}
+				onNavigateNext={assessmentNavigation.navigateNext}
+				canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
+				canNavigateNext={assessmentNavigation.canNavigateNext}
 			/>
 
 			<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">

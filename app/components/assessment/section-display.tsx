@@ -23,6 +23,8 @@
  * @requires #app/components/ui/select
  */
 
+import { Button } from '#app/components/ui/button'
+import { Icon } from '#app/components/ui/icon'
 import {
 	Select,
 	SelectContent,
@@ -44,6 +46,10 @@ interface SectionDisplayProps {
 	}>
 	onSectionChange: (sectionIndex: number) => Promise<void> | void
 	isNavigating?: boolean
+	onNavigatePrevious?: () => Promise<void> | void
+	onNavigateNext?: () => Promise<void> | void
+	canNavigatePrevious?: boolean
+	canNavigateNext?: boolean
 }
 
 export function SectionDisplay({
@@ -53,6 +59,10 @@ export function SectionDisplay({
 	questions,
 	onSectionChange,
 	isNavigating = false,
+	onNavigatePrevious,
+	onNavigateNext,
+	canNavigatePrevious = false,
+	canNavigateNext = false,
 }: SectionDisplayProps) {
 	// Extract unique sections and their first question indices
 	const sections = questions.reduce(
@@ -93,21 +103,58 @@ export function SectionDisplay({
 					<p className="text-muted-foreground mb-2 text-sm">
 						Navigate to Section
 					</p>
-					<Select value={section} onValueChange={handleSectionChange} disabled={isNavigating}>
-						<SelectTrigger className={cn('w-full', isNavigating && 'animate-pulse cursor-not-allowed opacity-50')}>
-							<SelectValue placeholder="Select section..." />
-						</SelectTrigger>
-						<SelectContent>
-							{sections.map((sectionItem) => (
-								<SelectItem
-									key={sectionItem.section}
-									value={sectionItem.section}
-								>
-									{sectionItem.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="flex items-center gap-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onNavigatePrevious}
+							disabled={!canNavigatePrevious || isNavigating}
+							className={cn(
+								'shrink-0',
+								isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+							)}
+						>
+							<Icon name="arrow-left" className="h-4 w-4" />
+							Previous
+						</Button>
+						<Select
+							value={section}
+							onValueChange={handleSectionChange}
+							disabled={isNavigating}
+						>
+							<SelectTrigger
+								className={cn(
+									'flex-1',
+									isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+								)}
+							>
+								<SelectValue placeholder="Select section..." />
+							</SelectTrigger>
+							<SelectContent>
+								{sections.map((sectionItem) => (
+									<SelectItem
+										key={sectionItem.section}
+										value={sectionItem.section}
+									>
+										{sectionItem.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onNavigateNext}
+							disabled={!canNavigateNext || isNavigating}
+							className={cn(
+								'shrink-0',
+								isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+							)}
+						>
+							Next
+							<Icon name="arrow-right" className="h-4 w-4" />
+						</Button>
+					</div>
 				</div>
 				<div className="text-right">
 					<p className="text-muted-foreground text-sm">Question</p>
