@@ -673,7 +673,9 @@ export default function AssessmentTake() {
 							<span className="sr-only">Back to Dashboard</span>
 						</Link>
 					</Button>
-					<h1 className="truncate text-base font-semibold">ESG Assessment</h1>
+					<h1 className="truncate text-base font-semibold">
+						Human Rights Due Diligence...
+					</h1>
 					<Button
 						onClick={handleFinalize}
 						size="sm"
@@ -694,7 +696,9 @@ export default function AssessmentTake() {
 					</Button>
 					<Separator orientation="vertical" className="h-6" />
 					<div className="min-w-0 flex-1">
-						<h1 className="truncate text-lg font-semibold">ESG Assessment</h1>
+						<h1 className="truncate text-lg font-semibold">
+							Human Rights Due Diligence Assessment
+						</h1>
 						{missingQuestions.length > 0 && (
 							<p className="text-muted-foreground truncate text-xs">
 								{missingQuestions.length} mandatory questions remaining
