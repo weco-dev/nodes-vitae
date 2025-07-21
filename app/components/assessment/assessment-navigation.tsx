@@ -152,10 +152,72 @@ export function AssessmentNavigation({
 	}, [scrollToCurrentDot])
 
 	return (
-		<div className={cn('bg-muted mb-6 rounded-lg p-4', className)}>
+		<div
+			className={cn(
+				'bg-muted/50 mb-4 rounded-lg p-3 sm:mb-6 sm:p-4',
+				className,
+			)}
+		>
 			{/* Section Navigation Header */}
-			<div className="mb-4">
-				<div className="flex items-center gap-2">
+			<div className="mb-3 sm:mb-4">
+				{/* Mobile: Stacked Layout */}
+				<div className="space-y-2 sm:hidden">
+					<div className="flex items-center gap-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onNavigatePrevious}
+							disabled={!canNavigatePrevious || isNavigating}
+							className={cn(
+								'h-8 w-8 shrink-0 p-0',
+								isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+							)}
+						>
+							<Icon name="arrow-left" className="h-3 w-3" />
+							<span className="sr-only">Previous</span>
+						</Button>
+						<Select
+							value={section}
+							onValueChange={handleSectionChange}
+							disabled={isNavigating}
+						>
+							<SelectTrigger
+								className={cn(
+									'h-8 flex-1 text-sm',
+									isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+								)}
+							>
+								<SelectValue placeholder="Select section..." />
+							</SelectTrigger>
+							<SelectContent>
+								{sections.map((sectionItem) => (
+									<SelectItem
+										key={sectionItem.section}
+										value={sectionItem.section}
+									>
+										{sectionItem.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onNavigateNext}
+							disabled={!canNavigateNext || isNavigating}
+							className={cn(
+								'h-8 w-8 shrink-0 p-0',
+								isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
+							)}
+						>
+							<Icon name="arrow-right" className="h-3 w-3" />
+							<span className="sr-only">Next</span>
+						</Button>
+					</div>
+				</div>
+
+				{/* Desktop/Tablet: Horizontal Layout */}
+				<div className="hidden items-center gap-2 sm:flex">
 					<Button
 						variant="outline"
 						size="sm"
@@ -167,7 +229,7 @@ export function AssessmentNavigation({
 						)}
 					>
 						<Icon name="arrow-left" className="h-4 w-4" />
-						<span className="hidden sm:inline">Previous</span>
+						<span className="hidden md:inline">Previous</span>
 					</Button>
 					<Select
 						value={section}
@@ -203,7 +265,7 @@ export function AssessmentNavigation({
 							isNavigating && 'animate-pulse cursor-not-allowed opacity-50',
 						)}
 					>
-						<span className="hidden sm:inline">Next</span>
+						<span className="hidden md:inline">Next</span>
 						<Icon name="arrow-right" className="h-4 w-4" />
 					</Button>
 				</div>
@@ -213,26 +275,27 @@ export function AssessmentNavigation({
 			<div>
 				{/* Mobile Layout */}
 				<div className="lg:hidden">
-					<div className="flex items-center gap-4">
+					<div className="flex items-center gap-2 sm:gap-3">
 						{/* Left Arrow */}
 						<button
 							onClick={onNavigatePrevious}
 							disabled={!canNavigatePrevious || isNavigating}
 							className={cn(
-								'shrink-0 rounded-full border p-2 transition-colors',
+								'shrink-0 rounded-full border p-1.5 sm:p-2 transition-colors touch-manipulation',
 								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+								'active:scale-95 active:bg-muted/80',
 								(!canNavigatePrevious || isNavigating) &&
 									'cursor-not-allowed opacity-50',
 							)}
 							aria-label="Previous question"
 						>
-							<ChevronLeft className="h-5 w-5" />
+							<ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 
 						{/* Progress Dots */}
 						<div
 							ref={mobileScrollRef}
-							className="flex flex-1 gap-2 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden"
+							className="flex flex-1 gap-1.5 sm:gap-2 overflow-x-auto py-2 px-1 [&::-webkit-scrollbar]:hidden"
 							style={{
 								scrollbarWidth: 'none',
 								msOverflowStyle: 'none',
@@ -252,9 +315,9 @@ export function AssessmentNavigation({
 										onClick={() => !isNavigating && onPageChange(index)}
 										disabled={isNavigating}
 										className={cn(
-											'h-6 w-6 shrink-0 rounded-full transition-all duration-200',
-											'hover:scale-110 focus:scale-110 focus:outline-none',
-											'focus:ring-primary/50 focus:ring-2 focus:ring-offset-2',
+											'h-5 w-5 sm:h-6 sm:w-6 shrink-0 rounded-full transition-all duration-200 touch-manipulation',
+											'hover:scale-110 focus:scale-110 focus:outline-none active:scale-95',
+											'focus:ring-primary/50 focus:ring-2 focus:ring-offset-1',
 											'border-2',
 											isNavigating && 'cursor-not-allowed opacity-50',
 											{
@@ -262,10 +325,10 @@ export function AssessmentNavigation({
 												'border-green-500 bg-green-500 hover:bg-green-600':
 													isAnswered && !isCurrent,
 												// Current answered question
-												'ring-primary/30 border-green-500 bg-green-500 ring-4':
+												'ring-primary/30 border-green-500 bg-green-500 ring-2 sm:ring-4':
 													isAnswered && isCurrent,
 												// Current unanswered question
-												'border-primary ring-primary/30 bg-transparent ring-4':
+												'border-primary ring-primary/30 bg-transparent ring-2 sm:ring-4':
 													!isAnswered && isCurrent,
 												// Unanswered question
 												'border-gray-300 bg-gray-300 hover:bg-gray-400':
@@ -286,14 +349,15 @@ export function AssessmentNavigation({
 							onClick={onNavigateNext}
 							disabled={!canNavigateNext || isNavigating}
 							className={cn(
-								'shrink-0 rounded-full border p-2 transition-colors',
+								'shrink-0 rounded-full border p-1.5 sm:p-2 transition-colors touch-manipulation',
 								'hover:bg-muted focus:ring-primary/50 focus:ring-2 focus:outline-none',
+								'active:scale-95 active:bg-muted/80',
 								(!canNavigateNext || isNavigating) &&
 									'cursor-not-allowed opacity-50',
 							)}
 							aria-label="Next question"
 						>
-							<ChevronRight className="h-5 w-5" />
+							<ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 					</div>
 				</div>
@@ -387,24 +451,47 @@ export function AssessmentNavigation({
 			</div>
 
 			{/* Bottom Progress Bar */}
-			<div className="mt-4">
-				<div className="mb-2 flex items-center justify-between">
-					<div className="text-sm font-medium">
-						Progress{' '}
-						{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
-						completed
+			<div className="mt-3 sm:mt-4">
+				{/* Mobile: Stacked Progress Info */}
+				<div className="sm:hidden space-y-2">
+					<div className="flex items-center justify-between text-xs">
+						<span className="font-medium">
+							{Math.round((answeredQuestions.size / totalQuestions) * 100)}% completed
+						</span>
+						<span className="text-muted-foreground">
+							{currentQuestion} / {totalQuestions}
+						</span>
 					</div>
-					<div className="text-sm font-medium">
-						Question {currentQuestion} / {totalQuestions}
+					<div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
+						<div
+							className="h-full rounded-full bg-green-500 transition-all duration-300 ease-in-out"
+							style={{
+								width: `${Math.round((answeredQuestions.size / totalQuestions) * 100)}%`,
+							}}
+						></div>
 					</div>
 				</div>
-				<div className="h-2 w-full rounded-full bg-gray-200">
-					<div
-						className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-in-out"
-						style={{
-							width: `${Math.round((answeredQuestions.size / totalQuestions) * 100)}%`,
-						}}
-					></div>
+
+				{/* Desktop: Horizontal Progress Info */}
+				<div className="hidden sm:block">
+					<div className="mb-2 flex items-center justify-between">
+						<div className="text-sm font-medium">
+							Progress{' '}
+							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
+							completed
+						</div>
+						<div className="text-sm font-medium">
+							Question {currentQuestion} / {totalQuestions}
+						</div>
+					</div>
+					<div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+						<div
+							className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-in-out"
+							style={{
+								width: `${Math.round((answeredQuestions.size / totalQuestions) * 100)}%`,
+							}}
+						></div>
+					</div>
 				</div>
 			</div>
 		</div>

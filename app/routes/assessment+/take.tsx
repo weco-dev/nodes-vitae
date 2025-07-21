@@ -663,107 +663,135 @@ export default function AssessmentTake() {
 
 	return (
 		<div className="bg-background min-h-screen">
-			{/* Simplified Header */}
-			<header className="border-b">
-				<div className="flex h-16 items-center gap-4 px-4 lg:px-6">
-					<Button variant="ghost" size="sm" asChild>
+			{/* Mobile-First Header */}
+			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b backdrop-blur">
+				{/* Mobile Layout */}
+				<div className="flex h-14 items-center justify-between px-4 sm:hidden">
+					<Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0">
+						<Link to="/dashboard">
+							<Icon name="arrow-left" className="h-4 w-4" />
+							<span className="sr-only">Back to Dashboard</span>
+						</Link>
+					</Button>
+					<h1 className="truncate text-base font-semibold">ESG Assessment</h1>
+					<Button
+						onClick={handleFinalize}
+						size="sm"
+						className="h-8 px-3 text-xs"
+					>
+						Finalize
+					</Button>
+				</div>
+
+				{/* Desktop/Tablet Layout */}
+				<div className="hidden h-16 items-center gap-4 px-4 sm:flex lg:px-6">
+					<Button variant="ghost" size="sm" asChild className="shrink-0">
 						<Link to="/dashboard">
 							<Icon name="arrow-left" className="mr-2 h-4 w-4" />
-							Dashboard
+							<span className="hidden md:inline">Dashboard</span>
+							<span className="md:hidden">Back</span>
 						</Link>
 					</Button>
 					<Separator orientation="vertical" className="h-6" />
-					<h1 className="text-lg font-semibold">ESG Assessment</h1>
-					<div className="ml-auto">
-						<Button onClick={handleFinalize} size="sm">
-							Finalize Assessment
-						</Button>
+					<div className="min-w-0 flex-1">
+						<h1 className="truncate text-lg font-semibold">ESG Assessment</h1>
+						{missingQuestions.length > 0 && (
+							<p className="text-muted-foreground truncate text-xs">
+								{missingQuestions.length} mandatory questions remaining
+							</p>
+						)}
 					</div>
+					<Button onClick={handleFinalize} size="sm" className="shrink-0">
+						<Icon name="check" className="mr-2 h-4 w-4" />
+						Finalize Assessment
+					</Button>
 				</div>
 			</header>
 
-			<div className="p-4 py-4 lg:px-6 lg:py-8">
-				<div className="w-full lg:mx-auto lg:max-w-4xl">
-					{showValidation && missingQuestions.length > 0 && (
-						<Alert className="mb-6">
-							<AlertCircle className="h-4 w-4" />
-							<AlertDescription>
-								<p className="mb-2 font-medium">
-									Please complete the following mandatory questions:
-								</p>
-								<ul className="list-inside list-disc space-y-1">
-									{missingQuestions.map((q) => (
-										<li key={q.questionId}>
-											<button
-												className="text-primary underline"
-												onClick={() => {
-													// Navigate to question
-													const surveyModel = (window as any).surveyModel
-													const question = surveyModel?.getQuestionByName(
-														q.name,
-													)
-													if (question) {
-														isProgrammaticNavigation.current = true
-														surveyModel.currentPage = question.page
-														setShowValidation(false)
-														setTimeout(() => {
-															isProgrammaticNavigation.current = false
-														}, 100)
-													}
-												}}
-											>
-												{q.section}: {q.title}
-											</button>
-										</li>
-									))}
-								</ul>
-							</AlertDescription>
-						</Alert>
-					)}
+			<main className="flex-1">
+				<div className="p-3 sm:p-4 lg:p-6">
+					<div className="mx-auto w-full max-w-5xl">
+						{showValidation && missingQuestions.length > 0 && (
+							<Alert className="mb-6">
+								<AlertCircle className="h-4 w-4" />
+								<AlertDescription>
+									<p className="mb-2 font-medium">
+										Please complete the following mandatory questions:
+									</p>
+									<ul className="list-inside list-disc space-y-1">
+										{missingQuestions.map((q) => (
+											<li key={q.questionId}>
+												<button
+													className="text-primary underline"
+													onClick={() => {
+														// Navigate to question
+														const surveyModel = (window as any).surveyModel
+														const question = surveyModel?.getQuestionByName(
+															q.name,
+														)
+														if (question) {
+															isProgrammaticNavigation.current = true
+															surveyModel.currentPage = question.page
+															setShowValidation(false)
+															setTimeout(() => {
+																isProgrammaticNavigation.current = false
+															}, 100)
+														}
+													}}
+												>
+													{q.section}: {q.title}
+												</button>
+											</li>
+										))}
+									</ul>
+								</AlertDescription>
+							</Alert>
+						)}
 
-					<AssessmentNavigation
-						section={currentSection}
-						currentQuestion={assessmentNavigation.currentPageIndex + 1}
-						totalQuestions={questions.length}
-						questions={questions}
-						onSectionChange={assessmentNavigation.navigate}
-						currentIndex={assessmentNavigation.currentPageIndex}
-						answeredQuestions={answeredQuestions}
-						onPageChange={assessmentNavigation.navigate}
-						isNavigating={assessmentNavigation.isNavigating}
-						onNavigatePrevious={assessmentNavigation.navigatePrevious}
-						onNavigateNext={assessmentNavigation.navigateNext}
-						canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
-						canNavigateNext={assessmentNavigation.canNavigateNext}
-					/>
+						<AssessmentNavigation
+							section={currentSection}
+							currentQuestion={assessmentNavigation.currentPageIndex + 1}
+							totalQuestions={questions.length}
+							questions={questions}
+							onSectionChange={assessmentNavigation.navigate}
+							currentIndex={assessmentNavigation.currentPageIndex}
+							answeredQuestions={answeredQuestions}
+							onPageChange={assessmentNavigation.navigate}
+							isNavigating={assessmentNavigation.isNavigating}
+							onNavigatePrevious={assessmentNavigation.navigatePrevious}
+							onNavigateNext={assessmentNavigation.navigateNext}
+							canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
+							canNavigateNext={assessmentNavigation.canNavigateNext}
+						/>
 
-					<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">
-						<ClientOnly
-							fallback={
-								<div className="space-y-4">
-									<Skeleton className="h-8 w-3/4" />
-									<Skeleton className="h-32 w-full" />
-									<Skeleton className="h-10 w-32" />
-								</div>
-							}
-						>
-							{() => (
-								<Suspense fallback={<div>Loading survey...</div>}>
-									<SurveyComponent
-										surveyJson={surveyJson}
-										initialData={assessment.surveyData}
-										initialPageIndex={assessment.currentPageIndex}
-										onValueChanged={handleValueChanged}
-										onPageChanged={handlePageChanged}
-										onComplete={handleComplete}
-										isNavigating={assessmentNavigation.isNavigating}
-									/>
-								</Suspense>
-							)}
-						</ClientOnly>
+						<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">
+							<ClientOnly
+								fallback={
+									<div className="space-y-4">
+										<Skeleton className="h-8 w-3/4" />
+										<Skeleton className="h-32 w-full" />
+										<Skeleton className="h-10 w-32" />
+									</div>
+								}
+							>
+								{() => (
+									<Suspense fallback={<div>Loading survey...</div>}>
+										<SurveyComponent
+											surveyJson={surveyJson}
+											initialData={assessment.surveyData}
+											initialPageIndex={assessment.currentPageIndex}
+											onValueChanged={handleValueChanged}
+											onPageChanged={handlePageChanged}
+											onComplete={handleComplete}
+											isNavigating={assessmentNavigation.isNavigating}
+										/>
+									</Suspense>
+								)}
+							</ClientOnly>
+						</div>
 					</div>
 				</div>
-			</div>
+			</main>
 		</div>
 	)
 }
