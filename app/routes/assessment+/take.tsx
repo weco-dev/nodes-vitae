@@ -228,12 +228,14 @@ e, resume, complete)
 
 import { AlertCircle } from 'lucide-react'
 import { lazy, Suspense, useState, useCallback, useEffect, useRef } from 'react'
-import { redirect, useFetcher, useLoaderData } from 'react-router'
+import { redirect, useFetcher, useLoaderData, Link } from 'react-router'
 import { AssessmentNavigation } from '#app/components/assessment/assessment-navigation.tsx'
 import { ClientOnly } from '#app/components/client-only.tsx'
 import { useAssessmentNavigation } from '#app/components/hooks/use-assessment-navigation.ts'
 import { Alert, AlertDescription } from '#app/components/ui/alert.tsx'
 import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { Separator } from '#app/components/ui/separator.tsx'
 import { Skeleton } from '#app/components/ui/skeleton.tsx'
 import {
 	assessmentQuestions,
@@ -660,103 +662,107 @@ export default function AssessmentTake() {
 	}, [fetcher.data])
 
 	return (
-		<div className="p-4 py-4 lg:px-0 lg:py-8">
-			<div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-				<div className="flex-1">
-					<h1 className="mb-2 text-2xl font-bold lg:text-3xl">
-						ESG Assessment
-					</h1>
-					<p className="text-muted-foreground">
-						Evaluate your ESG practices and performance.
-					</p>
-				</div>
-				<div className="flex flex-col items-start gap-2 lg:items-end lg:text-right">
-					<Button onClick={handleFinalize} size="default">
-						Finalize Assessment
+		<div className="bg-background min-h-screen">
+			{/* Simplified Header */}
+			<header className="border-b">
+				<div className="flex h-16 items-center gap-4 px-4 lg:px-6">
+					<Button variant="ghost" size="sm" asChild>
+						<Link to="/dashboard">
+							<Icon name="arrow-left" className="mr-2 h-4 w-4" />
+							Dashboard
+						</Link>
 					</Button>
-					{missingQuestions.length > 0 && (
-						<p className="text-muted-foreground text-sm">
-							{missingQuestions.length} mandatory questions remaining
-						</p>
-					)}
+					<Separator orientation="vertical" className="h-6" />
+					<h1 className="text-lg font-semibold">ESG Assessment</h1>
+					<div className="ml-auto">
+						<Button onClick={handleFinalize} size="sm">
+							Finalize Assessment
+						</Button>
+					</div>
 				</div>
-			</div>
+			</header>
 
-			{showValidation && missingQuestions.length > 0 && (
-				<Alert className="mb-6">
-					<AlertCircle className="h-4 w-4" />
-					<AlertDescription>
-						<p className="mb-2 font-medium">
-							Please complete the following mandatory questions:
-						</p>
-						<ul className="list-inside list-disc space-y-1">
-							{missingQuestions.map((q) => (
-								<li key={q.questionId}>
-									<button
-										className="text-primary underline"
-										onClick={() => {
-											// Navigate to question
-											const surveyModel = (window as any).surveyModel
-											const question = surveyModel?.getQuestionByName(q.name)
-											if (question) {
-												isProgrammaticNavigation.current = true
-												surveyModel.currentPage = question.page
-												setShowValidation(false)
-												setTimeout(() => {
-													isProgrammaticNavigation.current = false
-												}, 100)
-											}
-										}}
-									>
-										{q.section}: {q.title}
-									</button>
-								</li>
-							))}
-						</ul>
-					</AlertDescription>
-				</Alert>
-			)}
-
-			<AssessmentNavigation
-				section={currentSection}
-				currentQuestion={assessmentNavigation.currentPageIndex + 1}
-				totalQuestions={questions.length}
-				questions={questions}
-				onSectionChange={assessmentNavigation.navigate}
-				currentIndex={assessmentNavigation.currentPageIndex}
-				answeredQuestions={answeredQuestions}
-				onPageChange={assessmentNavigation.navigate}
-				isNavigating={assessmentNavigation.isNavigating}
-				onNavigatePrevious={assessmentNavigation.navigatePrevious}
-				onNavigateNext={assessmentNavigation.navigateNext}
-				canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
-				canNavigateNext={assessmentNavigation.canNavigateNext}
-			/>
-
-			<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">
-				<ClientOnly
-					fallback={
-						<div className="space-y-4">
-							<Skeleton className="h-8 w-3/4" />
-							<Skeleton className="h-32 w-full" />
-							<Skeleton className="h-10 w-32" />
-						</div>
-					}
-				>
-					{() => (
-						<Suspense fallback={<div>Loading survey...</div>}>
-							<SurveyComponent
-								surveyJson={surveyJson}
-								initialData={assessment.surveyData}
-								initialPageIndex={assessment.currentPageIndex}
-								onValueChanged={handleValueChanged}
-								onPageChanged={handlePageChanged}
-								onComplete={handleComplete}
-								isNavigating={assessmentNavigation.isNavigating}
-							/>
-						</Suspense>
+			<div className="p-4 py-4 lg:px-6 lg:py-8">
+				<div className="w-full lg:mx-auto lg:max-w-4xl">
+					{showValidation && missingQuestions.length > 0 && (
+						<Alert className="mb-6">
+							<AlertCircle className="h-4 w-4" />
+							<AlertDescription>
+								<p className="mb-2 font-medium">
+									Please complete the following mandatory questions:
+								</p>
+								<ul className="list-inside list-disc space-y-1">
+									{missingQuestions.map((q) => (
+										<li key={q.questionId}>
+											<button
+												className="text-primary underline"
+												onClick={() => {
+													// Navigate to question
+													const surveyModel = (window as any).surveyModel
+													const question = surveyModel?.getQuestionByName(
+														q.name,
+													)
+													if (question) {
+														isProgrammaticNavigation.current = true
+														surveyModel.currentPage = question.page
+														setShowValidation(false)
+														setTimeout(() => {
+															isProgrammaticNavigation.current = false
+														}, 100)
+													}
+												}}
+											>
+												{q.section}: {q.title}
+											</button>
+										</li>
+									))}
+								</ul>
+							</AlertDescription>
+						</Alert>
 					)}
-				</ClientOnly>
+
+					<AssessmentNavigation
+						section={currentSection}
+						currentQuestion={assessmentNavigation.currentPageIndex + 1}
+						totalQuestions={questions.length}
+						questions={questions}
+						onSectionChange={assessmentNavigation.navigate}
+						currentIndex={assessmentNavigation.currentPageIndex}
+						answeredQuestions={answeredQuestions}
+						onPageChange={assessmentNavigation.navigate}
+						isNavigating={assessmentNavigation.isNavigating}
+						onNavigatePrevious={assessmentNavigation.navigatePrevious}
+						onNavigateNext={assessmentNavigation.navigateNext}
+						canNavigatePrevious={assessmentNavigation.canNavigatePrevious}
+						canNavigateNext={assessmentNavigation.canNavigateNext}
+					/>
+
+					<div className="bg-card mx-auto max-w-6xl rounded-lg p-2 shadow-sm lg:p-6">
+						<ClientOnly
+							fallback={
+								<div className="space-y-4">
+									<Skeleton className="h-8 w-3/4" />
+									<Skeleton className="h-32 w-full" />
+									<Skeleton className="h-10 w-32" />
+								</div>
+							}
+						>
+							{() => (
+								<Suspense fallback={<div>Loading survey...</div>}>
+									<SurveyComponent
+										surveyJson={surveyJson}
+										initialData={assessment.surveyData}
+										initialPageIndex={assessment.currentPageIndex}
+										onValueChanged={handleValueChanged}
+										onPageChanged={handlePageChanged}
+										onComplete={handleComplete}
+										isNavigating={assessmentNavigation.isNavigating}
+									/>
+								</Suspense>
+							)}
+						</ClientOnly>
+					</div>
+				</div>
 			</div>
 		</div>
 	)
