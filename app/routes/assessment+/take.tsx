@@ -478,7 +478,17 @@ export default function AssessmentTake() {
 	const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
 		new Set(),
 	)
+	const [loadingTimeout, setLoadingTimeout] = useState(false)
 	const isProgrammaticNavigation = useRef(false)
+
+	// Handle loading timeout
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setLoadingTimeout(true)
+		}, 10000) // 10 second timeout
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	// Initialize answered questions from assessment data
 	useEffect(() => {
@@ -779,7 +789,59 @@ export default function AssessmentTake() {
 								}
 							>
 								{() => (
-									<Suspense fallback={<div>Loading survey...</div>}>
+									<Suspense fallback={
+									loadingTimeout ? (
+										<div className="space-y-4 p-6">
+											<Alert>
+												<AlertCircle className="h-4 w-4" />
+												<AlertDescription>
+													<p className="font-medium mb-2">Assessment is taking longer than usual to load</p>
+													<p className="text-sm text-muted-foreground mb-3">
+														This may be due to network conditions or React Router v7 performance issues. 
+														The assessment will continue loading in the background.
+													</p>
+													<Button 
+														variant="outline" 
+														size="sm"
+														onClick={() => window.location.reload()}
+													>
+														Refresh Page
+													</Button>
+												</AlertDescription>
+											</Alert>
+											<div className="space-y-2">
+												<Skeleton className="h-8 w-3/4" />
+												<Skeleton className="h-4 w-1/2" />
+											</div>
+										</div>
+									) : (
+										<div className="space-y-4 p-6">
+											<div className="space-y-2">
+												<Skeleton className="h-8 w-3/4" />
+												<Skeleton className="h-4 w-1/2" />
+											</div>
+											<div className="space-y-3">
+												<Skeleton className="h-32 w-full" />
+												<div className="flex space-x-2">
+													<Skeleton className="h-4 w-4 rounded-full" />
+													<Skeleton className="h-4 w-24" />
+												</div>
+												<div className="flex space-x-2">
+													<Skeleton className="h-4 w-4 rounded-full" />
+													<Skeleton className="h-4 w-32" />
+												</div>
+												<div className="flex space-x-2">
+													<Skeleton className="h-4 w-4 rounded-full" />
+													<Skeleton className="h-4 w-28" />
+												</div>
+											</div>
+											<div className="flex justify-between pt-4">
+												<Skeleton className="h-10 w-20" />
+												<Skeleton className="h-10 w-20" />
+											</div>
+										</div>
+									)
+								}>
 										<SurveyComponent
 											surveyJson={surveyJson}
 											initialData={assessment.surveyData}
