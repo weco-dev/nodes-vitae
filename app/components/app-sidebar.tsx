@@ -34,7 +34,6 @@ import {
 } from '@tabler/icons-react'
 import * as React from 'react'
 
-import { NavDocuments } from '#app/components/nav-documents'
 import { NavMain } from '#app/components/nav-main'
 import { NavSettings } from '#app/components/nav-settings'
 import { NavUser } from '#app/components/nav-user'
@@ -56,34 +55,9 @@ const data = {
 	},
 	navMain: [
 		{
-			title: 'Dashboard',
-			url: '#',
-			icon: IconDashboard,
-		},
-		{
 			title: 'ESG Assessment',
 			url: '/dashboard/assessments',
 			icon: IconClipboardCheck,
-		},
-		{
-			title: 'Lifecycle',
-			url: '#',
-			icon: IconListDetails,
-		},
-		{
-			title: 'Analytics',
-			url: '#',
-			icon: IconChartBar,
-		},
-		{
-			title: 'Projects',
-			url: '#',
-			icon: IconFolder,
-		},
-		{
-			title: 'Team',
-			url: '#',
-			icon: IconUsers,
 		},
 	],
 	navClouds: [
@@ -199,7 +173,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
-				<NavDocuments items={data.documents} />
 				<NavSettings items={data.navSettings} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>

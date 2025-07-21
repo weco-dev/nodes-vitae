@@ -1,18 +1,14 @@
-import { ChartAreaInteractive } from '#app/components/chart-area-interactive.tsx'
-import { DataTable } from '#app/components/data-table.tsx'
-import { SectionCards } from '#app/components/section-cards.tsx'
-import data from './data.json'
-
 export default function DashboardRoute() {
 	return (
 		<div className="flex flex-1 flex-col">
 			<div className="@container/main flex flex-1 flex-col gap-2">
-				<div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-					<SectionCards />
-					<div className="px-4 lg:px-6">
-						<ChartAreaInteractive />
+				<div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 py-6 px-4 lg:px-6">
+					<div className="text-center">
+						<h1 className="text-2xl font-semibold mb-2">Welcome to your Dashboard</h1>
+						<p className="text-muted-foreground">
+							Your ESG assessment workspace
+						</p>
 					</div>
-					<DataTable data={data} />
 				</div>
 			</div>
 		</div>

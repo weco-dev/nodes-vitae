@@ -1,9 +1,9 @@
 /**
  * @fileoverview Excel to TypeScript Assessment Questions Import Script
- * 
+ *
  * This script imports ESG assessment questions from Excel files and generates
  * TypeScript configuration files for use in the assessment system.
- * 
+ *
  * KEY FEATURES:
  * - Reads Excel files with standardized column structure
  * - Validates question data and checks for duplicates
@@ -12,13 +12,13 @@
  * - Applies default choices for radiogroup questions
  * - Preserves existing file documentation and helper functions
  * - Generates clean TypeScript code with proper escaping
- * 
+ *
  * USAGE:
  * npm run import-questions
- * 
+ *
  * INPUT: data/uploads/assessment-questions.xlsx
  * OUTPUT: app/utils/assessment-questions.ts
- * 
+ *
  * @version 1.0.0
  * @since 2025-07-18
  */
@@ -30,9 +30,9 @@ import XLSX from 'xlsx'
 // Constants
 const DEFAULT_RADIOGROUP_CHOICES = [
 	'Non adottato',
-	'parzialmente adottato',
-	'totalmente adottato',
-	'non applicabile',
+	'Parzialmente adottato',
+	'Totalmente adottato',
+	'Non applicabile',
 ]
 const EXCEL_FILE_PATH = path.join(
 	process.cwd(),
