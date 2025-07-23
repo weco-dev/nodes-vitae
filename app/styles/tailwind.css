@@ -256,3 +256,145 @@
 	-ms-overflow-style: none; /* IE and Edge */
 	scrollbar-width: none; /* Firefox */
 }
+
+/* ========================================================================== */
+/* ESG Assessment Question Elements Styling */
+/* ========================================================================== */
+
+/* Question title with markdown support */
+.question-title-markdown {
+	@apply text-foreground max-w-none;
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply leading-relaxed;
+}
+
+/* SurveyJS default title wrapping */
+.sv_q_title,
+.sv-question__title,
+.sv_q_title_text {
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal !important;
+	@apply leading-relaxed !important;
+	white-space: normal !important;
+	word-break: break-word !important;
+	overflow-wrap: anywhere !important;
+	max-width: 100% !important;
+}
+
+/* Markdown heading styles within question titles */
+.question-title-markdown h1,
+.question-title-markdown h2,
+.question-title-markdown h3,
+.question-title-markdown h4,
+.question-title-markdown h5,
+.question-title-markdown h6 {
+	@apply text-foreground mt-0 mb-2 leading-tight font-semibold;
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+}
+
+.question-title-markdown h1 {
+	@apply text-lg;
+}
+.question-title-markdown h2 {
+	@apply text-base;
+}
+.question-title-markdown h3 {
+	@apply text-sm;
+}
+.question-title-markdown h4,
+.question-title-markdown h5,
+.question-title-markdown h6 {
+	@apply text-sm;
+}
+
+/* Markdown paragraph styles */
+.question-title-markdown p {
+	@apply text-foreground mb-2 leading-relaxed last:mb-0;
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+}
+
+/* Markdown emphasis styles */
+.question-title-markdown strong {
+	@apply text-foreground font-semibold;
+	@apply break-words whitespace-normal;
+}
+
+.question-title-markdown em {
+	@apply text-foreground italic;
+	@apply break-words whitespace-normal;
+}
+
+/* Markdown code styles */
+.question-title-markdown code {
+	@apply bg-muted rounded px-1 py-0.5 font-mono text-xs;
+	@apply text-foreground border-border/30 border;
+}
+
+/* Markdown list styles */
+.question-title-markdown ul,
+.question-title-markdown ol {
+	@apply mb-2 ml-4 last:mb-0;
+	@apply break-words whitespace-normal;
+}
+
+.question-title-markdown ul {
+	@apply list-disc;
+}
+
+.question-title-markdown ol {
+	@apply list-decimal;
+}
+
+.question-title-markdown li {
+	@apply mb-1 leading-relaxed;
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+}
+
+/* Markdown blockquote styles */
+.question-title-markdown blockquote {
+	@apply border-muted text-muted-foreground border-l-4 pl-4 italic;
+	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+}
+
+/* Markdown link styles */
+.question-title-markdown a {
+	@apply text-primary break-words underline;
+	@apply hover:text-primary/80 transition-colors;
+}
+
+/* Enhanced accordion wrapper styling */
+.question-accordion-wrapper {
+	@apply w-full;
+}
+
+.dark .question-title-markdown code {
+	@apply bg-muted/50 border-border/20;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+	.question-title-markdown code {
+		@apply border-foreground/30 border-2;
+	}
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.question-title-markdown a {
+		@apply transition-none;
+	}
+}
+
+/* Print styles */
+@media print {
+	.question-field-name {
+		@apply border-gray-300 bg-gray-100 text-black;
+	}
+
+	.question-title-markdown {
+		@apply text-black;
+	}
+
+	.question-title-markdown code {
+		@apply border-gray-300 bg-gray-100;
+	}
+}

@@ -4,11 +4,33 @@
  * This script imports ESG assessment questions from Excel files and generates
  * TypeScript configuration files for use in the assessment system.
  *
+ * ==================================================================================
+ * RECENT ENHANCEMENTS (v2.0 - July 2025)
+ * ==================================================================================
+ *
+ * ### Updated Column Structure:
+ * - **Replaced**: Generic `descriptions` column with delimiter splitting
+ * - **With**: Three dedicated columns for semantic content:
+ *   - `help` - Contextual guidance content
+ *   - `reporting` - Compliance and regulatory information
+ *   - `docs` - Additional documentation and resources
+ *
+ * ### Enhanced Processing:
+ * - **Markdown Preservation**: Maintains newlines and formatting in text fields
+ * - **Safe Escaping**: Proper TypeScript string escaping with markdown support
+ * - **Validation**: Column mapping validation with clear error reporting
+ * - **Type Safety**: Full TypeScript interface compliance checking
+ *
+ * ### Excel Integration:
+ * - **Column Constants**: Centralized column name definitions for validation
+ * - **Flexible Mapping**: Robust column header mapping system
+ * - **Error Handling**: Comprehensive validation with detailed error messages
+ *
  * KEY FEATURES:
  * - Reads Excel files with standardized column structure
  * - Validates question data and checks for duplicates
  * - Converts Italian boolean values ("VERO"/"FALSO") to JavaScript booleans
- * - Processes descriptions with delimiter splitting
+ * - Preserves markdown formatting in content fields
  * - Applies default choices for radiogroup questions
  * - Preserves existing file documentation and helper functions
  * - Generates clean TypeScript code with proper escaping
@@ -42,8 +64,22 @@ const OUTPUT_FILE_PATH = path.join(
 	process.cwd(),
 	'app/utils/assessment-questions.ts',
 )
-const DESCRIPTION_DELIMITER = '-----'
-const MAX_DESCRIPTIONS = 3
+
+// Excel column name constants for validation and mapping
+const EXCEL_COLUMNS = {
+	QUESTION_ID: 'questionId',
+	NAME: 'name',
+	TYPE: 'type',
+	TITLE: 'title',
+	HELP: 'help',
+	REPORTING: 'reporting',
+	DOCS: 'docs',
+	SECTION: 'section',
+	CHOICES: 'choices',
+	IS_REQUIRED: 'isRequired',
+	SCORE: 'score',
+	IGNORE: 'ignore',
+} as const
 
 // Interfaces
 interface ExcelRow {
@@ -55,7 +91,9 @@ interface ImportedQuestion {
 	name: string
 	type: 'radiogroup' | 'text'
 	title: string
-	descriptions: string[]
+	help?: string
+	reporting?: string
+	docs?: string
 	section: string
 	choices: string[]
 	isRequired: boolean
@@ -74,18 +112,13 @@ function sanitizeString(str: string): string {
 		.trim()
 }
 
-function processDescriptions(descriptionsText: string): string[] {
-	if (!descriptionsText || descriptionsText.trim() === '') {
-		return []
-	}
-
-	const parts = descriptionsText
-		.split(DESCRIPTION_DELIMITER)
-		.map((desc) => sanitizeString(desc.trim()))
-		.filter((desc) => desc.length > 0)
-		.slice(0, MAX_DESCRIPTIONS)
-
-	return parts
+function sanitizeMarkdownString(str: string): string {
+	if (!str) return ''
+	return str
+		.replace(/\r\n/g, '\n') // Convert Windows line endings to Unix
+		.replace(/\r/g, '\n') // Convert Mac line endings to Unix
+		.replace(/\t/g, ' ') // Convert tabs to spaces
+		.trim()
 }
 
 function processChoices(type: string, choicesText: string): string[] {
@@ -105,18 +138,19 @@ function processChoices(type: string, choicesText: string): string[] {
 }
 
 function mapExcelRowToStandardRow(row: ExcelRow): any {
-	// The Excel file now has the correct column names, so we can use them directly
 	return {
-		questionId: sanitizeString(row.questionId),
-		name: sanitizeString(row.name),
-		type: row.type,
-		title: sanitizeString(row.title),
-		descriptions: sanitizeString(row.descriptions || ''),
-		section: sanitizeString(row.section),
-		choices: sanitizeString(row.choices || ''),
-		isRequired: row.isRequired,
-		score: row.score || 0,
-		ignore: row.ignore || false,
+		questionId: sanitizeString(row[EXCEL_COLUMNS.QUESTION_ID]),
+		name: sanitizeString(row[EXCEL_COLUMNS.NAME]),
+		type: row[EXCEL_COLUMNS.TYPE],
+		title: sanitizeMarkdownString(row[EXCEL_COLUMNS.TITLE]),
+		help: sanitizeMarkdownString(row[EXCEL_COLUMNS.HELP] || ''),
+		reporting: sanitizeMarkdownString(row[EXCEL_COLUMNS.REPORTING] || ''),
+		docs: sanitizeMarkdownString(row[EXCEL_COLUMNS.DOCS] || ''),
+		section: sanitizeString(row[EXCEL_COLUMNS.SECTION]),
+		choices: sanitizeString(row[EXCEL_COLUMNS.CHOICES] || ''),
+		isRequired: row[EXCEL_COLUMNS.IS_REQUIRED],
+		score: row[EXCEL_COLUMNS.SCORE] || 0,
+		ignore: row[EXCEL_COLUMNS.IGNORE] || false,
 	}
 }
 
@@ -218,13 +252,32 @@ function generateTypeScriptFile(questions: ImportedQuestion[]): string {
 			.replace(/\t/g, '\\t') // Escape tabs
 	}
 
+	// Helper function to escape markdown strings (preserves newlines)
+	function escapeMarkdownString(str: string): string {
+		return str
+			.replace(/\\/g, '\\\\') // Escape backslashes first
+			.replace(/'/g, "\\'") // Escape single quotes
+			.replace(/\n/g, '\\n') // Escape newlines for JavaScript string literals
+	}
+
+	// Helper function to generate optional string field
+	function generateOptionalField(
+		fieldName: string,
+		value?: string,
+		isMarkdown: boolean = false,
+	): string {
+		if (!value || value.trim() === '') {
+			return `\t\t${fieldName}: "",`
+		}
+		const escapedValue = isMarkdown
+			? escapeMarkdownString(value)
+			: escapeString(value)
+		return `\t\t${fieldName}: '${escapedValue}',`
+	}
+
 	// Generate TypeScript object literals manually for safety
 	const questionsArray = questions
 		.map((q) => {
-			const descriptions =
-				q.descriptions.length > 0
-					? q.descriptions.map((d) => `\t\t\t'${escapeString(d)}'`).join(',\n')
-					: ''
 			const choices =
 				q.choices.length > 0
 					? q.choices.map((c) => `\t\t\t'${escapeString(c)}'`).join(',\n')
@@ -234,8 +287,10 @@ function generateTypeScriptFile(questions: ImportedQuestion[]): string {
 \t\tquestionId: '${escapeString(q.questionId)}',
 \t\tname: '${escapeString(q.name)}',
 \t\ttype: '${q.type}' as const,
-\t\ttitle: '${escapeString(q.title)}',
-\t\tdescriptions: [${descriptions ? '\n' + descriptions + '\n\t\t' : ''}],
+\t\ttitle: '${escapeMarkdownString(q.title)}',
+${generateOptionalField('help', q.help, true)}
+${generateOptionalField('reporting', q.reporting, true)}
+${generateOptionalField('docs', q.docs, true)}
 \t\tsection: '${escapeString(q.section)}',
 \t\tchoices: [${choices ? '\n' + choices + '\n\t\t' : ''}],
 \t\tisRequired: ${q.isRequired},
@@ -319,7 +374,9 @@ async function importQuestions() {
 				name: mappedRow.name,
 				type: mappedRow.type as 'radiogroup' | 'text',
 				title: mappedRow.title,
-				descriptions: processDescriptions(mappedRow.descriptions),
+				help: mappedRow.help || undefined,
+				reporting: mappedRow.reporting || undefined,
+				docs: mappedRow.docs || undefined,
 				section: mappedRow.section,
 				choices: processChoices(mappedRow.type, mappedRow.choices),
 				isRequired: mappedRow.isRequired === true,
