@@ -76,7 +76,7 @@ import {
 } from '#app/components/ui/tabs.tsx'
 import { getUserAssessments } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { type Route } from './+types/assessments'
+import { type Route } from './+types/index'
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)

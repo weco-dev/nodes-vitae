@@ -264,7 +264,7 @@
 /* Question title with markdown support */
 .question-title-markdown {
 	@apply text-foreground max-w-none;
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply break-words whitespace-normal;
 	@apply leading-relaxed;
 }
 
@@ -272,8 +272,8 @@
 .sv_q_title,
 .sv-question__title,
 .sv_q_title_text {
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal !important;
-	@apply leading-relaxed !important;
+	@apply break-words whitespace-normal;
+	@apply leading-relaxed;
 	white-space: normal !important;
 	word-break: break-word !important;
 	overflow-wrap: anywhere !important;
@@ -288,7 +288,7 @@
 .question-title-markdown h5,
 .question-title-markdown h6 {
 	@apply text-foreground mt-0 mb-2 leading-tight font-semibold;
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply break-words whitespace-normal;
 }
 
 .question-title-markdown h1 {
@@ -309,7 +309,7 @@
 /* Markdown paragraph styles */
 .question-title-markdown p {
 	@apply text-foreground mb-2 leading-relaxed last:mb-0;
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply break-words whitespace-normal;
 }
 
 /* Markdown emphasis styles */
@@ -346,13 +346,13 @@
 
 .question-title-markdown li {
 	@apply mb-1 leading-relaxed;
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply break-words whitespace-normal;
 }
 
 /* Markdown blockquote styles */
 .question-title-markdown blockquote {
 	@apply border-muted text-muted-foreground border-l-4 pl-4 italic;
-	@apply word-wrap overflow-wrap-anywhere break-words whitespace-normal;
+	@apply break-words whitespace-normal;
 }
 
 /* Markdown link styles */
