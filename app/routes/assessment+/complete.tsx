@@ -1,26 +1,26 @@
 /**
  * @fileoverview Assessment Complete Route - Success page for completed ESG assessments
- * 
+ *
  * ==================================================================================
  * ROUTE OVERVIEW
  * ==================================================================================
- * 
+ *
  * This route provides a success confirmation page displayed after users complete
  * an ESG assessment. It validates assessment completion status and offers navigation
  * options for next steps in the assessment workflow.
- * 
+ *
  * KEY FEATURES:
  * 1. Assessment completion validation and redirect protection
  * 2. Success confirmation with visual feedback (CheckCircle icon)
  * 3. Clear call-to-action buttons for post-completion workflow
  * 4. Responsive card-based layout for focused user experience
  * 5. Authentication-protected route with automatic redirects
- * 
+ *
  * WORKFLOW INTEGRATION:
  * - Validates user has open assessment (prevents direct access)
  * - Provides links to view assessment results and start new assessments
  * - Integrates with assessment dashboard for comprehensive user journey
- * 
+ *
  * @version 1.0.0
  * @author ESG Assessment Team
  * @since 2025-07-11
@@ -30,7 +30,7 @@
  * @requires #app/components/ui/card
  * @requires #app/utils/assessment.server
  * @requires #app/utils/auth.server
- * 
+ *
  * @see {@link app/routes/assessment+/take.tsx} for assessment completion flow
  * @see {@link app/routes/dashboard+/assessments.tsx} for assessment management
  */
@@ -51,14 +51,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const assessment = await prisma.assessment.findFirst({
 		where: {
 			userId,
-			status: 'completed'
+			status: 'completed',
 		},
 		orderBy: {
-			completedAt: 'desc'
+			completedAt: 'desc',
 		},
 		include: {
-			answers: true
-		}
+			answers: true,
+		},
 	})
 
 	if (!assessment) {
@@ -68,7 +68,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 	// Calculate basic score
 	const totalQuestions = assessmentQuestions.length
 	const answeredQuestions = assessment.answers.length
-	const completionPercentage = Math.round((answeredQuestions / totalQuestions) * 100)
+	const completionPercentage = Math.round(
+		(answeredQuestions / totalQuestions) * 100,
+	)
 
 	return { assessment, completionPercentage }
 }
@@ -78,18 +80,18 @@ export default function AssessmentComplete() {
 
 	return (
 		<div className="py-8">
-			<Card className="max-w-2xl mx-auto">
+			<Card className="mx-auto max-w-2xl">
 				<CardContent className="flex flex-col items-center justify-center py-12">
-					<CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-					<h1 className="text-2xl font-bold mb-2">Assessment Completed!</h1>
-					<p className="text-muted-foreground text-center mb-4">
-						Thank you for completing your ESG assessment. Your responses have been
-						saved and you can now view your results.
+					<CheckCircle className="mb-4 h-16 w-16 text-green-500" />
+					<h1 className="mb-2 text-2xl font-bold">Assessment Completed!</h1>
+					<p className="text-muted-foreground mb-4 text-center">
+						Thank you for completing your ESG assessment. Your responses have
+						been saved and you can now view your results.
 					</p>
 
 					{/* Score summary */}
-					<div className="bg-muted rounded-lg p-6 mb-8">
-						<p className="text-center text-sm text-muted-foreground mb-2">
+					<div className="bg-muted mb-8 rounded-lg p-6">
+						<p className="text-muted-foreground mb-2 text-center text-sm">
 							Overall Completion
 						</p>
 						<p className="text-center text-4xl font-bold">
@@ -102,7 +104,7 @@ export default function AssessmentComplete() {
 							<Link to="/dashboard/assessments">View All Assessments</Link>
 						</Button>
 						<Button asChild>
-							<Link to={`/dashboard/assessment/${assessment.id}/summary`}>
+							<Link to={`/dashboard/assessments/${assessment.id}`}>
 								View Detailed Results
 							</Link>
 						</Button>

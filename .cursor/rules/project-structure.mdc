@@ -8,7 +8,7 @@ alwaysApply: false
 
 ## Project Overview
 
-This is a comprehensive ESG (Environmental, Social, Governance) assessment platform built with React Router v7. The project follows Epic Stack conventions and includes a sophisticated assessment system with real-time persistence and progress tracking.
+This is a comprehensive ESG (Environmental, Social, Governance) assessment platform built with React Router v7. The project follows Epic Stack conventions and includes a sophisticated assessment system with real-time persistence, three-column accordion help system, and advanced markdown processing capabilities.
 
 ## Main Structure
 
@@ -18,6 +18,7 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 - SQLite database with Prisma ORM
 - Deployed on Fly.io with LiteFS for database replication
 - **Core Feature**: ESG Assessment system with SurveyJS integration (88 questions across 7 sections)
+- **Latest Enhancement (v2.0)**: Three-column accordion help system with markdown support and field name display
 
 ```tree
 .
@@ -25,55 +26,84 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   ├── components/          # React components
 │   │   ├── assessment/      # ESG Assessment components
 │   │   │   ├── assessment-navigation.tsx    # Unified navigation and progress component
-│   │   │   ├── survey-component.tsx         # SurveyJS wrapper with real-time persistence
+│   │   │   ├── survey-component.tsx         # SurveyJS wrapper with enhanced help system
 │   │   │   ├── responsive-progress-bar.tsx  # Enhanced adaptive progress navigation
 │   │   │   └── section-display.tsx          # Legacy section navigation (being phased out)
 │   │   ├── ui/             # UI component library (Radix-based)
 │   │   │   ├── icons/      # Icon sprite and types
-│   │   │   ├── progress.tsx # Progress bar component
-│   │   │   ├── accordion.tsx # Accordion for question help
-│   │   │   ├── badge.tsx   # Status badges
-│   │   │   ├── breadcrumb.tsx # Navigation breadcrumbs
-│   │   │   ├── button.tsx  # Button variants
-│   │   │   ├── card.tsx    # Card layouts
-│   │   │   ├── checkbox.tsx # Form checkboxes
-│   │   │   ├── collapsible.tsx # Collapsible panels
+│   │   │   │   ├── sprite.svg    # SVG sprite file
+│   │   │   │   └── types.ts      # Icon name definitions
+│   │   │   ├── accordion.tsx     # Accordion for question help system
+│   │   │   ├── alert.tsx         # Alert messages
+│   │   │   ├── avatar.tsx        # User avatars
+│   │   │   ├── badge.tsx         # Status badges
+│   │   │   ├── breadcrumb.tsx    # Navigation breadcrumbs
+│   │   │   ├── button.tsx        # Button variants
+│   │   │   ├── card.tsx          # Card layouts
+│   │   │   ├── checkbox.tsx      # Form checkboxes
+│   │   │   ├── drawer.tsx        # Mobile drawer component
 │   │   │   ├── dropdown-menu.tsx # Dropdown menus
-│   │   │   ├── form.tsx    # Form controls
-│   │   │   ├── input.tsx   # Input fields
-│   │   │   ├── label.tsx   # Form labels
-│   │   │   ├── radio-group.tsx # Radio button groups
-│   │   │   ├── select.tsx  # Select dropdowns
-│   │   │   ├── separator.tsx # Visual separators
-│   │   │   ├── sheet.tsx   # Side sheets
-│   │   │   ├── skeleton.tsx # Loading skeletons
-│   │   │   ├── sonner.tsx  # Toast notifications
-│   │   │   ├── switch.tsx  # Toggle switches
-│   │   │   ├── table.tsx   # Data tables
-│   │   │   ├── textarea.tsx # Text areas
-│   │   │   ├── tooltip.tsx # Tooltips
-│   │   │   └── utils.tsx   # UI utilities
+│   │   │   ├── icon.tsx          # Icon component wrapper
+│   │   │   ├── input.tsx         # Input fields
+│   │   │   ├── input-otp.tsx     # OTP input fields
+│   │   │   ├── label.tsx         # Form labels
+│   │   │   ├── progress.tsx      # Progress bar component
+│   │   │   ├── select.tsx        # Select dropdowns
+│   │   │   ├── separator.tsx     # Visual separators
+│   │   │   ├── sheet.tsx         # Side sheets
+│   │   │   ├── sidebar.tsx       # Navigation sidebar
+│   │   │   ├── skeleton.tsx      # Loading skeletons
+│   │   │   ├── sonner.tsx        # Toast notifications
+│   │   │   ├── status-button.tsx # Status button component
+│   │   │   ├── table.tsx         # Data tables
+│   │   │   ├── tabs.tsx          # Tab navigation
+│   │   │   ├── textarea.tsx      # Text areas
+│   │   │   ├── toggle.tsx        # Toggle switches
+│   │   │   ├── toggle-group.tsx  # Toggle switch groups
+│   │   │   └── tooltip.tsx       # Tooltips
 │   │   ├── hooks/          # Custom React hooks
 │   │   │   ├── use-assessment-navigation.ts # Navigation state management
 │   │   │   └── use-mobile.ts                # Mobile breakpoint detection
-│   │   ├── client-only.tsx # SSR compatibility wrapper
-│   │   ├── app-sidebar.tsx # Navigation sidebar with collapsible sections
-│   │   ├── nav-main.tsx    # Dynamic assessment navigation
-│   │   ├── nav-user.tsx    # User profile navigation
-│   │   ├── site-header.tsx # Application header
+│   │   ├── app-sidebar.tsx      # Main navigation sidebar with collapsible sections
+│   │   ├── client-only.tsx      # SSR compatibility wrapper
 │   │   ├── dynamic-breadcrumb.tsx # Context-aware breadcrumbs
-│   │   ├── sidebar-trigger.tsx # Sidebar toggle control
-│   │   ├── theme-switch.tsx # Theme toggle control
-│   │   └── *.tsx           # Other application components
+│   │   ├── error-boundary.tsx   # Error boundary components
+│   │   ├── floating-toolbar.tsx # Floating toolbar component
+│   │   ├── forms.tsx           # Form utilities and components
+│   │   ├── nav-documents.tsx   # Document navigation links
+│   │   ├── nav-main.tsx        # Main navigation menu
+│   │   ├── nav-secondary.tsx   # Secondary navigation
+│   │   ├── nav-settings.tsx    # Settings navigation
+│   │   ├── nav-user.tsx        # User profile navigation
+│   │   ├── progress-bar.tsx    # Progress bar utilities
+│   │   ├── search-bar.tsx      # Search functionality
+│   │   ├── section-cards.tsx   # Section card components
+│   │   ├── site-header.tsx     # Application header
+│   │   ├── spacer.tsx          # Layout spacer component
+│   │   ├── toaster.tsx         # Toast notification container
+│   │   └── user-dropdown.tsx   # User dropdown menu
 │   ├── routes/             # Route definitions and handlers
 │   │   ├── _auth+/         # Authentication routes
-│   │   │   ├── login.tsx   # Login page
-│   │   │   ├── logout.tsx  # Logout handler
-│   │   │   ├── signup.tsx  # User registration
-│   │   │   ├── reset-password.tsx # Password reset
-│   │   │   ├── verify.tsx  # Email verification
-│   │   │   ├── onboarding.tsx # User onboarding
-│   │   │   └── forgot-password.tsx # Password recovery
+│   │   │   ├── _layout.tsx       # Auth layout wrapper
+│   │   │   ├── login.tsx         # Login page
+│   │   │   ├── login.server.ts   # Login server utilities
+│   │   │   ├── logout.tsx        # Logout handler
+│   │   │   ├── signup.tsx        # User registration
+│   │   │   ├── reset-password.tsx # Password reset page
+│   │   │   ├── reset-password.server.ts # Password reset server logic
+│   │   │   ├── verify.tsx        # Email verification page
+│   │   │   ├── verify.server.ts  # Email verification server logic
+│   │   │   ├── onboarding.tsx    # User onboarding flow
+│   │   │   ├── onboarding.server.ts # Onboarding server logic
+│   │   │   ├── onboarding_.$provider.tsx # Provider-specific onboarding
+│   │   │   ├── onboarding_.$provider.server.ts # Provider onboarding logic
+│   │   │   ├── forgot-password.tsx # Password recovery page
+│   │   │   ├── auth.$provider.callback.ts # OAuth callback handler
+│   │   │   ├── auth_.$provider.ts # OAuth provider routes
+│   │   │   └── webauthn+/        # WebAuthn/Passkey routes
+│   │   │       ├── authentication.ts # WebAuthn authentication
+│   │   │       ├── registration.ts   # WebAuthn registration
+│   │   │       └── utils.server.ts   # WebAuthn server utilities
 │   │   ├── _marketing+/    # Marketing/landing pages
 │   │   │   ├── _layout.tsx # Marketing layout
 │   │   │   ├── about.tsx   # About page
@@ -83,6 +113,12 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   ├── _seo+/          # SEO-related routes
 │   │   │   ├── robots[.]txt.tsx # Robots.txt
 │   │   │   └── sitemap[.]xml.tsx # XML sitemap
+│   │   ├── admin+/         # Admin dashboard routes
+│   │   │   ├── cache.tsx         # Cache management interface
+│   │   │   ├── cache_.lru.$cacheKey.ts # LRU cache operations
+│   │   │   ├── cache_.sqlite.$cacheKey.ts # SQLite cache operations
+│   │   │   ├── cache_.sqlite.server.ts # SQLite cache server logic
+│   │   │   └── cache_.sqlite.tsx # SQLite cache management UI
 │   │   ├── assessment+/    # ESG Assessment workflow
 │   │   │   ├── _layout.tsx # Authentication-protected layout
 │   │   │   ├── take.tsx    # Main assessment interface (88 questions)
@@ -90,14 +126,15 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   │   └── complete.tsx # Success confirmation
 │   │   ├── dashboard+/     # Main dashboard and management
 │   │   │   ├── _layout.tsx # Dashboard layout
+│   │   │   ├── index.tsx   # Dashboard home
 │   │   │   ├── assessments.tsx # Assessment listing and management
 │   │   │   ├── assessment.$id.tsx # Individual assessment details
 │   │   │   ├── assessment.$id.summary.tsx # Results visualization
-│   │   │   ├── settings+/  # User settings routes
-│   │   │   │   ├── _layout.tsx # Settings layout
-│   │   │   │   ├── profile.tsx # Profile management
-│   │   │   │   └── two-factor.tsx # 2FA settings
-│   │   │   └── index.tsx   # Dashboard home
+│   │   │   ├── data.json   # Static dashboard data
+│   │   │   └── settings+/  # User settings routes
+│   │   │       ├── _layout.tsx # Settings layout
+│   │   │       ├── profile.tsx # Profile management
+│   │   │       └── two-factor.tsx # 2FA settings
 │   │   ├── resources+/     # Resource routes (API-like endpoints)
 │   │   │   ├── auth+/      # Authentication resources
 │   │   │   ├── file-upload.tsx # File upload handler
@@ -107,6 +144,7 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   ├── users+/         # User profile and notes routes
 │   │   │   ├── $username.tsx # User profile
 │   │   │   └── $username+/ # User-specific routes
+│   │   ├── me.tsx          # Current user profile shortcut
 │   │   ├── _index.tsx      # Landing page
 │   │   └── $.tsx           # 404 handler
 │   ├── utils/              # Utility functions and server-side code
@@ -114,42 +152,58 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   │   ├── provider.ts # Base provider interface
 │   │   │   └── github.server.ts # GitHub OAuth provider
 │   │   ├── assessment.server.ts    # Assessment backend utilities
-│   │   ├── assessment-questions.ts # ESG question configuration (88 questions)
+│   │   ├── assessment-questions.ts # ESG question configuration (88 questions with v2.0 enhancements)
 │   │   ├── auth.server.ts  # Authentication utilities
 │   │   ├── cache.server.ts # Server-side caching
-│   │   ├── csrf.server.ts  # CSRF protection
+│   │   ├── client-hints.tsx # Client hints utilities
+│   │   ├── connections.server.ts # OAuth connection management
+│   │   ├── connections.tsx # OAuth connection components
 │   │   ├── db.server.ts    # Database connection and utilities
 │   │   ├── email.server.ts # Email sending utilities
 │   │   ├── env.server.ts   # Environment variables
+│   │   ├── headers.server.ts # HTTP header utilities
 │   │   ├── honeypot.server.ts # Bot protection
+│   │   ├── litefs.server.ts # LiteFS utilities
 │   │   ├── misc.tsx        # Miscellaneous utilities
-│   │   ├── monitoring.server.ts # Sentry monitoring
+│   │   ├── monitoring.client.tsx # Client-side monitoring
+│   │   ├── nonce-provider.ts # CSP nonce provider
 │   │   ├── permissions.server.ts # Permission checking
 │   │   ├── totp.server.ts  # TOTP utilities
 │   │   ├── user.server.ts  # User management
-│   │   └── *.ts            # Other utility modules
+│   │   └── user.ts         # User utilities
 │   ├── assets/             # Static assets (favicons, images)
 │   ├── styles/             # CSS styles (Tailwind CSS)
-│   │   ├── app.css         # Main stylesheet
-│   │   └── tailwind.css    # Tailwind imports
+│   │   └── tailwind.css    # Main stylesheet with Tailwind imports and ESG assessment styles
 │   ├── entry.client.tsx    # Client-side entry point
 │   ├── entry.server.tsx    # Server-side entry point
 │   ├── root.tsx            # Root component and layout
 │   └── routes.ts           # Route configuration
-├── ai/                     # AI development documentation
+├── ai/                     # AI development documentation and activity logs
 │   ├── TODO.md            # Development task list
-│   ├── activities/        # Implementation activity logs
-│   │   ├── 2025.07.11/    # ESG Assessment implementation docs
-│   │   └── 2025.07.18/    # Current UI improvement activities
-│   │       └── activity-02/
+│   ├── activities/        # Implementation activity logs by date
+│   │   ├── 2025.07.11/    # ESG Assessment initial implementation
+│   │   ├── 2025.07.12/    # Assessment enhancements
+│   │   ├── 2025.07.18/    # UI improvement activities
+│   │   ├── 2025.07.21/    # Navigation system improvements
+│   │   └── 2025.07.23/    # Three-column accordion system implementation
+│   │       └── activity-01/
 │   │           ├── 00.support-prompts.md
-│   │           └── 01.issue-statement.md # Current UI issues
+│   │           ├── 01.issue-statement.md
+│   │           ├── 02.exploration-statement.md
+│   │           ├── 03.diagnostic-report.md
+│   │           ├── 04.code-change-plan.md
+│   │           ├── 05.summary-implementation-report.md
+│   │           ├── 06.detailed-implementation-report.md
+│   │           └── assessment-questions.xlsx
 │   └── guidelines/        # Development guidelines
+│       ├── guidelines.md  # Main development guidelines
+│       └── guidelines-epicstack-core.md # Epic Stack core guidelines
 ├── data/                  # Data files and uploads
 │   └── uploads/           # File upload storage
-│       └── assessment-questions.xlsx # Source Excel file (88 questions)
+│       ├── assessment-questions.xlsx # Source Excel file (88 questions - updated for v2.0)
+│       └── *.* # Other uploaded files
 ├── scripts/               # Utility scripts
-│   └── import-questions.ts # Excel-to-TypeScript question importer
+│   └── import-questions.ts # Excel-to-TypeScript question importer (enhanced for v2.0)
 ├── prisma/                # Database schema and migrations
 │   ├── migrations/        # Database migration files
 │   │   ├── 20250711123650_add_assessment_models/ # Assessment models
@@ -163,10 +217,11 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   ├── mocks/             # MSW mock handlers
 │   └── setup/             # Test setup and configuration
 ├── other/                 # Build and deployment configuration
-│   ├── Dockerfile         # Docker configuration
-│   ├── litefs.yml         # LiteFS configuration
-│   ├── sly/               # Icon transformation utilities
-│   └── svg-icons/         # SVG icon source files
+│   ├── build-server.ts   # Server build script
+│   ├── Dockerfile        # Docker configuration
+│   ├── litefs.yml        # LiteFS configuration
+│   ├── sly/              # Icon transformation utilities
+│   └── svg-icons/        # SVG icon source files
 ├── server/                # Server configuration
 │   ├── dev-server.js      # Development server setup
 │   ├── index.ts           # Production server entry point
@@ -219,23 +274,27 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 - **Real-time Auto-save** - Automatic answer persistence
 - **Progress Tracking** - Page-level progress with visual indicators
 - **Responsive Design** - Mobile and desktop optimized
-- **Section Navigation** - Accordion-based help system
+- **Three-Column Help System** - Enhanced accordion with Help, Reporting, and Documentation sections
+- **Markdown Processing** - Safe markdown rendering with field name display
+- **Conditional UI** - Progressive disclosure based on content availability
 
 ### UI & Styling
 - **Tailwind CSS v4** - Utility-first styling with modern features
 - **Radix UI** - Accessible component primitives (shadcn/ui)
-- **Lucide React** - Icon library
+- **Tabler Icons React** - Icon library for consistent iconography
 - **Sonner** - Toast notifications
+- **Vaul** - Mobile drawer component
+- **React Markdown** - Markdown rendering for help content
 - **next-themes** - Theme management
-- **Responsive Design** - Mobile-first approach
+- **Responsive Design** - Mobile-first approach with touch optimization
 
 ### Testing & Quality
 - **Playwright** - End-to-end testing
-- **Vitest** - Unit testing
-- **MSW** - API mocking
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **TypeScript** - Static type checking
+- **Vitest** - Unit testing with coverage reports
+- **MSW** - API mocking for development and testing
+- **ESLint** - Code linting with modern configuration
+- **Prettier** - Code formatting with plugin support
+- **TypeScript** - Static type checking with strict configuration
 
 ## File Naming and Organization
 
@@ -292,10 +351,10 @@ Key models:
 model Assessment {
   id               String    @id @default(cuid())
   userId           String
+  title            String?   // Optional assessment title
   status           String    @default("open") // open, completed, archived
   currentPageIndex Int       @default(0)
-  surveyData       String    @default("{}")
-  title            String?   // Optional assessment title
+  surveyData       String    @default("{}") // JSON TEXT field
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   completedAt      DateTime?
@@ -328,9 +387,9 @@ model AssessmentAnswer {
 }
 ```
 
-### Assessment Question Structure
+### Assessment Question Structure (v2.0 Enhancement)
 
-The assessment system includes 88 ESG questions organized into 7 sections:
+The assessment system includes 88 ESG questions organized into 7 sections with enhanced help content structure:
 
 - **SEZIONE 0**: Company identification (7 questions)
 - **SEZIONE I**: Human rights commitment (19 questions)  
@@ -345,8 +404,13 @@ Each question includes:
 - **Italian text** with professional terminology
 - **Question type** (radiogroup, text)
 - **Standardized choices** for consistency
-- **Multiple descriptions** (up to 3 per question) for help accordions
+- **Enhanced help content structure (v2.0)**:
+  - `help`: Contextual guidance for question understanding
+  - `reporting`: Compliance and regulatory requirements
+  - `docs`: Additional documentation and resources
 - **Section grouping** for progress tracking
+- **Markdown support** in titles and help content
+- **Field name display** for better context
 
 ## Development Workflow
 
@@ -499,11 +563,13 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
   - Desktop grid layout with visual progress indicators
   - Auto-scroll functionality for current question visibility
   - Integrated section dropdown with smart positioning
-- **SurveyComponent** (`app/components/assessment/survey-component.tsx`)
-  - SurveyJS wrapper with custom accordion integration
-  - Real-time auto-save functionality
-  - Error handling and recovery
+- **SurveyComponent** (`app/components/assessment/survey-component.tsx`) ⭐ **ENHANCED v2.0**
+  - SurveyJS wrapper with enhanced three-column accordion integration
+  - Real-time auto-save functionality with conflict prevention
+  - Advanced markdown processing with field name display
+  - XSS-safe content rendering and DOM manipulation
   - Enterprise-grade React wrapper with memory management
+  - Conditional rendering for better performance
 - **ResponsiveProgressBar** (`app/components/assessment/responsive-progress-bar.tsx`) ⭐ **ENHANCED**
   - Enhanced adaptive progress navigation
   - Dual progress metrics (mandatory vs. total questions)
@@ -531,10 +597,18 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
   - Complete assessment lifecycle management
   - Real-time answer persistence with upsert operations
   - Progress tracking and completion logic
-- **assessment-questions.ts** (`app/utils/assessment-questions.ts`)
-  - 88 ESG questions with Italian text
-  - SurveyJS formatting and configuration
-  - Multiple description support for help accordions
+- **assessment-questions.ts** (`app/utils/assessment-questions.ts`) ⭐ **ENHANCED v2.0**
+  - Centralized configuration for 88 ESG questions across 7 sections
+  - Enhanced semantic field structure with help/reporting/docs metadata
+  - Markdown support in question titles with field name display
+  - Complete migration from descriptions array to semantic fields
+  - Italian ESG questions with regulatory compliance information
+  - Structured help content with progressive disclosure
+- **import-questions.ts** (`scripts/import-questions.ts`) ⭐ **ENHANCED**
+  - Excel import functionality with column mapping for v2.0 semantic fields
+  - Support for help/reporting/docs field structures
+  - Data validation and transformation pipeline
+  - Bulk import operations with error handling
 
 #### Route Structure
 - **assessment+/** - Assessment workflow
@@ -563,22 +637,33 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 - **Touch-optimized controls** for mobile devices ⭐ **NEW**
 - **Dual progress metrics** (mandatory vs. total questions) ⭐ **NEW**
 
-### Recent Improvements (July 21, 2025)
-Based on recent commits (24114fb - 1f0e143):
+### Recent Improvements (July 2025) ⭐ **ESG Assessment System v2.0**
+Based on recent commits and comprehensive enhancements:
 
-1. **AssessmentNavigation Component**: NEW unified navigation system combining progress bar and section selection
-2. **Enhanced State Management**: NEW `useAssessmentNavigation` hook prevents navigation conflicts
-3. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
-4. **Better Progress Tracking**: Dual progress metrics (mandatory vs. total questions)
-5. **Auto-scroll Functionality**: Current question visibility in progress navigation
-6. **Ping Pong Effect Prevention**: Sophisticated navigation state management with abort controllers
+1. **ESG Assessment System v2.0**: Complete overhaul with enhanced help structure
+   - Three-column accordion system (Help, Reporting, Documentation)
+   - Markdown support in question titles with field name display
+   - 88 Italian ESG questions with semantic field structure
+   - Enhanced progressive disclosure and content organization
 
-### Dependencies Added
+2. **AssessmentNavigation Component**: NEW unified navigation system combining progress bar and section selection
+3. **Enhanced State Management**: NEW `useAssessmentNavigation` hook prevents navigation conflicts
+4. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
+5. **Better Progress Tracking**: Dual progress metrics (mandatory vs. total questions)
+6. **Auto-scroll Functionality**: Current question visibility in progress navigation
+7. **Ping Pong Effect Prevention**: Sophisticated navigation state management with abort controllers
+8. **Excel Import System**: Enhanced import-questions.ts with column mapping for semantic fields
+
+### Dependencies Added (Current)
 ```json
 {
   "survey-react-ui": "^2.2.4",
   "survey-core": "^2.2.4",
-  "xlsx": "^0.18.5"
+  "react-markdown": "^10.1.0",
+  "xlsx": "^0.18.5",
+  "@tabler/icons-react": "^3.34.0",
+  "vaul": "^1.1.2",
+  "tw-animate-css": "^1.2.9"
 }
 ```
 
