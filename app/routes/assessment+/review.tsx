@@ -60,13 +60,13 @@ import {
 } from '#app/components/ui/card.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Progress } from '#app/components/ui/progress.tsx'
-import { assessmentQuestions } from '#app/utils/assessment-questions.ts'
 import {
 	getUserOpenAssessment,
 	completeAssessment,
 	updateAssessmentProgress,
 } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { getAnswerableQuestions } from '#app/utils/question-filtering.ts'
 import { type Route } from './+types/review'
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -79,8 +79,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 	const surveyData = JSON.parse(assessment.surveyData || '{}')
 
-	// Calculate statistics
-	const totalQuestions = assessmentQuestions.length
+	// Calculate statistics (exclude umbrella/group questions from total count)
+	const answerableQuestions = getAnswerableQuestions()
+	const totalQuestions = answerableQuestions.length
 	const answeredQuestions = assessment.answers.length
 	const unansweredQuestions = totalQuestions - answeredQuestions
 	const completionPercentage = Math.round(

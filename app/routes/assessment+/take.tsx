@@ -269,6 +269,7 @@ import {
 	completeAssessment,
 } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { getAnswerableQuestions } from '#app/utils/question-filtering.ts'
 import { type Route } from './+types/take'
 
 // Lazy load the survey component
@@ -797,7 +798,7 @@ export default function AssessmentTake() {
 						<AssessmentNavigation
 							section={currentSection}
 							currentQuestion={assessmentNavigation.currentPageIndex + 1}
-							totalQuestions={questions.length}
+							totalQuestions={getAnswerableQuestions().length}
 							questions={questions}
 							onSectionChange={assessmentNavigation.navigate}
 							currentIndex={assessmentNavigation.currentPageIndex}

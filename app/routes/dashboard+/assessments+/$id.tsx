@@ -59,6 +59,7 @@ import {
 	updateAssessmentTitle,
 } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { getAnswerableQuestions } from '#app/utils/question-filtering.ts'
 import { type Route } from './+types/$id'
 
 export async function loader({ request, params }: Route.LoaderArgs) {
@@ -89,8 +90,9 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 		{} as Record<string, any[]>,
 	)
 
-	// Calculate statistics
-	const totalQuestions = assessmentQuestions.length
+	// Calculate statistics (exclude umbrella/group questions from total count)
+	const answerableQuestions = getAnswerableQuestions()
+	const totalQuestions = answerableQuestions.length
 	const answeredQuestions = assessment.answers.length
 	const unansweredQuestions = totalQuestions - answeredQuestions
 	const completionPercentage = Math.round(

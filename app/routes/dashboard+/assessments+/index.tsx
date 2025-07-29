@@ -76,6 +76,7 @@ import {
 } from '#app/components/ui/tabs.tsx'
 import { getUserAssessments } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { getAnswerableQuestions } from '#app/utils/question-filtering.ts'
 import { type Route } from './+types/index'
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -90,6 +91,22 @@ export default function AssessmentsRoute() {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [statusFilter, setStatusFilter] = useState('all')
 	const [viewMode, setViewMode] = useState('grid')
+
+	// Helper function to calculate completion percentage for an assessment
+	const calculateCompletionPercentage = (assessment: {
+		status: string
+		answers: any[]
+	}) => {
+		if (assessment.status === 'completed') {
+			return 100
+		}
+		const answerableQuestions = getAnswerableQuestions()
+		const totalQuestions = answerableQuestions.length
+		const answeredQuestions = assessment.answers.length
+		return totalQuestions > 0
+			? Math.round((answeredQuestions / totalQuestions) * 100)
+			: 0
+	}
 
 	// Filter assessments based on search and status
 	const filteredAssessments = assessments.filter((assessment) => {
@@ -369,15 +386,13 @@ export default function AssessmentsRoute() {
 															<p className="text-muted-foreground">Progress</p>
 															<div className="flex items-center gap-2">
 																<Progress
-																	value={
-																		assessment.status === 'completed' ? 100 : 65
-																	}
+																	value={calculateCompletionPercentage(
+																		assessment,
+																	)}
 																	className="flex-1"
 																/>
 																<span className="text-xs">
-																	{assessment.status === 'completed'
-																		? '100%'
-																		: '65%'}
+																	{calculateCompletionPercentage(assessment)}%
 																</span>
 															</div>
 														</div>
@@ -613,9 +628,15 @@ export default function AssessmentsRoute() {
 																<span className="text-muted-foreground">
 																	Progress
 																</span>
-																<span>65%</span>
+																<span>
+																	{calculateCompletionPercentage(assessment)}%
+																</span>
 															</div>
-															<Progress value={65} />
+															<Progress
+																value={calculateCompletionPercentage(
+																	assessment,
+																)}
+															/>
 														</div>
 														<Button asChild size="sm" className="w-full">
 															<Link to="/assessment/take">
