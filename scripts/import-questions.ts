@@ -5,8 +5,14 @@
  * TypeScript configuration files for use in the assessment system.
  *
  * ==================================================================================
- * RECENT ENHANCEMENTS (v2.0 - July 2025)
+ * RECENT ENHANCEMENTS (v3.0 - July 2025)
  * ==================================================================================
+ *
+ * ### Umbrella Questions Support:
+ * - **New Type**: Support for `type: 'group'` umbrella questions
+ * - **Parent-Child Relationships**: `parentQuestionId` column for question grouping
+ * - **Conditional Processing**: Different handling for umbrella vs regular questions
+ * - **Navigation Structure**: Maintains question hierarchy for better UX
  *
  * ### Updated Column Structure:
  * - **Replaced**: Generic `descriptions` column with delimiter splitting
@@ -14,26 +20,31 @@
  *   - `help` - Contextual guidance content
  *   - `reporting` - Compliance and regulatory information
  *   - `docs` - Additional documentation and resources
+ * - **Added**: `parentQuestionId` column for umbrella question relationships
  *
  * ### Enhanced Processing:
  * - **Markdown Preservation**: Maintains newlines and formatting in text fields
  * - **Safe Escaping**: Proper TypeScript string escaping with markdown support
  * - **Validation**: Column mapping validation with clear error reporting
  * - **Type Safety**: Full TypeScript interface compliance checking
+ * - **Group Type Handling**: Special processing for umbrella questions
  *
  * ### Excel Integration:
  * - **Column Constants**: Centralized column name definitions for validation
  * - **Flexible Mapping**: Robust column header mapping system
  * - **Error Handling**: Comprehensive validation with detailed error messages
+ * - **Parent Validation**: Ensures valid parent-child question relationships
  *
  * KEY FEATURES:
  * - Reads Excel files with standardized column structure
  * - Validates question data and checks for duplicates
  * - Converts Italian boolean values ("VERO"/"FALSO") to JavaScript booleans
  * - Preserves markdown formatting in content fields
- * - Applies default choices for radiogroup questions
+ * - Applies default choices for radiogroup questions (not for group type)
+ * - Handles umbrella question hierarchy with parentQuestionId
  * - Preserves existing file documentation and helper functions
  * - Generates clean TypeScript code with proper escaping
+ * - Supports question grouping for better assessment navigation
  *
  * USAGE:
  * npm run import-questions
@@ -41,8 +52,23 @@
  * INPUT: data/uploads/assessment-questions.xlsx
  * OUTPUT: app/utils/assessment-questions.ts
  *
- * @version 1.0.0
- * @since 2025-07-18
+ * EXCEL COLUMN STRUCTURE:
+ * - questionId: Unique identifier (required)
+ * - name: Field name for forms (required)
+ * - type: Question type - 'radiogroup', 'text', or 'group' (required)
+ * - title: Question text displayed to users (required)
+ * - help: Contextual help content (optional)
+ * - reporting: Compliance reporting info (optional)
+ * - docs: Additional documentation (optional)
+ * - section: Category grouping (required)
+ * - choices: Answer options for radiogroup (optional, ignored for group type)
+ * - isRequired: Boolean flag (required)
+ * - score: Point weight (required)
+ * - ignore: Skip import flag (optional)
+ * - parentQuestionId: Reference to umbrella question (optional)
+ *
+ * @version 3.0.0
+ * @since 2025-07-28
  */
 
 import * as fs from 'fs'
@@ -79,6 +105,7 @@ const EXCEL_COLUMNS = {
 	IS_REQUIRED: 'isRequired',
 	SCORE: 'score',
 	IGNORE: 'ignore',
+	PARENT_QUESTION_ID: 'parentQuestionId', // New column for umbrella question support
 } as const
 
 // Interfaces
@@ -89,7 +116,7 @@ interface ExcelRow {
 interface ImportedQuestion {
 	questionId: string
 	name: string
-	type: 'radiogroup' | 'text'
+	type: 'radiogroup' | 'text' | 'group' // Add 'group' type for umbrella questions
 	title: string
 	help?: string
 	reporting?: string
@@ -98,6 +125,7 @@ interface ImportedQuestion {
 	choices: string[]
 	isRequired: boolean
 	score: number
+	parentQuestionId?: string // New field for sub-questions that reference umbrella questions
 }
 
 // Helper Functions
@@ -122,6 +150,11 @@ function sanitizeMarkdownString(str: string): string {
 }
 
 function processChoices(type: string, choicesText: string): string[] {
+	// Group type questions (umbrella questions) should not have choices
+	if (type === 'group') {
+		return []
+	}
+
 	if (type === 'text') {
 		return []
 	}
@@ -151,6 +184,9 @@ function mapExcelRowToStandardRow(row: ExcelRow): any {
 		isRequired: row[EXCEL_COLUMNS.IS_REQUIRED],
 		score: row[EXCEL_COLUMNS.SCORE] || 0,
 		ignore: row[EXCEL_COLUMNS.IGNORE] || false,
+		parentQuestionId: sanitizeString(
+			row[EXCEL_COLUMNS.PARENT_QUESTION_ID] || '',
+		), // New field mapping
 	}
 }
 
@@ -168,9 +204,9 @@ function validateQuestion(row: any, index: number): string[] {
 	if (row.score === undefined || isNaN(row.score))
 		errors.push(`Row ${rowNum}: Invalid score`)
 
-	if (row.type && !['radiogroup', 'text'].includes(row.type)) {
+	if (row.type && !['radiogroup', 'text', 'group'].includes(row.type)) {
 		errors.push(
-			`Row ${rowNum}: Invalid type '${row.type}'. Must be 'radiogroup' or 'text'`,
+			`Row ${rowNum}: Invalid type '${row.type}'. Must be 'radiogroup', 'text', or 'group'`,
 		)
 	}
 
@@ -283,7 +319,8 @@ function generateTypeScriptFile(questions: ImportedQuestion[]): string {
 					? q.choices.map((c) => `\t\t\t'${escapeString(c)}'`).join(',\n')
 					: ''
 
-			return `\t{
+			// Build the question object with conditional fields
+			let questionObject = `\t{
 \t\tquestionId: '${escapeString(q.questionId)}',
 \t\tname: '${escapeString(q.name)}',
 \t\ttype: '${q.type}' as const,
@@ -291,11 +328,27 @@ function generateTypeScriptFile(questions: ImportedQuestion[]): string {
 ${generateOptionalField('help', q.help, true)}
 ${generateOptionalField('reporting', q.reporting, true)}
 ${generateOptionalField('docs', q.docs, true)}
-\t\tsection: '${escapeString(q.section)}',
-\t\tchoices: [${choices ? '\n' + choices + '\n\t\t' : ''}],
+\t\tsection: '${escapeString(q.section)}',`
+
+			// Add choices array only for question types that need it
+			if (q.type !== 'group') {
+				questionObject += `\n\t\tchoices: [${choices ? '\n' + choices + '\n\t\t' : ''}],`
+			}
+
+			questionObject += `
 \t\tisRequired: ${q.isRequired},
-\t\tscore: ${q.score},
+\t\tscore: ${q.score}`
+
+			// Add parentQuestionId if it exists
+			if (q.parentQuestionId && q.parentQuestionId.trim() !== '') {
+				questionObject += `,
+\t\tparentQuestionId: '${escapeString(q.parentQuestionId)}'`
+			}
+
+			questionObject += `
 \t}`
+
+			return questionObject
 		})
 		.join(',\n')
 
@@ -339,6 +392,17 @@ async function importQuestions() {
 		const skippedQuestions: string[] = []
 		const validationErrors: string[] = []
 		const questionIds = new Set<string>()
+		const umbrellaQuestions = new Set<string>()
+
+		// First pass: collect all question IDs and umbrella questions
+		rawData.forEach((row) => {
+			const mappedRow = mapExcelRowToStandardRow(row)
+			if (mappedRow.ignore === true) return
+
+			if (mappedRow.type === 'group') {
+				umbrellaQuestions.add(mappedRow.questionId)
+			}
+		})
 
 		rawData.forEach((row, index) => {
 			// Map Excel row to standard format
@@ -368,11 +432,44 @@ async function importQuestions() {
 			}
 			questionIds.add(mappedRow.questionId)
 
+			// Validate parent-child relationships
+			if (
+				mappedRow.parentQuestionId &&
+				mappedRow.parentQuestionId.trim() !== ''
+			) {
+				// Check if parent question exists as an umbrella question
+				if (!umbrellaQuestions.has(mappedRow.parentQuestionId)) {
+					validationErrors.push(
+						`Row ${index + 2}: Parent question '${mappedRow.parentQuestionId}' not found or not an umbrella question (type: 'group')`,
+					)
+					return
+				}
+
+				// Umbrella questions should not have parents
+				if (mappedRow.type === 'group') {
+					validationErrors.push(
+						`Row ${index + 2}: Umbrella questions (type: 'group') cannot have a parentQuestionId`,
+					)
+					return
+				}
+			}
+
+			// Umbrella questions should not have choices
+			if (
+				mappedRow.type === 'group' &&
+				mappedRow.choices &&
+				mappedRow.choices.trim() !== ''
+			) {
+				console.warn(
+					`Row ${index + 2}: Umbrella question '${mappedRow.questionId}' has choices but type 'group' should not have choices. Choices will be ignored.`,
+				)
+			}
+
 			// Transform row to question
 			const question: ImportedQuestion = {
 				questionId: mappedRow.questionId,
 				name: mappedRow.name,
-				type: mappedRow.type as 'radiogroup' | 'text',
+				type: mappedRow.type as 'radiogroup' | 'text' | 'group',
 				title: mappedRow.title,
 				help: mappedRow.help || undefined,
 				reporting: mappedRow.reporting || undefined,
@@ -381,6 +478,10 @@ async function importQuestions() {
 				choices: processChoices(mappedRow.type, mappedRow.choices),
 				isRequired: mappedRow.isRequired === true,
 				score: Number(mappedRow.score),
+				parentQuestionId:
+					mappedRow.parentQuestionId && mappedRow.parentQuestionId.trim() !== ''
+						? mappedRow.parentQuestionId
+						: undefined,
 			}
 
 			questions.push(question)

@@ -18,8 +18,14 @@
  * 8. Conditional UI rendering for better user experience
  *
  * ==================================================================================
- * RECENT ENHANCEMENTS (v2.0 - July 2025)
+ * RECENT ENHANCEMENTS (v3.0 - July 2025)
  * ==================================================================================
+ *
+ * ### Umbrella Question Support:
+ * - **Hierarchical Structure**: Support for umbrella questions that group sub-questions
+ * - **Parent Title Injection**: Sub-questions display their parent umbrella question title
+ * - **Visual Differentiation**: Blue-themed styling for umbrella question sections
+ * - **Conditional Processing**: Different rendering logic for umbrella vs regular questions
  *
  * ### Enhanced Help System:
  * - **Three-Column Structure**: Replaced generic descriptions with semantic fields:
@@ -32,12 +38,14 @@
  * ### Markdown Integration:
  * - **Title Processing**: Question titles support markdown formatting (*italic*, **bold**, `code`)
  * - **Field Name Display**: Question field names appear above titles for context
+ * - **Umbrella Title Display**: Parent question titles for grouped sub-questions
  * - **Safe Processing**: Secure markdown rendering without XSS vulnerabilities
  *
  * ### Mobile-First Design:
  * - **Responsive Accordions**: Optimized layout for all screen sizes
  * - **Touch-Friendly**: Enhanced touch targets for mobile interaction
  * - **Text Wrapping**: Improved text flow for long question content
+ * - **Hierarchy Display**: Clear visual hierarchy for umbrella question relationships
  *
  * The component is designed to handle complex assessment workflows where users may:
  * - Navigate away and return to continue surveys
@@ -333,9 +341,37 @@
  *    - Error reporting integration
  *    - Completion rate analysis
  *
- * @version 1.0.0
- * @author ESG Assessment Team
+ * ==================================================================================
+ * UMBRELLA QUESTION IMPLEMENTATION (v3.0)
+ * ==================================================================================
+ *
+ * QUESTION HIERARCHY PROCESSING:
+ * - Umbrella questions (`type: 'group'`) provide structure without accepting input
+ * - Sub-questions reference parent umbrella via `parentQuestionId` and `parentQuestionTitle`
+ * - Dynamic parent title injection creates visual hierarchy
+ *
+ * STYLING SYSTEM:
+ * ```tsx
+ * // Umbrella question field names (blue theme)
+ * className="bg-blue-50 text-blue-700 border-b border-blue-200"
+ * 
+ * // Regular question field names (primary theme)  
+ * className="bg-primary/10 text-primary border-b border-primary/10"
+ * 
+ * // Parent title sections (prominent blue styling)
+ * className="bg-blue-50 text-blue-700 text-base font-semibold"
+ * ```
+ *
+ * PROCESSING FLOW:
+ * 1. Field name injection with umbrella-specific styling
+ * 2. Parent title injection for sub-questions before field names
+ * 3. Markdown processing with hierarchy-aware rendering
+ * 4. Answer handling that ignores umbrella question inputs
+ *
+ * @version 3.0.0
+ * @author ESG Assessment Team  
  * @since 2025-07-11
+ * @updated 2025-07-28 - Added umbrella question support with parent-child relationships
  * @requires react ^18.0.0
  * @requires react-dom ^18.0.0
  * @requires survey-core
@@ -423,7 +459,7 @@ function QuestionAccordion({
 		<Accordion
 			type="single"
 			collapsible
-			className="bg-card mt-2 mb-4 w-full rounded-md border"
+			className="bg-card mt-4 mb-4 w-full rounded-md border"
 		>
 			{accordionItems.map((item) => (
 				<AccordionItem
@@ -726,8 +762,27 @@ export function SurveyComponent({
 
 					// Create field name element
 					const fieldNameDiv = document.createElement('div')
-					fieldNameDiv.className =
-						'-mt-4 -ml-6 -mr-6 sm:-mt-8 sm:-ml-10 sm:-mr-10 p-4 bg-primary/10 text-primary text-sm font-medium mb-6 border-b border-primary/10'
+
+					// Find the question in the original survey JSON to get custom properties
+					let isUmbrellaQuestion = false
+					for (const page of surveyJson.pages) {
+						for (const element of page.elements) {
+							if (element.name === question.name) {
+								isUmbrellaQuestion = element.isUmbrellaQuestion || false
+								break
+							}
+						}
+					}
+
+					// Debug: Log question properties to understand structure
+					console.log('🔍 Question properties:', {
+						name: question.name,
+						type: question.type,
+						isUmbrellaQuestion: isUmbrellaQuestion,
+						foundInSurveyJson: isUmbrellaQuestion,
+					})
+
+					fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
 					fieldNameDiv.textContent = question.name
 
 					console.log('📋 Created field name element:', fieldNameDiv)
@@ -747,6 +802,61 @@ export function SurveyComponent({
 						titleElement: !!titleElement,
 						questionName: question.name,
 					})
+				}
+
+				// Step 1.5: Inject umbrella question title for sub-questions (before field name)
+				// Find the question in the original survey JSON to get parent question info
+				let parentQuestionTitle: string | undefined
+				let parentQuestionId: string | undefined
+
+				for (const page of surveyJson.pages) {
+					for (const element of page.elements) {
+						if (element.name === question.name) {
+							parentQuestionTitle = element.parentQuestionTitle
+							parentQuestionId = element.parentQuestionId
+							break
+						}
+					}
+				}
+
+				if (parentQuestionTitle && parentQuestionId) {
+					console.log(
+						'🏢 Injecting umbrella question title for sub-question:',
+						question.name,
+						'Parent title:',
+						parentQuestionTitle,
+					)
+
+					// Check if umbrella title already exists to avoid duplicates
+					const existingUmbrellaTitle = titleElement?.parentNode?.querySelector(
+						'.umbrella-question-title',
+					)
+					if (existingUmbrellaTitle) {
+						console.log('⚠️ Umbrella title already exists, removing it first')
+						existingUmbrellaTitle.remove()
+					}
+
+					// Create umbrella question title element
+					const umbrellaTitleDiv = document.createElement('div')
+					umbrellaTitleDiv.className =
+						'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
+					umbrellaTitleDiv.innerHTML =
+						processMarkdownSafely(parentQuestionTitle)
+
+					console.log('🏢 Created umbrella title element:', umbrellaTitleDiv)
+
+					// Insert umbrella title before the field name element (at the very beginning)
+					const container = titleElement?.parentNode || options.htmlElement
+					if (container) {
+						container.insertBefore(umbrellaTitleDiv, container.firstChild)
+						console.log(
+							'✅ Umbrella title injected successfully before field name',
+						)
+					} else {
+						console.error('❌ No container found for umbrella title injection')
+					}
+				} else {
+					console.log('❌ No parent question found for:', question.name)
 				}
 
 				// Step 2: Process markdown in title if it contains markdown syntax

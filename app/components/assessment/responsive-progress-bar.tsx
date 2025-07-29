@@ -22,10 +22,14 @@
  * ==================================================================================
  *
  * PROGRESS DOT STATES:
- * - Answered: Green background (bg-green-500) - Question completed
- * - Answered + Current: Green with ring (ring-4 ring-primary/30) - Active completed question
- * - Current: Transparent with primary border + ring - Active unanswered question
- * - Unanswered: Gray background (bg-gray-300) - Not yet visited/answered
+ * - **Regular Questions (Round)**:
+ *   - Answered: Green background (bg-green-500) - Question completed
+ *   - Answered + Current: Green with ring (ring-4 ring-primary/30) - Active completed question
+ *   - Current: Transparent with primary border + ring - Active unanswered question
+ *   - Unanswered: Gray background (bg-gray-300) - Not yet visited/answered
+ * - **Umbrella Questions (Square)**:
+ *   - Normal: Gray background (bg-gray-100) with gray border - Overview state
+ *   - Current: Blue background (bg-blue-200) with blue ring - Active overview
  *
  * RESPONSIVE BREAKPOINTS:
  * - Mobile (< lg): Horizontal scrollable container with navigation arrows
@@ -56,15 +60,19 @@
  *
  * PROGRESS CALCULATION LOGIC:
  * ```tsx
- * // Mandatory completion percentage
- * const mandatoryAnswered = questions
- *   .filter(q => q.isRequired)
- *   .filter(q => answeredQuestions.has(q.questionId)).length
- * const mandatoryPercentage = (mandatoryAnswered / mandatoryTotal) * 100
+ * // Filter out umbrella questions (type: 'group') from progress calculations
+ * const answerableQuestions = questions.filter(q => q.type !== 'group')
+ * 
+ * // Mandatory completion percentage (excludes umbrella questions)
+ * const mandatoryAnswerable = answerableQuestions.filter(q => q.isRequired)
+ * const mandatoryAnswered = mandatoryAnswerable.filter(q => 
+ *   answeredQuestions.has(q.questionId)).length
+ * const mandatoryPercentage = (mandatoryAnswered / mandatoryAnswerable.length) * 100
  *
- * // Total completion percentage
- * const allAnswered = questions.filter(q => answeredQuestions.has(q.questionId)).length
- * const totalPercentage = (allAnswered / questions.length) * 100
+ * // Total completion percentage (excludes umbrella questions)
+ * const allAnswered = answerableQuestions.filter(q => 
+ *   answeredQuestions.has(q.questionId)).length
+ * const totalPercentage = (allAnswered / answerableQuestions.length) * 100
  * ```
  *
  * ==================================================================================
@@ -104,10 +112,29 @@
  * - Lightweight hover effects without layout thrashing
  * - Smooth scrolling to current dot with proper timing
  *
- * @version 1.1.0
+ * ==================================================================================
+ * UMBRELLA QUESTION SUPPORT (v2.0)
+ * ==================================================================================
+ *
+ * QUESTION TYPE HANDLING:
+ * - `type: 'group'` - Umbrella questions excluded from progress calculations
+ * - `type: 'radiogroup'|'text'|'checkbox'|'rating'|'boolean'` - Answerable questions
+ *
+ * VISUAL DIFFERENTIATION:
+ * - Square shape (rounded-sm) for umbrella questions vs round for regular
+ * - Blue color theme for umbrella questions vs green/gray for regular
+ * - Special status handling: 'umbrella' and 'umbrella-current' states
+ *
+ * PROGRESS FILTERING:
+ * - Only answerable questions count toward completion percentages
+ * - Umbrella questions provide navigation structure without affecting metrics
+ * - Maintains accurate progress reporting for assessment completion
+ *
+ * @version 2.0.0
  * @author ESG Assessment Team
  * @since 2025-07-12
  * @updated 2025-07-18 - Added navigation hook integration and ping pong effect prevention
+ * @updated 2025-07-28 - Added umbrella question support with progress filtering
  * @requires react
  * @requires lucide-react
  * @requires #app/utils/misc (cn utility)
@@ -116,7 +143,7 @@
  * ```tsx
  * // Usage in assessment route with navigation hook
  * const navigation = useAssessmentNavigation(...)
- * 
+ *
  * <ResponsiveProgressBar
  *   questions={assessmentQuestions}
  *   currentIndex={navigation.currentPageIndex}
@@ -154,6 +181,7 @@ interface ResponsiveProgressBarProps {
 		section: string
 		title: string
 		isRequired: boolean
+		type?: string
 	}>
 	currentIndex: number
 	answeredQuestions: Set<string>
@@ -178,7 +206,6 @@ export function ResponsiveProgressBar({
 	canNavigatePrevious = false,
 	canNavigateNext = false,
 }: ResponsiveProgressBarProps) {
-
 	// Refs for scroll containers
 	const mobileScrollRef = useRef<HTMLDivElement>(null)
 	const desktopScrollRef = useRef<HTMLDivElement>(null)
@@ -224,13 +251,16 @@ export function ResponsiveProgressBar({
 	)
 
 	// Calculate completion percentages
-	const mandatoryAnswered = questions
-		.filter((q) => q.isRequired)
-		.filter((q) => answeredQuestions.has(q.questionId)).length
+	const answerableQuestions = questions.filter((q) => q.type !== 'group')
+	const mandatoryAnswerable = answerableQuestions.filter((q) => q.isRequired)
 
-	const mandatoryTotal = questions.filter((q) => q.isRequired).length
+	const mandatoryAnswered = mandatoryAnswerable.filter((q) =>
+		answeredQuestions.has(q.questionId),
+	).length
 
-	const allAnswered = questions.filter((q) =>
+	const mandatoryTotal = mandatoryAnswerable.length
+
+	const allAnswered = answerableQuestions.filter((q) =>
 		answeredQuestions.has(q.questionId),
 	).length
 
@@ -239,9 +269,20 @@ export function ResponsiveProgressBar({
 			? Math.round((mandatoryAnswered / mandatoryTotal) * 100)
 			: 0
 
-	const totalPercentage = Math.round((allAnswered / questions.length) * 100)
-	const getProgressDotStatus = (index: number, questionId: string) => {
-		const isAnswered = answeredQuestions.has(questionId)
+	const totalPercentage = Math.round(
+		(allAnswered / answerableQuestions.length) * 100,
+	)
+	const getProgressDotStatus = (
+		index: number,
+		question: { questionId: string; type?: string },
+	) => {
+		// Special handling for umbrella questions
+		if (question.type === 'group') {
+			const isCurrent = index === currentIndex
+			return isCurrent ? 'umbrella-current' : 'umbrella'
+		}
+
+		const isAnswered = answeredQuestions.has(question.questionId)
 		const isCurrent = index === currentIndex
 
 		if (isAnswered && isCurrent) return 'answered-current'
@@ -252,19 +293,23 @@ export function ResponsiveProgressBar({
 
 	const getProgressDotStyles = (status: string) => {
 		const baseStyles =
-			'focus:ring-primary/50 h-4 w-4 flex-shrink-0 rounded-full border-2 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none'
+			'focus:ring-primary/50 h-4 w-4 flex-shrink-0 transition-all duration-200 focus:ring-2 focus:ring-offset-2 focus:outline-none border-2'
 
 		switch (status) {
 			case 'answered':
-				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600`
+				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600 rounded-full`
 			case 'answered-current':
-				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600 ring-4 ring-primary/30`
+				return `${baseStyles} bg-green-500 border-green-500 text-white hover:bg-green-600 ring-4 ring-primary/30 rounded-full`
 			case 'current':
-				return `${baseStyles} bg-transparent border-primary text-primary ring-4 ring-primary/30`
+				return `${baseStyles} bg-transparent border-primary text-primary ring-4 ring-primary/30 rounded-full`
+			case 'umbrella':
+				return `${baseStyles} bg-gray-100 border-gray-400 text-gray-600 hover:bg-gray-200 rounded-sm` // Square shape, gray colors
+			case 'umbrella-current':
+				return `${baseStyles} bg-blue-200 border-blue-500 text-blue-700 ring-4 ring-blue-300 rounded-sm` // Square shape with ring
 			case 'unanswered':
-				return `${baseStyles} bg-transparent border-gray-300 text-gray-400 hover:bg-gray-50`
+				return `${baseStyles} bg-transparent border-gray-300 text-gray-400 hover:bg-gray-50 rounded-full`
 			default:
-				return `${baseStyles} bg-transparent border-gray-300 text-gray-400`
+				return `${baseStyles} bg-transparent border-gray-300 text-gray-400 rounded-full`
 		}
 	}
 
@@ -291,7 +336,7 @@ export function ResponsiveProgressBar({
 					>
 						<div className="flex min-w-max gap-2 px-2 py-3">
 							{questions.map((question, index) => {
-								const status = getProgressDotStatus(index, question.questionId)
+								const status = getProgressDotStatus(index, question)
 								return (
 									<button
 										key={question.questionId}
@@ -355,7 +400,7 @@ export function ResponsiveProgressBar({
 					>
 						<div className="flex min-w-max gap-3 px-4 py-3">
 							{questions.map((question, index) => {
-								const status = getProgressDotStatus(index, question.questionId)
+								const status = getProgressDotStatus(index, question)
 								return (
 									<button
 										key={question.questionId}

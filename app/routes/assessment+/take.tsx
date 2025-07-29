@@ -201,10 +201,30 @@ e, resume, complete)
  *    - Predictive prefetching
  *    - Service worker caching
  *
- * @version 1.1.0
+ * ==================================================================================
+ * UMBRELLA QUESTION SUPPORT (v2.0)
+ * ==================================================================================
+ *
+ * QUESTION DATA ENHANCEMENT:
+ * - Added `type` field to question objects for umbrella question identification
+ * - Added `parentQuestionId` field for sub-question to parent relationships
+ * - Enhanced loader data structure to support question hierarchy
+ *
+ * ANSWER PROCESSING:
+ * - Filters out umbrella questions (`type: 'group'`) from answer processing
+ * - Prevents value change handling for non-answerable umbrella questions
+ * - Maintains clean answer state by ignoring navigation-only questions
+ *
+ * NAVIGATION INTEGRATION:
+ * - Passes question type information to navigation components
+ * - Supports hierarchical navigation with parent-child relationships
+ * - Enables proper progress calculation excluding umbrella questions
+ *
+ * @version 2.0.0
  * @author ESG Assessment Team
  * @since 2025-07-11
  * @updated 2025-07-18 - Integrated centralized navigation hook to prevent ping pong effects
+ * @updated 2025-07-28 - Added umbrella question support with hierarchy handling
  * @requires react
  * @requires react-router
  * @requires #app/components/assessment/survey-component
@@ -285,6 +305,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 			section: q.section,
 			title: q.title,
 			isRequired: q.isRequired,
+			type: q.type, // Add type information
+			parentQuestionId: q.parentQuestionId, // Add parent relationship
 		})),
 	}
 }
@@ -478,6 +500,7 @@ export default function AssessmentTake() {
 	const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
 		new Set(),
 	)
+
 	const [loadingTimeout, setLoadingTimeout] = useState(false)
 	const isProgrammaticNavigation = useRef(false)
 
@@ -540,6 +563,15 @@ export default function AssessmentTake() {
 				)
 				return fullQuestion?.name === name
 			})
+
+			// Only process answers for non-umbrella questions
+			const fullQuestion = assessmentQuestions.find(
+				(aq) => aq.questionId === question?.questionId,
+			)
+			if (fullQuestion?.type === 'group') {
+				console.log('⚠️ Ignoring value change for umbrella question:', name)
+				return
+			}
 
 			if (question) {
 				setAnsweredQuestions((prev) => {
@@ -789,59 +821,64 @@ export default function AssessmentTake() {
 								}
 							>
 								{() => (
-									<Suspense fallback={
-									loadingTimeout ? (
-										<div className="space-y-4 p-6">
-											<Alert>
-												<AlertCircle className="h-4 w-4" />
-												<AlertDescription>
-													<p className="font-medium mb-2">Assessment is taking longer than usual to load</p>
-													<p className="text-sm text-muted-foreground mb-3">
-														This may be due to network conditions or React Router v7 performance issues. 
-														The assessment will continue loading in the background.
-													</p>
-													<Button 
-														variant="outline" 
-														size="sm"
-														onClick={() => window.location.reload()}
-													>
-														Refresh Page
-													</Button>
-												</AlertDescription>
-											</Alert>
-											<div className="space-y-2">
-												<Skeleton className="h-8 w-3/4" />
-												<Skeleton className="h-4 w-1/2" />
-											</div>
-										</div>
-									) : (
-										<div className="space-y-4 p-6">
-											<div className="space-y-2">
-												<Skeleton className="h-8 w-3/4" />
-												<Skeleton className="h-4 w-1/2" />
-											</div>
-											<div className="space-y-3">
-												<Skeleton className="h-32 w-full" />
-												<div className="flex space-x-2">
-													<Skeleton className="h-4 w-4 rounded-full" />
-													<Skeleton className="h-4 w-24" />
+									<Suspense
+										fallback={
+											loadingTimeout ? (
+												<div className="space-y-4 p-6">
+													<Alert>
+														<AlertCircle className="h-4 w-4" />
+														<AlertDescription>
+															<p className="mb-2 font-medium">
+																Assessment is taking longer than usual to load
+															</p>
+															<p className="text-muted-foreground mb-3 text-sm">
+																This may be due to network conditions or React
+																Router v7 performance issues. The assessment
+																will continue loading in the background.
+															</p>
+															<Button
+																variant="outline"
+																size="sm"
+																onClick={() => window.location.reload()}
+															>
+																Refresh Page
+															</Button>
+														</AlertDescription>
+													</Alert>
+													<div className="space-y-2">
+														<Skeleton className="h-8 w-3/4" />
+														<Skeleton className="h-4 w-1/2" />
+													</div>
 												</div>
-												<div className="flex space-x-2">
-													<Skeleton className="h-4 w-4 rounded-full" />
-													<Skeleton className="h-4 w-32" />
+											) : (
+												<div className="space-y-4 p-6">
+													<div className="space-y-2">
+														<Skeleton className="h-8 w-3/4" />
+														<Skeleton className="h-4 w-1/2" />
+													</div>
+													<div className="space-y-3">
+														<Skeleton className="h-32 w-full" />
+														<div className="flex space-x-2">
+															<Skeleton className="h-4 w-4 rounded-full" />
+															<Skeleton className="h-4 w-24" />
+														</div>
+														<div className="flex space-x-2">
+															<Skeleton className="h-4 w-4 rounded-full" />
+															<Skeleton className="h-4 w-32" />
+														</div>
+														<div className="flex space-x-2">
+															<Skeleton className="h-4 w-4 rounded-full" />
+															<Skeleton className="h-4 w-28" />
+														</div>
+													</div>
+													<div className="flex justify-between pt-4">
+														<Skeleton className="h-10 w-20" />
+														<Skeleton className="h-10 w-20" />
+													</div>
 												</div>
-												<div className="flex space-x-2">
-													<Skeleton className="h-4 w-4 rounded-full" />
-													<Skeleton className="h-4 w-28" />
-												</div>
-											</div>
-											<div className="flex justify-between pt-4">
-												<Skeleton className="h-10 w-20" />
-												<Skeleton className="h-10 w-20" />
-											</div>
-										</div>
-									)
-								}>
+											)
+										}
+									>
 										<SurveyComponent
 											surveyJson={surveyJson}
 											initialData={assessment.surveyData}

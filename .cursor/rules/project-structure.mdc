@@ -17,8 +17,9 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 - Built with Vite as the build tool
 - SQLite database with Prisma ORM
 - Deployed on Fly.io with LiteFS for database replication
-- **Core Feature**: ESG Assessment system with SurveyJS integration (88 questions across 7 sections)
-- **Latest Enhancement (v2.0)**: Three-column accordion help system with markdown support and field name display
+- **Core Feature**: ESG Assessment system with SurveyJS integration (88+ questions across 7 sections)
+- **Latest Enhancement (v3.0)**: Umbrella question support with hierarchical grouping and parent-child relationships
+- **Previous Enhancement (v2.0)**: Three-column accordion help system with markdown support and field name display
 
 ```tree
 .
@@ -185,25 +186,34 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   ├── 2025.07.12/    # Assessment enhancements
 │   │   ├── 2025.07.18/    # UI improvement activities
 │   │   ├── 2025.07.21/    # Navigation system improvements
-│   │   └── 2025.07.23/    # Three-column accordion system implementation
+│   │   ├── 2025.07.23/    # Three-column accordion system implementation (v2.0)
+│   │   │   └── activity-01/
+│   │   │       ├── 00.support-prompts.md
+│   │   │       ├── 01.issue-statement.md
+│   │   │       ├── 02.exploration-statement.md
+│   │   │       ├── 03.diagnostic-report.md
+│   │   │       ├── 04.code-change-plan.md
+│   │   │       ├── 05.summary-implementation-report.md
+│   │   │       ├── 06.detailed-implementation-report.md
+│   │   │       └── assessment-questions.xlsx
+│   │   └── 2025.07.28/    # Umbrella question implementation (v3.0)
 │   │       └── activity-01/
 │   │           ├── 00.support-prompts.md
 │   │           ├── 01.issue-statement.md
 │   │           ├── 02.exploration-statement.md
 │   │           ├── 03.diagnostic-report.md
 │   │           ├── 04.code-change-plan.md
-│   │           ├── 05.summary-implementation-report.md
-│   │           ├── 06.detailed-implementation-report.md
-│   │           └── assessment-questions.xlsx
+│   │           ├── 05.summary-code-changes.md
+│   │           └── 06.detailed-implementation-report.md
 │   └── guidelines/        # Development guidelines
 │       ├── guidelines.md  # Main development guidelines
 │       └── guidelines-epicstack-core.md # Epic Stack core guidelines
 ├── data/                  # Data files and uploads
 │   └── uploads/           # File upload storage
-│       ├── assessment-questions.xlsx # Source Excel file (88 questions - updated for v2.0)
+│       ├── assessment-questions.xlsx # Source Excel file (88+ questions - updated for v3.0 with umbrella support)
 │       └── *.* # Other uploaded files
 ├── scripts/               # Utility scripts
-│   └── import-questions.ts # Excel-to-TypeScript question importer (enhanced for v2.0)
+│   └── import-questions.ts # Excel-to-TypeScript question importer (enhanced for v3.0 with umbrella question support)
 ├── prisma/                # Database schema and migrations
 │   ├── migrations/        # Database migration files
 │   │   ├── 20250711123650_add_assessment_models/ # Assessment models
@@ -270,13 +280,15 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 
 ### Assessment System
 - **SurveyJS** - Advanced survey and form components with real-time persistence
-- **88 ESG Questions** - Comprehensive assessment across 7 sections
+- **88+ ESG Questions** - Comprehensive assessment across 7 sections with hierarchical grouping
+- **Umbrella Questions** - Hierarchical question organization with parent-child relationships (v3.0)
 - **Real-time Auto-save** - Automatic answer persistence
-- **Progress Tracking** - Page-level progress with visual indicators
+- **Progress Tracking** - Page-level progress with visual indicators (excluding umbrella questions)
 - **Responsive Design** - Mobile and desktop optimized
-- **Three-Column Help System** - Enhanced accordion with Help, Reporting, and Documentation sections
+- **Three-Column Help System** - Enhanced accordion with Help, Reporting, and Documentation sections (v2.0)
 - **Markdown Processing** - Safe markdown rendering with field name display
 - **Conditional UI** - Progressive disclosure based on content availability
+- **Visual Differentiation** - Square blue indicators for umbrella questions vs round indicators for regular questions
 
 ### UI & Styling
 - **Tailwind CSS v4** - Utility-first styling with modern features
@@ -387,9 +399,9 @@ model AssessmentAnswer {
 }
 ```
 
-### Assessment Question Structure (v2.0 Enhancement)
+### Assessment Question Structure (v3.0 Enhancement)
 
-The assessment system includes 88 ESG questions organized into 7 sections with enhanced help content structure:
+The assessment system includes 88+ ESG questions organized into 7 sections with enhanced help content structure and umbrella question support:
 
 - **SEZIONE 0**: Company identification (7 questions)
 - **SEZIONE I**: Human rights commitment (19 questions)  
@@ -402,12 +414,16 @@ The assessment system includes 88 ESG questions organized into 7 sections with e
 Each question includes:
 - **Unique ID** and **Name** for SurveyJS integration
 - **Italian text** with professional terminology
-- **Question type** (radiogroup, text)
+- **Question type** (radiogroup, text, group for umbrella questions)
 - **Standardized choices** for consistency
 - **Enhanced help content structure (v2.0)**:
   - `help`: Contextual guidance for question understanding
   - `reporting`: Compliance and regulatory requirements
   - `docs`: Additional documentation and resources
+- **Umbrella question support (v3.0)**:
+  - `type: 'group'` for umbrella questions that provide navigation structure
+  - `parentQuestionId` field for sub-questions to reference their umbrella parent
+  - Visual differentiation with blue square indicators vs round indicators
 - **Section grouping** for progress tracking
 - **Markdown support** in titles and help content
 - **Field name display** for better context
@@ -557,24 +573,30 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 ### Key Components
 
 #### Frontend Components
-- **AssessmentNavigation** (`app/components/assessment/assessment-navigation.tsx`) ⭐ **NEW**
+- **AssessmentNavigation** (`app/components/assessment/assessment-navigation.tsx`) ⭐ **ENHANCED v3.0**
   - Unified navigation combining progress bar and section selection
   - Mobile-optimized horizontal scrollable view with touch controls
   - Desktop grid layout with visual progress indicators
   - Auto-scroll functionality for current question visibility
   - Integrated section dropdown with smart positioning
-- **SurveyComponent** (`app/components/assessment/survey-component.tsx`) ⭐ **ENHANCED v2.0**
-  - SurveyJS wrapper with enhanced three-column accordion integration
+  - **Umbrella question support** with square blue indicators vs round indicators for regular questions
+  - **Enhanced accessibility** with "Overview" labels for umbrella questions
+- **SurveyComponent** (`app/components/assessment/survey-component.tsx`) ⭐ **ENHANCED v3.0**
+  - SurveyJS wrapper with enhanced three-column accordion integration (v2.0)
+  - **Umbrella question support** with parent title injection for sub-questions
+  - **Conditional processing** for umbrella vs regular questions
   - Real-time auto-save functionality with conflict prevention
   - Advanced markdown processing with field name display
   - XSS-safe content rendering and DOM manipulation
   - Enterprise-grade React wrapper with memory management
   - Conditional rendering for better performance
-- **ResponsiveProgressBar** (`app/components/assessment/responsive-progress-bar.tsx`) ⭐ **ENHANCED**
+- **ResponsiveProgressBar** (`app/components/assessment/responsive-progress-bar.tsx`) ⭐ **ENHANCED v3.0**
   - Enhanced adaptive progress navigation
-  - Dual progress metrics (mandatory vs. total questions)
+  - Dual progress metrics (mandatory vs. total questions) with umbrella question filtering
   - Interactive progress dots with color-coded completion states
-  - Accessibility support with ARIA labels
+  - **Umbrella question visual differentiation** with square blue indicators
+  - **Progress filtering** that excludes umbrella questions from completion calculations
+  - Accessibility support with ARIA labels and "Overview" state for umbrella questions
 - **SectionDisplay** (`app/components/assessment/section-display.tsx`)
   - Legacy section navigation component (being phased out)
   - Basic section dropdown functionality
@@ -596,23 +618,27 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 - **assessment.server.ts** (`app/utils/assessment.server.ts`)
   - Complete assessment lifecycle management
   - Real-time answer persistence with upsert operations
-  - Progress tracking and completion logic
-- **assessment-questions.ts** (`app/utils/assessment-questions.ts`) ⭐ **ENHANCED v2.0**
-  - Centralized configuration for 88 ESG questions across 7 sections
-  - Enhanced semantic field structure with help/reporting/docs metadata
+  - Progress tracking and completion logic with umbrella question filtering
+- **assessment-questions.ts** (`app/utils/assessment-questions.ts`) ⭐ **ENHANCED v3.0**
+  - Centralized configuration for 88+ ESG questions across 7 sections
+  - **Umbrella question support** with `type: 'group'` and `parentQuestionId` field
+  - Enhanced semantic field structure with help/reporting/docs metadata (v2.0)
   - Markdown support in question titles with field name display
   - Complete migration from descriptions array to semantic fields
   - Italian ESG questions with regulatory compliance information
   - Structured help content with progressive disclosure
-- **import-questions.ts** (`scripts/import-questions.ts`) ⭐ **ENHANCED**
-  - Excel import functionality with column mapping for v2.0 semantic fields
-  - Support for help/reporting/docs field structures
+  - **Hierarchical question organization** with parent-child relationships
+- **import-questions.ts** (`scripts/import-questions.ts`) ⭐ **ENHANCED v3.0**
+  - Excel import functionality with column mapping for v3.0 umbrella question support
+  - **Parent-child validation** ensures valid umbrella question relationships
+  - Support for help/reporting/docs field structures (v2.0)
+  - **Umbrella question processing** with `parentQuestionId` column mapping
   - Data validation and transformation pipeline
-  - Bulk import operations with error handling
+  - Bulk import operations with comprehensive error handling
 
 #### Route Structure
 - **assessment+/** - Assessment workflow
-  - `take.tsx` - Main assessment interface with enhanced navigation system ⭐ **ENHANCED**
+  - `take.tsx` - Main assessment interface with umbrella question support ⭐ **ENHANCED v3.0**
   - `review.tsx` - Assessment review interface
   - `complete.tsx` - Success confirmation
 - **dashboard+/assessment** - Assessment management
@@ -621,8 +647,9 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
   - `assessment.$id.summary.tsx` - Results visualization
 
 #### Question Types Supported
-- **Radio groups** (single selection) - Most common type
+- **Radio groups** (single selection) - Most common type for answerable questions
 - **Text fields** (open responses) - For detailed explanations
+- **Group questions** (umbrella) - Navigation-only questions that organize sub-questions (v3.0)
 - **Standardized choices** - Consistent "Sì/No" options across questions
 
 #### Technical Features
@@ -631,28 +658,39 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 - **Comprehensive error handling** and recovery mechanisms
 - **Enhanced responsive design** with mobile-first approach ⭐ **IMPROVED**
 - **Unified navigation system** with progress indicators and section selection ⭐ **NEW**
-- **Accordion help system** with multiple descriptions per question
+- **Umbrella question hierarchy** with parent-child relationships ⭐ **NEW v3.0**
+- **Visual differentiation** between regular questions (round) and umbrella questions (square blue) ⭐ **NEW v3.0**
+- **Progress filtering** that excludes umbrella questions from completion calculations ⭐ **NEW v3.0**
+- **Parent title injection** for sub-questions showing their umbrella context ⭐ **NEW v3.0**
+- **Accordion help system** with multiple descriptions per question (v2.0)
 - **State management** with conflict prevention and abort controllers ⭐ **NEW**
 - **Auto-scroll functionality** for current question visibility ⭐ **NEW**
 - **Touch-optimized controls** for mobile devices ⭐ **NEW**
 - **Dual progress metrics** (mandatory vs. total questions) ⭐ **NEW**
 
-### Recent Improvements (July 2025) ⭐ **ESG Assessment System v2.0**
+### Recent Improvements (July 2025) ⭐ **ESG Assessment System v3.0**
 Based on recent commits and comprehensive enhancements:
 
-1. **ESG Assessment System v2.0**: Complete overhaul with enhanced help structure
+1. **ESG Assessment System v3.0**: Umbrella question support with hierarchical organization
+   - Umbrella questions (`type: 'group'`) for navigation-only organization
+   - Parent-child relationships via `parentQuestionId` field
+   - Visual differentiation with square blue indicators vs round green/gray for regular questions
+   - Progress filtering that excludes umbrella questions from completion calculations
+   - Parent title injection for sub-questions showing umbrella context
+
+2. **ESG Assessment System v2.0**: Complete overhaul with enhanced help structure
    - Three-column accordion system (Help, Reporting, Documentation)
    - Markdown support in question titles with field name display
-   - 88 Italian ESG questions with semantic field structure
+   - 88+ Italian ESG questions with semantic field structure
    - Enhanced progressive disclosure and content organization
 
-2. **AssessmentNavigation Component**: NEW unified navigation system combining progress bar and section selection
-3. **Enhanced State Management**: NEW `useAssessmentNavigation` hook prevents navigation conflicts
-4. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
-5. **Better Progress Tracking**: Dual progress metrics (mandatory vs. total questions)
-6. **Auto-scroll Functionality**: Current question visibility in progress navigation
-7. **Ping Pong Effect Prevention**: Sophisticated navigation state management with abort controllers
-8. **Excel Import System**: Enhanced import-questions.ts with column mapping for semantic fields
+3. **AssessmentNavigation Component**: Enhanced with umbrella question support
+4. **Enhanced State Management**: `useAssessmentNavigation` hook prevents navigation conflicts
+5. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
+6. **Better Progress Tracking**: Dual progress metrics excluding umbrella questions
+7. **Auto-scroll Functionality**: Current question visibility in progress navigation
+8. **Ping Pong Effect Prevention**: Sophisticated navigation state management with abort controllers
+9. **Excel Import System**: Enhanced with umbrella question validation and processing
 
 ### Dependencies Added (Current)
 ```json

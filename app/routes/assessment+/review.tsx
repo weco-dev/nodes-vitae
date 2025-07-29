@@ -42,7 +42,15 @@
  * @see {@link app/routes/assessment+/complete.tsx} for post-submission page
  */
 
-import { redirect, useLoaderData, useNavigate, Form } from 'react-router'
+import { useEffect } from 'react'
+import {
+	redirect,
+	useLoaderData,
+	useNavigate,
+	Form,
+	useActionData,
+} from 'react-router'
+import { toast } from 'sonner'
 import { Button } from '#app/components/ui/button.tsx'
 import {
 	Card,
@@ -56,6 +64,7 @@ import { assessmentQuestions } from '#app/utils/assessment-questions.ts'
 import {
 	getUserOpenAssessment,
 	completeAssessment,
+	updateAssessmentProgress,
 } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { type Route } from './+types/review'
@@ -98,16 +107,48 @@ export async function action({ request }: Route.ActionArgs) {
 		return redirect('/assessment/take')
 	}
 
-	// Complete the assessment
-	await completeAssessment(assessment.id)
+	const formData = await request.formData()
+	const actionType = formData.get('actionType')
 
-	// Redirect to the dashboard with the specific assessment
-	return redirect(`/dashboard/assessments/${assessment.id}`)
+	if (actionType === 'save') {
+		// Save the assessment without closing it
+		const surveyData = JSON.parse(assessment.surveyData || '{}') as Record<
+			string,
+			any
+		>
+		await updateAssessmentProgress(
+			assessment.id,
+			surveyData,
+			assessment.currentPageIndex,
+		)
+
+		// Redirect to the dashboard with the specific assessment
+		return redirect(`/dashboard/assessments/${assessment.id}`)
+	}
+
+	if (actionType === 'complete') {
+		// Complete and close the assessment
+		await completeAssessment(assessment.id)
+
+		// Redirect to the dashboard with the specific assessment
+		return redirect(`/dashboard/assessments/${assessment.id}`)
+	}
+
+	// Default fallback
+	return { error: 'Invalid action' }
 }
 
 export default function AssessmentReview() {
 	const { stats } = useLoaderData<typeof loader>()
+	const actionData = useActionData<typeof action>()
 	const navigate = useNavigate()
+
+	// Show toast notification for errors only
+	useEffect(() => {
+		if (actionData?.error) {
+			toast.error(actionData.error)
+		}
+	}, [actionData])
 
 	return (
 		<div className="container mx-auto space-y-8 py-8">
@@ -201,7 +242,23 @@ export default function AssessmentReview() {
 					<Icon name="arrow-left" className="h-4 w-4" />
 					Continue Assessment
 				</Button>
+
 				<Form method="post">
+					<input type="hidden" name="actionType" value="save" />
+					<Button
+						type="submit"
+						variant="outline"
+						size="lg"
+						className="flex items-center gap-2"
+						disabled={stats.answeredQuestions === 0}
+					>
+						<Icon name="file-text" className="h-4 w-4" />
+						Save Assessment
+					</Button>
+				</Form>
+
+				<Form method="post">
+					<input type="hidden" name="actionType" value="complete" />
 					<Button
 						type="submit"
 						size="lg"
@@ -209,7 +266,7 @@ export default function AssessmentReview() {
 						disabled={stats.answeredQuestions === 0}
 					>
 						<Icon name="question-mark-circled" className="h-4 w-4" />
-						Submit Assessment
+						Submit and Close Assessment
 					</Button>
 				</Form>
 			</div>
