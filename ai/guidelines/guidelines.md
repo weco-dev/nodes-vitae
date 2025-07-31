@@ -5,3 +5,5 @@
 - The app is mobile first
 - The available icon names are in iconNames in the file
   app/components/ui/icons/types.ts
+- use invariant or invariantResponse to avoid "if" clauses or {vaiable}!
+  solutions when a variable is null or undefined
