@@ -11,6 +11,7 @@ import {
 import { Icon } from '#app/components/ui/icon'
 import { Separator } from '#app/components/ui/separator'
 import { getUserId } from '#app/utils/auth.server.ts'
+import { trackDemoConversion } from '#app/utils/demo-analytics.ts'
 import { type Route } from './+types/index'
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -46,6 +47,13 @@ export default function Index() {
 							>
 								Vantaggi
 							</a>
+							<Link
+								to="/demo/take"
+								className="text-muted-foreground hover:text-primary transition-colors font-medium"
+								onClick={() => trackDemoConversion('demo_clicked', 'header')}
+							>
+								Demo
+							</Link>
 							<a
 								href="#contact"
 								className="text-muted-foreground hover:text-primary transition-colors"
@@ -86,9 +94,19 @@ export default function Index() {
 								Inizia la valutazione gratuita
 							</Link>
 						</Button>
-						<Button variant="outline" size="lg" className="px-8 py-3 text-lg">
-							<Icon name="camera" className="mr-2 h-5 w-5" />
-							Guarda la demo
+						<Button 
+							variant="outline" 
+							size="lg" 
+							className="px-8 py-3 text-lg" 
+							asChild
+						>
+							<Link 
+								to="/demo/take"
+								onClick={() => trackDemoConversion('demo_clicked', 'hero')}
+							>
+								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+								Prova la demo
+							</Link>
 						</Button>
 					</div>
 				</div>
@@ -203,6 +221,81 @@ export default function Index() {
 								</ul>
 							</CardContent>
 						</Card>
+					</div>
+				</div>
+			</section>
+
+			{/* Demo Section */}
+			<section className="px-4 py-20 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+				<div className="container mx-auto">
+					<div className="max-w-4xl mx-auto text-center">
+						<div className="mb-6">
+							<Badge variant="outline" className="mb-4">
+								<Icon name="arrow-right" className="mr-2 h-4 w-4" />
+								Demo Gratuita
+							</Badge>
+							<h2 className="text-foreground mb-4 text-4xl font-bold">
+								Scopri la Piattaforma in 5 Minuti
+							</h2>
+							<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
+								Prova subito il nostro sistema di valutazione ESG con 25 domande rappresentative. 
+								Nessuna registrazione richiesta.
+							</p>
+						</div>
+
+						<div className="grid gap-6 md:grid-cols-3 mb-8">
+							<div className="flex flex-col items-center text-center">
+								<div className="bg-blue-100 dark:bg-blue-900 rounded-full p-3 mb-3">
+									<Icon name="clock" className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+								</div>
+								<h3 className="font-semibold mb-1">5 Minuti</h3>
+								<p className="text-sm text-muted-foreground">Tempo medio di completamento</p>
+							</div>
+							<div className="flex flex-col items-center text-center">
+								<div className="bg-green-100 dark:bg-green-900 rounded-full p-3 mb-3">
+									<Icon name="check" className="h-6 w-6 text-green-600 dark:text-green-400" />
+								</div>
+								<h3 className="font-semibold mb-1">25 Domande</h3>
+								<p className="text-sm text-muted-foreground">Esempi da tutte le sezioni ESG</p>
+							</div>
+							<div className="flex flex-col items-center text-center">
+								<div className="bg-purple-100 dark:bg-purple-900 rounded-full p-3 mb-3">
+									<Icon name="check" className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+								</div>
+								<h3 className="font-semibold mb-1">Senza Registrazione</h3>
+								<p className="text-sm text-muted-foreground">Inizia subito, dati salvati localmente</p>
+							</div>
+						</div>
+
+						<div className="flex flex-col sm:flex-row gap-4 justify-center">
+							<Button 
+								size="lg" 
+								className="px-8 py-3 text-lg" 
+								asChild
+							>
+								<Link 
+									to="/demo/take"
+									onClick={() => trackDemoConversion('demo_clicked', 'section')}
+								>
+									<Icon name="arrow-right" className="mr-2 h-5 w-5" />
+									Inizia la Demo
+								</Link>
+							</Button>
+							<Button variant="outline" size="lg" className="px-8 py-3 text-lg" asChild>
+								<Link to="/about">
+									<Icon name="question-mark-circled" className="mr-2 h-5 w-5" />
+									Scopri di Più
+								</Link>
+							</Button>
+						</div>
+
+						<div className="mt-8 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+							<p className="text-sm text-muted-foreground">
+								<Icon name="question-mark-circled" className="inline h-4 w-4 mr-1" />
+								La demo mostra le funzionalità principali della piattaforma con dati di esempio. 
+								Per accedere alla valutazione completa con 88+ domande, crea un account gratuito.
+							</p>
+						</div>
 					</div>
 				</div>
 			</section>

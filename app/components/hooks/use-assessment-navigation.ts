@@ -91,7 +91,7 @@
  *   async (pageIndex, signal) => {
  *     // Update survey model
  *     surveyModel.currentPageNo = pageIndex
- *     
+ *
  *     // Save to server
  *     await saveProgress(pageIndex, signal)
  *   }
@@ -128,7 +128,7 @@ interface NavigationOptions {
 export function useAssessmentNavigation(
 	initialPageIndex: number,
 	totalPages: number,
-	onNavigate: (pageIndex: number, signal?: AbortSignal) => Promise<void>
+	onNavigate: (pageIndex: number, signal?: AbortSignal) => Promise<void>,
 ) {
 	const [navigationState, setNavigationState] = useState<NavigationState>({
 		isNavigating: false,
@@ -139,15 +139,36 @@ export function useAssessmentNavigation(
 
 	const navigationInProgress = useRef(false)
 
-	// Sync external page changes
+	// Sync external page changes - fix synchronization issues
 	useEffect(() => {
-		if (!navigationInProgress.current && initialPageIndex !== navigationState.currentPageIndex) {
-			setNavigationState(prev => ({
+		if (
+			!navigationInProgress.current &&
+			initialPageIndex !== navigationState.currentPageIndex
+		) {
+			setNavigationState((prev) => ({
 				...prev,
 				currentPageIndex: initialPageIndex,
 			}))
 		}
 	}, [initialPageIndex, navigationState.currentPageIndex])
+
+	// Force sync when navigationInProgress becomes false
+	useEffect(() => {
+		if (
+			!navigationState.isNavigating &&
+			!navigationInProgress.current &&
+			initialPageIndex !== navigationState.currentPageIndex
+		) {
+			setNavigationState((prev) => ({
+				...prev,
+				currentPageIndex: initialPageIndex,
+			}))
+		}
+	}, [
+		navigationState.isNavigating,
+		initialPageIndex,
+		navigationState.currentPageIndex,
+	])
 
 	const navigate = useCallback(
 		async (targetPageIndex: number, _options: NavigationOptions = {}) => {
@@ -169,7 +190,7 @@ export function useAssessmentNavigation(
 			// Set up new navigation
 			const controller = new AbortController()
 			navigationInProgress.current = true
-			
+
 			setNavigationState({
 				isNavigating: true,
 				currentPageIndex: navigationState.currentPageIndex,
@@ -190,7 +211,11 @@ export function useAssessmentNavigation(
 					})
 				}
 			} catch (error) {
-				if (error instanceof Error && (error.name === 'AbortError' || error.message === 'Navigation aborted')) {
+				if (
+					error instanceof Error &&
+					(error.name === 'AbortError' ||
+						error.message === 'Navigation aborted')
+				) {
 					// Navigation was cancelled, reset navigation state
 					setNavigationState({
 						isNavigating: false,
@@ -220,30 +245,47 @@ export function useAssessmentNavigation(
 					pendingPageIndex: null,
 					abortController: null,
 				})
-				
+
 				throw error
 			} finally {
 				navigationInProgress.current = false
 			}
 		},
-		[navigationState, totalPages, onNavigate]
+		[navigationState, totalPages, onNavigate],
 	)
 
 	const navigatePrevious = useCallback(() => {
 		if (navigationState.currentPageIndex > 0 && !navigationState.isNavigating) {
-			void navigate(navigationState.currentPageIndex - 1, { source: 'progress-bar' })
+			void navigate(navigationState.currentPageIndex - 1, {
+				source: 'progress-bar',
+			})
 		}
 	}, [navigate, navigationState.currentPageIndex, navigationState.isNavigating])
 
 	const navigateNext = useCallback(() => {
-		if (navigationState.currentPageIndex < totalPages - 1 && !navigationState.isNavigating) {
-			void navigate(navigationState.currentPageIndex + 1, { source: 'progress-bar' })
+		if (
+			navigationState.currentPageIndex < totalPages - 1 &&
+			!navigationState.isNavigating
+		) {
+			void navigate(navigationState.currentPageIndex + 1, {
+				source: 'progress-bar',
+			})
 		}
-	}, [navigate, navigationState.currentPageIndex, navigationState.isNavigating, totalPages])
+	}, [
+		navigate,
+		navigationState.currentPageIndex,
+		navigationState.isNavigating,
+		totalPages,
+	])
 
-	const navigateToPage = useCallback((pageIndex: number, source?: string) => {
-		void navigate(pageIndex, { source: source as NavigationOptions['source'] })
-	}, [navigate])
+	const navigateToPage = useCallback(
+		(pageIndex: number, source?: string) => {
+			void navigate(pageIndex, {
+				source: source as NavigationOptions['source'],
+			})
+		},
+		[navigate],
+	)
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -261,7 +303,10 @@ export function useAssessmentNavigation(
 		navigate: navigateToPage,
 		navigatePrevious,
 		navigateNext,
-		canNavigatePrevious: navigationState.currentPageIndex > 0 && !navigationState.isNavigating,
-		canNavigateNext: navigationState.currentPageIndex < totalPages - 1 && !navigationState.isNavigating,
+		canNavigatePrevious:
+			navigationState.currentPageIndex > 0 && !navigationState.isNavigating,
+		canNavigateNext:
+			navigationState.currentPageIndex < totalPages - 1 &&
+			!navigationState.isNavigating,
 	}
 }

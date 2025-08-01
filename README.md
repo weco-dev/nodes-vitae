@@ -51,6 +51,14 @@ npm run dev
 3. Questions are automatically converted to TypeScript and integrated into the
    application
 
+### Excel Demo Import Process
+
+1. Place your assessment questions Excel file at
+   `data/uploads/demo-assessment-questions.xlsx`
+2. Run the import command: `npm run import-demo-questions`
+3. Questions are automatically converted to TypeScript and integrated into the
+   application
+
 ---
 
 ## Excel Structure

@@ -417,8 +417,10 @@ interface SurveyComponentProps {
 	onValueChanged?: (name: string, value: any, questionMeta: any) => void
 	onPageChanged?: (pageIndex: number, surveyData: any) => void
 	onComplete?: (surveyData: any) => void
+	onError?: (error: Error, errorInfo: any) => void
 	isNavigating?: boolean
 	onNavigationStateChange?: (isNavigating: boolean) => void
+	isDemo?: boolean // Add demo mode support
 }
 
 function QuestionAccordion({
@@ -572,8 +574,10 @@ export function SurveyComponent({
 	onValueChanged,
 	onPageChanged,
 	onComplete,
+	onError,
 	isNavigating = false,
 	onNavigationStateChange: _onNavigationStateChange,
+	isDemo = false,
 }: SurveyComponentProps) {
 	console.log('🎯 SurveyComponent render called')
 	const surveyRef = useRef<Model | null>(null)
@@ -584,11 +588,13 @@ export function SurveyComponent({
 	const onValueChangedRef = useRef(onValueChanged)
 	const onPageChangedRef = useRef(onPageChanged)
 	const onCompleteRef = useRef(onComplete)
+	const onErrorRef = useRef(onError)
 
 	// Update refs when callbacks change
 	onValueChangedRef.current = onValueChanged
 	onPageChangedRef.current = onPageChanged
 	onCompleteRef.current = onComplete
+	onErrorRef.current = onError
 
 	useEffect(() => {
 		console.log('🔄 SurveyComponent useEffect triggered')
@@ -608,18 +614,37 @@ export function SurveyComponent({
 		// Validate surveyJson before creating model
 		if (!surveyJson || !surveyJson.pages || !Array.isArray(surveyJson.pages)) {
 			console.error('Invalid survey JSON structure:', surveyJson)
+			if (onErrorRef.current) {
+				onErrorRef.current(new Error('Invalid survey JSON structure'), { surveyJson })
+			}
 			return
 		}
 
-		// Create survey model
-		const survey = new Model(surveyJson)
-		console.log('📝 Survey model created:', survey)
+		try {
+			// Create survey model
+			const survey = new Model(surveyJson)
+			console.log('📝 Survey model created:', survey)
 
 		// Configure survey to trigger value changes on text input changes
 		survey.textUpdateMode = 'onTyping'
 
 		// Configure navigation buttons based on navigation state
 		survey.showNavigationButtons = !isNavigating
+
+		// Demo-specific configuration
+		if (isDemo) {
+			survey.showProgressBar = 'bottom'
+			survey.showTitle = false
+			survey.completedHtml = '<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
+			survey.completeText = 'Complete Demo'
+			survey.pageNextText = 'Next →'
+			survey.pagePrevText = '← Previous'
+			
+			// Add demo watermark or indicator if needed
+			if (survey.title) {
+				survey.title = `${survey.title} (Demo)`
+			}
+		}
 
 		surveyRef.current = survey
 
@@ -1017,6 +1042,18 @@ export function SurveyComponent({
 		// Mark as initialized after all setup is complete
 		setIsInitialized(true)
 
+		} catch (error) {
+			console.error('Failed to initialize survey:', error)
+			if (onErrorRef.current) {
+				onErrorRef.current(error as Error, { 
+					component: 'SurveyComponent',
+					action: 'initialization',
+					isDemo 
+				})
+			}
+			return
+		}
+
 		const localAccordionRoots = accordionRootsRef.current
 
 		return () => {
@@ -1028,7 +1065,9 @@ export function SurveyComponent({
 			localAccordionRoots.clear()
 
 			// Cleanup survey
-			survey.dispose()
+			if (surveyRef.current) {
+				surveyRef.current.dispose()
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
