@@ -1,4 +1,10 @@
 import { Link, redirect } from 'react-router'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '#app/components/ui/accordion.tsx'
 import { Badge } from '#app/components/ui/badge'
 import { Button } from '#app/components/ui/button'
 import {
@@ -7,6 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 	CardDescription,
+	CardFooter,
 } from '#app/components/ui/card'
 import { Icon } from '#app/components/ui/icon'
 import { Separator } from '#app/components/ui/separator'
@@ -126,13 +133,18 @@ export default function Index() {
 						</p>
 					</div>
 					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-						<Card className="border-border/60 transition-shadow hover:shadow-lg md:col-start-2">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:col-start-2">
 							<CardHeader>
 								<CardTitle className="text-center text-xl">
 									Scoprilo con il nostro questionario di prova
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="text-center">
+								<p>25 Domande</p>
+								<p>5 minuti</p>
+								<p>Senza registrazione</p>
+							</CardContent>
+							<CardFooter className="justify-center">
 								<Button
 									variant="outline"
 									size="lg"
@@ -146,7 +158,7 @@ export default function Index() {
 										Prova la demo
 									</Link>
 								</Button>
-							</CardContent>
+							</CardFooter>
 						</Card>
 						<Card className="border-border/60 transition-shadow hover:shadow-lg">
 							<CardHeader>
@@ -155,10 +167,15 @@ export default function Index() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="text-center">
+								<p>89 Domande</p>
+								<p>In autonomia o con supporto</p>
+								<p>Salva i risultati</p>
+							</CardContent>
+							<CardFooter className="justify-center">
 								<Button size="lg" className="px-8 py-3 text-lg" asChild>
 									<Link to="/login">Inizia il questionario</Link>
 								</Button>
-							</CardContent>
+							</CardFooter>
 						</Card>
 					</div>
 				</div>
@@ -264,15 +281,74 @@ export default function Index() {
 				<div className="container mx-auto">
 					<div className="mb-16 text-center">
 						<h2 className="text-foreground mb-4 text-4xl font-bold">
-							Perché Scegliere Vitae?
+							Perché vale la pena capire come la tua azienda tutela i diritti
+							delle persone con cui lavora?
 						</h2>
-						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-							Vantaggi concreti per la tua azienda vitivinicola
-						</p>
+						<div className="grid gap-8 lg:grid-cols-3">
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="text-center text-xl">
+										Compliance normativa
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-center">
+									<p>
+										Le normative europee e le linee guida internazionali
+										richiedono alle imprese di conoscere, prevenire, mitigare e
+										comunicare i rischi legati ai diritti umani lungo tutta la
+										filiera. Dotarsi di strumenti di autovalutazione e gestione
+										responsabile è oggi una misura preventiva per non farsi
+										trovare impreparati.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="text-center text-xl">
+										Opportunità di mercato
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-center">
+									<p>
+										Sempre più acquirenti — dalle cooperative ai distributori,
+										fino ai gruppi GDO — valutano i fornitori anche in base alla
+										loro capacità di gestire responsabilmente le relazioni con i
+										lavoratori.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="text-center text-xl">
+										Fiducia e reputazione
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-center">
+									<p>
+										Un’impresa che investe nel capitale umano e si prende cura
+										delle persone dimostra visione, responsabilità e attenzione
+										al futuro. Rispettare la dignità del lavoro, garantire
+										condizioni eque e costruire relazioni corrette con
+										dipendenti e fornitori rafforza la fiducia della comunità e
+										il valore del brand.
+									</p>
+								</CardContent>
+							</Card>
+						</div>
 					</div>
-					<div className="grid items-center gap-12 lg:grid-cols-2">
-						<div className="space-y-8">
-							<div className="flex items-start space-x-4">
+				</div>
+			</section>
+
+			{/* Benefits Section - Variant */}
+			<section id="benefits-variant" className="bg-secondary/30 px-4 py-20">
+				<div className="container mx-auto">
+					<div className="mb-16 text-center">
+						<h2 className="text-foreground mb-4 text-4xl font-bold">
+							Perché vale la pena capire come la tua azienda tutela i diritti
+							delle persone con cui lavora?
+						</h2>
+						<div className="grid gap-8 lg:grid-cols-3">
+							<div className="flex items-start space-x-4 text-left">
 								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
 									<Icon
 										name="plus"
@@ -281,93 +357,56 @@ export default function Index() {
 								</div>
 								<div>
 									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Specifico per il Settore Vino
+										Compliance normativa
 									</h3>
 									<p className="text-muted-foreground">
-										Non una soluzione generica, ma strumenti pensati
-										specificamente per le peculiarità delle aziende vitivinicole
-										e i loro processi produttivi.
+										Le normative europee e le linee guida internazionali
+										richiedono alle imprese di conoscere, prevenire, mitigare e
+										comunicare i rischi legati ai diritti umani lungo tutta la
+										filiera. Dotarsi di strumenti di autovalutazione e gestione
+										responsabile è oggi una misura preventiva per non farsi
+										trovare impreparati.
 									</p>
 								</div>
 							</div>
-							<div className="flex items-start space-x-4">
+							<div className="flex items-start space-x-4 text-left">
 								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
 									<Icon
-										name="dots-horizontal"
+										name="plus"
 										className="text-primary-foreground h-6 w-6"
 									/>
 								</div>
 								<div>
 									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Pensato per Micro e PMI
+										Opportunità di mercato
 									</h3>
 									<p className="text-muted-foreground">
-										Strumenti accessibili e user-friendly, senza la complessità
-										delle soluzioni enterprise. Perfetto per aziende familiari e
-										cooperative.
+										Sempre più acquirenti — dalle cooperative ai distributori,
+										fino ai gruppi GDO — valutano i fornitori anche in base alla
+										loro capacità di gestire responsabilmente le relazioni con i
+										lavoratori.
 									</p>
 								</div>
 							</div>
-							<div className="flex items-start space-x-4">
+							<div className="flex items-start space-x-4 text-left">
 								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
 									<Icon
-										name="lock-closed"
+										name="plus"
 										className="text-primary-foreground h-6 w-6"
 									/>
 								</div>
 								<div>
 									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Conformità Garantita
+										Fiducia e reputazione
 									</h3>
 									<p className="text-muted-foreground">
-										Sempre aggiornato con le ultime normative ESG europee e
-										italiane, per essere pronti alle verifiche e audit.
+										Un’impresa che investe nel capitale umano e si prende cura
+										delle persone dimostra visione, responsabilità e attenzione
+										al futuro. Rispettare la dignità del lavoro, garantire
+										condizioni eque e costruire relazioni corrette con
+										dipendenti e fornitori rafforza la fiducia della comunità e
+										il valore del brand.
 									</p>
-								</div>
-							</div>
-						</div>
-						<div className="relative">
-							<div className="bg-card border-border/60 rounded-2xl border p-8 shadow-xl">
-								<h4 className="text-card-foreground mb-6 text-center text-2xl font-bold">
-									Dashboard ESG
-								</h4>
-								<div className="space-y-4">
-									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground">
-											Sostenibilità Sociale
-										</span>
-										<Badge variant="secondary">85%</Badge>
-									</div>
-									<div className="bg-muted h-2 w-full rounded-full">
-										<div
-											className="bg-primary h-2 rounded-full"
-											style={{ width: '85%' }}
-										></div>
-									</div>
-									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground">
-											Benessere Lavoratori
-										</span>
-										<Badge variant="secondary">92%</Badge>
-									</div>
-									<div className="bg-muted h-2 w-full rounded-full">
-										<div
-											className="bg-primary h-2 rounded-full"
-											style={{ width: '92%' }}
-										></div>
-									</div>
-									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground">
-											Coinvolgimento Comunità
-										</span>
-										<Badge variant="secondary">78%</Badge>
-									</div>
-									<div className="bg-muted h-2 w-full rounded-full">
-										<div
-											className="bg-primary h-2 rounded-full"
-											style={{ width: '78%' }}
-										></div>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -376,35 +415,82 @@ export default function Index() {
 			</section>
 
 			{/* CTA Section */}
-			<section className="bg-primary px-4 py-20">
+			<section className="bg-primary text-primary-foreground px-4 py-20">
 				<div className="container mx-auto text-center">
-					<h2 className="text-primary-foreground mb-4 text-4xl font-bold">
-						Inizia il Tuo Percorso ESG Oggi
-					</h2>
-					<p className="text-primary-foreground/80 mx-auto mb-8 max-w-2xl text-xl">
-						Unisciti alle aziende vitivinicole che stanno già costruendo un
-						futuro più sostenibile
-					</p>
-					<div className="flex flex-col justify-center gap-4 sm:flex-row">
-						<Button
-							size="lg"
-							variant="secondary"
-							className="px-8 py-3 text-lg"
-							asChild
-						>
-							<Link to="/signup">
-								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-								Prova gratuita 30 giorni
-							</Link>
-						</Button>
-						<Button
-							size="lg"
-							variant="outline"
-							className="border-primary-foreground text-primary hover:bg-primary-foreground hover:text-primary px-8 py-3 text-lg"
-						>
-							<Icon name="clock" className="mr-2 h-5 w-5" />
-							Prenota una demo
-						</Button>
+					<h2 className="mb-4 text-4xl font-bold">Cosa ottieni con Vitae</h2>
+
+					<div className="grid gap-8 lg:grid-cols-2">
+						<div>
+							<h3 className="mb-2 text-xl font-semibold">
+								Se compili il questionario in autonomia
+							</h3>
+
+							<Accordion type="multiple" className="text-left">
+								<AccordionItem value="item-1">
+									<AccordionTrigger className="text-xl">
+										Score e allineamento agli standard
+									</AccordionTrigger>
+									<AccordionContent className="text-lg">
+										Ricevi una valutazione che indica il tuo livello di
+										compliance rispetto agli standard sui diritti umani presi a
+										riferimento:
+										<ul className="list-disc pl-5">
+											<li>
+												Principi Guida delle Nazioni Unite su Imprese e Diritti
+												Umani (UNGPs)
+											</li>
+											<li>
+												OCSE-FAO Linee guida sulle filiere agricole responsabili
+											</li>
+											<li>
+												OECD Linee guida per una condotta aziendale responsabile
+											</li>
+											<li>Standard Fairtrade per piccoli produttori</li>
+											<li>
+												Disciplinare Equalitas per la sostenibilità vitivinicola
+											</li>
+										</ul>
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem value="item-2">
+									<AccordionTrigger className="text-xl">
+										Rendicontazione
+									</AccordionTrigger>
+									<AccordionContent className="text-lg">
+										Ti segnaliamo quali requisiti sociali del questionario sono
+										richiesti dal report di sostenibilità VSME (Voluntary
+										Sustainability Reporting Standard for non-listed SMEs)
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
+						</div>
+						<div>
+							<h3 className="text-primary-foreground mb-2 text-xl font-semibold">
+								Se richiedi un supporto consulenziale
+							</h3>
+							<Accordion type="multiple" className="text-left">
+								<AccordionItem value="item-3">
+									<AccordionTrigger className="text-xl">
+										Guida e strumenti
+									</AccordionTrigger>
+									<AccordionContent className="text-lg">
+										Ti guidiamo nella compilazione del questionario
+										identificando le azioni necessarie a migliorare la tua
+										gestione. Ottieni guide e template per la realizzazione di
+										policy e procedure.
+									</AccordionContent>
+								</AccordionItem>
+								<AccordionItem value="item-4">
+									<AccordionTrigger className="text-xl">
+										Report di sostenibilità
+									</AccordionTrigger>
+									<AccordionContent className="text-lg">
+										Integriamo i requisiti ESG mancanti e ti supportiamo nella
+										redazione di un report di sostenibilità.
+									</AccordionContent>
+								</AccordionItem>
+							</Accordion>
+						</div>
 					</div>
 				</div>
 			</section>
