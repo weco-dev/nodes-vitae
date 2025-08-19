@@ -67,26 +67,21 @@ export default function Index() {
 			{/* Hero Section */}
 			<section className="px-4 py-20">
 				<div className="container mx-auto text-center">
-					<Badge variant="secondary" className="mb-4">
+					{/* <Badge variant="secondary" className="mb-4">
 						🍇 Piattaforma ESG per il settore vitivinicolo
-					</Badge>
+					</Badge> */}
 					<h1 className="text-foreground mb-6 text-5xl leading-tight font-bold md:text-6xl">
-						Sostenibilità Sociale per le
-						<span className="text-primary block">Aziende Vitivinicole</span>
+						Vitae
+						<span className="text-primary block">
+							valutazione etica d'impresa
+						</span>
 					</h1>
 					<p className="text-muted-foreground mx-auto mb-8 max-w-3xl text-xl leading-relaxed">
-						Una piattaforma digitale dedicata alle micro e PMI vitivinicole per
-						l'autovalutazione della sostenibilità sociale secondo criteri ESG,
-						con strumenti guidati e conformi alle normative nazionali ed
-						europee.
+						Attraverso un questionario guidato ti aiutiamo a valutare la due
+						diligence sui diritti umani e a tracciare la rotta operativa per
+						migliorare la responsabilità sociale della tua impresa.
 					</p>
 					<div className="flex flex-col justify-center gap-4 sm:flex-row">
-						<Button size="lg" className="px-8 py-3 text-lg" asChild>
-							<Link to="/signup">
-								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-								Inizia la valutazione gratuita
-							</Link>
-						</Button>
 						<Button
 							variant="outline"
 							size="lg"
@@ -97,9 +92,11 @@ export default function Index() {
 								to="/demo/take"
 								onClick={() => trackDemoConversion('demo_clicked', 'hero')}
 							>
-								<Icon name="arrow-right" className="mr-2 h-5 w-5" />
 								Prova la demo
 							</Link>
+						</Button>
+						<Button size="lg" className="px-8 py-3 text-lg" asChild>
+							<Link to="/login">Inizia il questionario</Link>
 						</Button>
 					</div>
 				</div>
