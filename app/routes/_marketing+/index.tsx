@@ -107,108 +107,57 @@ export default function Index() {
 				<div className="container mx-auto">
 					<div className="mb-16 text-center">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
-							Strumenti specializzati per il vino
+							Anche una piccola impresa ha un impatto sulle persone.
+							<span className="text-primary block">Sai qual è il tuo?</span>
 						</h2>
 						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-							Soluzioni verticali pensate specificamente per le esigenze delle
-							aziende vitivinicole
+							Il questionario di autovalutazione è pensato per supportare le
+							imprese nell’adozione progressiva di un sistema di dovuta
+							diligenza sui diritti umani in linea con gli standard europei e
+							internazionali e con le certificazioni più usate nel settore
+							agrifood.
+						</p>
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+							Quanto sei già attento ai diritti umani?
+						</p>
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+							Cosa significa affrontare questo tema nella gestione della tua
+							azienda?
 						</p>
 					</div>
-					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg md:col-start-2">
 							<CardHeader>
-								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-									<Icon
-										name="check"
-										className="text-secondary-foreground h-6 w-6"
-									/>
-								</div>
-								<CardTitle className="text-xl">
-									Autovalutazione Guidata
+								<CardTitle className="text-center text-xl">
+									Scoprilo con il nostro questionario di prova
 								</CardTitle>
-								<CardDescription>
-									Questionari strutturati per valutare la sostenibilità sociale
-									della tua azienda
-								</CardDescription>
 							</CardHeader>
-							<CardContent>
-								<ul className="text-muted-foreground space-y-2 text-sm">
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Criteri ESG specifici per il settore
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Domande adattate alle PMI
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Processo step-by-step
-									</li>
-								</ul>
+							<CardContent className="text-center">
+								<Button
+									variant="outline"
+									size="lg"
+									className="px-8 py-3 text-lg"
+									asChild
+								>
+									<Link
+										to="/demo/take"
+										onClick={() => trackDemoConversion('demo_clicked', 'hero')}
+									>
+										Prova la demo
+									</Link>
+								</Button>
 							</CardContent>
 						</Card>
-
 						<Card className="border-border/60 transition-shadow hover:shadow-lg">
 							<CardHeader>
-								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-									<Icon
-										name="file-text"
-										className="text-secondary-foreground h-6 w-6"
-									/>
-								</div>
-								<CardTitle className="text-xl">Conformità Normativa</CardTitle>
-								<CardDescription>
-									Strumenti allineati con le normative europee e italiane
-									vigenti
-								</CardDescription>
+								<CardTitle className="text-center text-xl">
+									Esegui la valutazione completa
+								</CardTitle>
 							</CardHeader>
-							<CardContent>
-								<ul className="text-muted-foreground space-y-2 text-sm">
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Direttiva CSRD europea
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Standard EFRAG ESRS
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Aggiornamenti automatici
-									</li>
-								</ul>
-							</CardContent>
-						</Card>
-
-						<Card className="border-border/60 transition-shadow hover:shadow-lg">
-							<CardHeader>
-								<div className="bg-secondary mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-									<Icon
-										name="dots-horizontal"
-										className="text-secondary-foreground h-6 w-6"
-									/>
-								</div>
-								<CardTitle className="text-xl">Report Personalizzati</CardTitle>
-								<CardDescription>
-									Dashboard e report dettagliati per monitorare i progressi
-								</CardDescription>
-							</CardHeader>
-							<CardContent>
-								<ul className="text-muted-foreground space-y-2 text-sm">
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Metriche di sostenibilità
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Piani di miglioramento
-									</li>
-									<li className="flex items-center">
-										<Icon name="check" className="text-primary mr-2 h-4 w-4" />
-										Export per stakeholder
-									</li>
-								</ul>
+							<CardContent className="text-center">
+								<Button size="lg" className="px-8 py-3 text-lg" asChild>
+									<Link to="/login">Inizia il questionario</Link>
+								</Button>
 							</CardContent>
 						</Card>
 					</div>
