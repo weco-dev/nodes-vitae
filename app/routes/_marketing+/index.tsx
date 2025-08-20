@@ -12,7 +12,6 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
-	CardDescription,
 	CardFooter,
 } from '#app/components/ui/card'
 import { Icon } from '#app/components/ui/icon'
@@ -74,9 +73,6 @@ export default function Index() {
 			{/* Hero Section */}
 			<section className="px-4 py-20">
 				<div className="container mx-auto text-center">
-					{/* <Badge variant="secondary" className="mb-4">
-						🍇 Piattaforma ESG per il settore vitivinicolo
-					</Badge> */}
 					<h1 className="text-foreground mb-6 text-5xl leading-tight font-bold md:text-6xl">
 						Vitae
 						<span className="text-primary block">
@@ -599,6 +595,38 @@ export default function Index() {
 									</a>
 								</li>
 							</ul>
+						</div>
+					</div>
+					<Separator className="bg-border my-8" />
+					<div>
+						<div className="text-muted-foreground">
+							Questa piattaforma è stata realizzata nell’ambito del progetto
+							“VITAE” NODES, finanziato dal MUR sui fondi M4C2 - Investimento
+							1.5 Avviso “Ecosistemi dell’Innovazione”, nell’ambito del PNRR
+							finanziato dall’Unione europea – NextGenerationEU (Grant agreement
+							Cod. n.ECS00000036)
+						</div>
+						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 lg:grid-cols-4">
+							<img
+								src="/public/img/placeholder.svg"
+								alt="Placeholder"
+								className="col-span-1 h-36 w-36"
+							/>
+							<img
+								src="/public/img/placeholder.svg"
+								alt="Placeholder"
+								className="col-span-1 h-36 w-36"
+							/>
+							<img
+								src="/public/img/placeholder.svg"
+								alt="Placeholder"
+								className="col-span-1 h-36 w-36"
+							/>
+							<img
+								src="/public/img/placeholder.svg"
+								alt="Placeholder"
+								className="col-span-1 h-36 w-36"
+							/>
 						</div>
 					</div>
 					<Separator className="bg-border my-8" />
