@@ -63,7 +63,7 @@ export default function Index() {
 								<Link to="/demo/take">Prova la demo</Link>
 							</Button>
 							<Button asChild>
-								<Link to="/login">Inizia il questionario</Link>
+								<Link to="/login">Accedi</Link>
 							</Button>
 						</nav>
 					</div>
