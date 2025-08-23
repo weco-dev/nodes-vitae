@@ -15,6 +15,7 @@
     "dev:no-mocks": "cross-env NODE_ENV=development node ./server/dev-server.js",
     "format": "prettier --write .",
     "import-questions": "tsx scripts/import-questions.ts",
+    "import-demo-questions": "tsx scripts/import-demo-questions.ts",
     "lint": "eslint .",
     "setup": "npm run build && prisma migrate deploy && prisma generate --sql && playwright install",
     "start": "NODE_OPTIONS='--import ./instrumentation.server.mjs' cross-env NODE_ENV=production node .",

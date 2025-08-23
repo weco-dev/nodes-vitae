@@ -7,7 +7,8 @@
  *
  * This component combines section navigation and progress tracking into a unified
  * interface for ESG assessments. It integrates the functionality of both
- * SectionDisplay and ResponsiveProgressBar components.
+ * SectionDisplay and ResponsiveProgressBar components with support for umbrella
+ * question hierarchies.
  *
  * KEY FEATURES:
  * 1. Section dropdown navigation with progress indicators
@@ -15,10 +16,31 @@
  * 3. Responsive design for mobile and desktop
  * 4. Consistent styling with the app's design system
  * 5. Auto-scroll functionality for current question visibility
+ * 6. **Umbrella question support** with hierarchical navigation
+ * 7. **Visual differentiation** between regular and umbrella questions
  *
- * @version 1.0.0
+ * ==================================================================================
+ * UMBRELLA QUESTION SUPPORT (v2.0)
+ * ==================================================================================
+ *
+ * VISUAL INDICATORS:
+ * - **Regular Questions**: Round dots (green when answered, gray when not)
+ * - **Umbrella Questions**: Square indicators (blue theme, "Overview" state)
+ * - **Current State**: Ring indicator around active question
+ *
+ * QUESTION TYPES:
+ * - `type: 'radiogroup'|'text'|'checkbox'|'rating'|'boolean'` - Answerable questions
+ * - `type: 'group'` - Umbrella questions for navigation organization only
+ *
+ * ACCESSIBILITY:
+ * - Screen reader labels distinguish between question types
+ * - "Overview" label for umbrella questions vs "Answered/Not answered" for regular
+ * - Proper ARIA labels for navigation state
+ *
+ * @version 2.0.0
  * @author ESG Assessment Team
  * @since 2025-07-21
+ * @updated 2025-07-28 - Added umbrella question support
  * @requires react
  * @requires lucide-react
  * @requires #app/components/ui/button
@@ -49,6 +71,7 @@ interface AssessmentNavigationProps {
 		section: string
 		title: string
 		isRequired: boolean
+		type?: string
 	}>
 	onSectionChange: (sectionIndex: number) => Promise<void> | void
 
@@ -308,6 +331,7 @@ export function AssessmentNavigation({
 							{questions.map((question, index) => {
 								const isAnswered = answeredQuestions.has(question.questionId)
 								const isCurrent = index === currentIndex
+								const isUmbrella = question.type === 'group'
 
 								return (
 									<button
@@ -315,28 +339,37 @@ export function AssessmentNavigation({
 										onClick={() => !isNavigating && onPageChange(index)}
 										disabled={isNavigating}
 										className={cn(
-											'h-5 w-5 shrink-0 touch-manipulation rounded-full transition-all duration-200 sm:h-6 sm:w-6',
+											'h-5 w-5 shrink-0 touch-manipulation transition-all duration-200 sm:h-6 sm:w-6',
 											'hover:scale-110 focus:scale-110 focus:outline-none active:scale-95',
 											'focus:ring-primary/50 focus:ring-2 focus:ring-offset-1',
 											'border-2',
 											isNavigating && 'cursor-not-allowed opacity-50',
 											{
-												// Answered question
-												'border-green-500 bg-green-500 hover:bg-green-600':
-													isAnswered && !isCurrent,
+												// Umbrella questions - square shape, gray/blue colors
+												'rounded-sm border-gray-400 bg-gray-100 hover:bg-gray-200':
+													isUmbrella && !isCurrent,
+												'rounded-sm border-blue-500 bg-blue-200 ring-2 ring-blue-300 sm:ring-4':
+													isUmbrella && isCurrent,
+												// Regular answered questions
+												'rounded-full border-green-500 bg-green-500 hover:bg-green-600':
+													isAnswered && !isCurrent && !isUmbrella,
 												// Current answered question
-												'ring-primary/30 border-green-500 bg-green-500 ring-2 sm:ring-4':
-													isAnswered && isCurrent,
+												'ring-primary/30 rounded-full border-green-500 bg-green-500 ring-2 sm:ring-4':
+													isAnswered && isCurrent && !isUmbrella,
 												// Current unanswered question
-												'border-primary ring-primary/30 bg-transparent ring-2 sm:ring-4':
-													!isAnswered && isCurrent,
+												'border-primary ring-primary/30 rounded-full bg-transparent ring-2 sm:ring-4':
+													!isAnswered && isCurrent && !isUmbrella,
 												// Unanswered question
-												'border-gray-300 bg-gray-300 hover:bg-gray-400':
-													!isAnswered && !isCurrent,
+												'rounded-full border-gray-300 bg-gray-300 hover:bg-gray-400':
+													!isAnswered && !isCurrent && !isUmbrella,
 											},
 										)}
 										aria-label={`Question ${index + 1}: ${question.title} - ${
-											isAnswered ? 'Answered' : 'Not answered'
+											isUmbrella
+												? 'Overview'
+												: isAnswered
+													? 'Answered'
+													: 'Not answered'
 										}${isCurrent ? ' (Current)' : ''}`}
 										title={`${question.section}: ${question.title}`}
 									></button>
@@ -397,6 +430,7 @@ export function AssessmentNavigation({
 						{questions.map((question, index) => {
 							const isAnswered = answeredQuestions.has(question.questionId)
 							const isCurrent = index === currentIndex
+							const isUmbrella = question.type === 'group'
 
 							return (
 								<button
@@ -404,28 +438,37 @@ export function AssessmentNavigation({
 									onClick={() => !isNavigating && onPageChange(index)}
 									disabled={isNavigating}
 									className={cn(
-										'h-6 w-6 shrink-0 rounded-full transition-all duration-200',
+										'h-6 w-6 shrink-0 transition-all duration-200',
 										'hover:scale-110 focus:scale-110 focus:outline-none',
 										'focus:ring-primary/50 focus:ring-2 focus:ring-offset-2',
 										'border-2',
 										isNavigating && 'cursor-not-allowed opacity-50',
 										{
-											// Answered question
-											'border-green-500 bg-green-500 hover:bg-green-600':
-												isAnswered && !isCurrent,
+											// Umbrella questions - square shape, blue colors
+											'rounded-sm border-gray-400 bg-gray-100 hover:bg-gray-200':
+												isUmbrella && !isCurrent,
+											'rounded-sm border-blue-500 bg-blue-200 ring-4 ring-blue-300':
+												isUmbrella && isCurrent,
+											// Regular answered questions
+											'rounded-full border-green-500 bg-green-500 hover:bg-green-600':
+												isAnswered && !isCurrent && !isUmbrella,
 											// Current answered question
-											'ring-primary/30 border-green-500 bg-green-500 ring-4':
-												isAnswered && isCurrent,
+											'ring-primary/30 rounded-full border-green-500 bg-green-500 ring-4':
+												isAnswered && isCurrent && !isUmbrella,
 											// Current unanswered question
-											'border-primary ring-primary/30 bg-transparent ring-4':
-												!isAnswered && isCurrent,
+											'border-primary ring-primary/30 rounded-full bg-transparent ring-4':
+												!isAnswered && isCurrent && !isUmbrella,
 											// Unanswered question
-											'border-gray-300 bg-gray-300 hover:bg-gray-400':
-												!isAnswered && !isCurrent,
+											'rounded-full border-gray-300 bg-gray-300 hover:bg-gray-400':
+												!isAnswered && !isCurrent && !isUmbrella,
 										},
 									)}
 									aria-label={`Question ${index + 1}: ${question.title} - ${
-										isAnswered ? 'Answered' : 'Not answered'
+										isUmbrella
+											? 'Overview'
+											: isAnswered
+												? 'Answered'
+												: 'Not answered'
 									}${isCurrent ? ' (Current)' : ''}`}
 									title={`${question.section}: ${question.title}`}
 								></button>

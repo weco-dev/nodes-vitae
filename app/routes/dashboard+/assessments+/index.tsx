@@ -33,7 +33,7 @@
  * @requires #app/utils/assessment.server
  * @requires #app/utils/auth.server
  *
- * @see {@link app/routes/dashboard+/assessment.$id.tsx} for individual assessment view
+ * @see {@link app/routes/dashboard+/assessments.$id.tsx} for individual assessment view
  * @see {@link app/routes/assessment+/take.tsx} for assessment creation
  */
 
@@ -55,7 +55,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '#app/components/ui/dropdown-menu.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -77,7 +76,8 @@ import {
 } from '#app/components/ui/tabs.tsx'
 import { getUserAssessments } from '#app/utils/assessment.server.ts'
 import { requireUserId } from '#app/utils/auth.server.ts'
-import { type Route } from './+types/assessments'
+import { getAnswerableQuestions } from '#app/utils/question-filtering.ts'
+import { type Route } from './+types/index'
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await requireUserId(request)
@@ -91,6 +91,22 @@ export default function AssessmentsRoute() {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [statusFilter, setStatusFilter] = useState('all')
 	const [viewMode, setViewMode] = useState('grid')
+
+	// Helper function to calculate completion percentage for an assessment
+	const calculateCompletionPercentage = (assessment: {
+		status: string
+		answers: any[]
+	}) => {
+		if (assessment.status === 'completed') {
+			return 100
+		}
+		const answerableQuestions = getAnswerableQuestions()
+		const totalQuestions = answerableQuestions.length
+		const answeredQuestions = assessment.answers.length
+		return totalQuestions > 0
+			? Math.round((answeredQuestions / totalQuestions) * 100)
+			: 0
+	}
 
 	// Filter assessments based on search and status
 	const filteredAssessments = assessments.filter((assessment) => {
@@ -139,7 +155,7 @@ export default function AssessmentsRoute() {
 				<div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
 					<div className="px-4 lg:px-6">
 						{/* Header with enhanced styling */}
-						<div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+						<div className="mb-8 flex flex-col gap-4">
 							<div className="space-y-1">
 								<h1 className="text-3xl font-bold tracking-tight">
 									ESG Assessments
@@ -148,12 +164,6 @@ export default function AssessmentsRoute() {
 									Manage and track your ESG assessment progress
 								</p>
 							</div>
-							<Button asChild>
-								<Link to="/assessment/take">
-									<Icon name="plus" className="mr-2 h-4 w-4" />
-									Start new assessment
-								</Link>
-							</Button>
 						</div>
 
 						{/* Statistics Cards */}
@@ -319,7 +329,7 @@ export default function AssessmentsRoute() {
 																<DropdownMenuLabel>Actions</DropdownMenuLabel>{' '}
 																<DropdownMenuItem asChild>
 																	<Link
-																		to={`/dashboard/assessment/${assessment.id}`}
+																		to={`/dashboard/assessments/${assessment.id}`}
 																	>
 																		<Icon
 																			name="arrow-right"
@@ -327,18 +337,6 @@ export default function AssessmentsRoute() {
 																		/>
 																		View Details
 																	</Link>
-																</DropdownMenuItem>
-																<DropdownMenuItem>
-																	<Icon
-																		name="download"
-																		className="mr-2 h-4 w-4"
-																	/>
-																	Download Report
-																</DropdownMenuItem>
-																<DropdownMenuSeparator />
-																<DropdownMenuItem className="text-destructive">
-																	<Icon name="trash" className="mr-2 h-4 w-4" />
-																	Archive
 																</DropdownMenuItem>
 															</DropdownMenuContent>
 														</DropdownMenu>
@@ -388,15 +386,13 @@ export default function AssessmentsRoute() {
 															<p className="text-muted-foreground">Progress</p>
 															<div className="flex items-center gap-2">
 																<Progress
-																	value={
-																		assessment.status === 'completed' ? 100 : 65
-																	}
+																	value={calculateCompletionPercentage(
+																		assessment,
+																	)}
 																	className="flex-1"
 																/>
 																<span className="text-xs">
-																	{assessment.status === 'completed'
-																		? '100%'
-																		: '65%'}
+																	{calculateCompletionPercentage(assessment)}%
 																</span>
 															</div>
 														</div>
@@ -423,7 +419,7 @@ export default function AssessmentsRoute() {
 																className="flex-1"
 															>
 																<Link
-																	to={`/dashboard/assessment/${assessment.id}`}
+																	to={`/dashboard/assessments/${assessment.id}`}
 																>
 																	<Icon
 																		name="arrow-right"
@@ -494,7 +490,7 @@ export default function AssessmentsRoute() {
 														) : (
 															<Button asChild size="sm" variant="outline">
 																<Link
-																	to={`/dashboard/assessment/${assessment.id}`}
+																	to={`/dashboard/assessments/${assessment.id}`}
 																>
 																	View
 																</Link>
@@ -550,7 +546,7 @@ export default function AssessmentsRoute() {
 														</div>
 														<Button asChild size="sm" className="w-full">
 															<Link
-																to={`/dashboard/assessment/${assessment.id}`}
+																to={`/dashboard/assessments/${assessment.id}`}
 															>
 																<Icon
 																	name="arrow-right"
@@ -632,9 +628,15 @@ export default function AssessmentsRoute() {
 																<span className="text-muted-foreground">
 																	Progress
 																</span>
-																<span>65%</span>
+																<span>
+																	{calculateCompletionPercentage(assessment)}%
+																</span>
 															</div>
-															<Progress value={65} />
+															<Progress
+																value={calculateCompletionPercentage(
+																	assessment,
+																)}
+															/>
 														</div>
 														<Button asChild size="sm" className="w-full">
 															<Link to="/assessment/take">

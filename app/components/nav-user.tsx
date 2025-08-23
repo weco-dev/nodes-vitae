@@ -9,7 +9,6 @@ import {
 import { useRef } from 'react'
 import { Link, Form } from 'react-router'
 
-import { Avatar, AvatarFallback, AvatarImage } from '#app/components/ui/avatar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -25,7 +24,6 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '#app/components/ui/sidebar'
-import { getUserImgSrc } from '#app/utils/misc.tsx'
 import { useOptionalUser } from '#app/utils/user.ts'
 
 export function NavUser() {

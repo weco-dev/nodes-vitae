@@ -17,17 +17,15 @@ interface BreadcrumbItem {
 const routeBreadcrumbs: Record<string, BreadcrumbItem[]> = {
 	'/': [{ label: 'Dashboard' }],
 	'/dashboard': [{ label: 'Dashboard' }],
-	'/lifecycle': [{ label: 'Lifecycle' }],
-	'/analytics': [{ label: 'Analytics' }],
-	'/projects': [{ label: 'Projects' }],
-	'/team': [{ label: 'Team' }],
-	'/documents': [{ label: 'Documents' }],
+	'/settings/assessments': [
+		{ label: 'Dashbaord', href: '/dashbaord' },
+		{ label: 'Assessments' },
+	],
 	'/settings': [{ label: 'Settings' }],
 	'/settings/profile': [
 		{ label: 'Settings', href: '/settings' },
 		{ label: 'Profile' },
 	],
-	'/settings/mfa': [{ label: 'Settings', href: '/settings' }, { label: 'MFA' }],
 	'/help': [{ label: 'Get Help' }],
 }
 

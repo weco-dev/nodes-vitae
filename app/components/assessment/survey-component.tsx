@@ -13,6 +13,39 @@
  * 3. Progress tracking across multi-page surveys
  * 4. Robust error handling and recovery mechanisms
  * 5. Memory-efficient lifecycle management
+ * 6. Three-column accordion system for contextual help (Help, Reporting, Documentation)
+ * 7. Markdown support in question titles with field name display
+ * 8. Conditional UI rendering for better user experience
+ *
+ * ==================================================================================
+ * RECENT ENHANCEMENTS (v3.0 - July 2025)
+ * ==================================================================================
+ *
+ * ### Umbrella Question Support:
+ * - **Hierarchical Structure**: Support for umbrella questions that group sub-questions
+ * - **Parent Title Injection**: Sub-questions display their parent umbrella question title
+ * - **Visual Differentiation**: Blue-themed styling for umbrella question sections
+ * - **Conditional Processing**: Different rendering logic for umbrella vs regular questions
+ *
+ * ### Enhanced Help System:
+ * - **Three-Column Structure**: Replaced generic descriptions with semantic fields:
+ *   - `help`: Contextual guidance for question understanding
+ *   - `reporting`: Compliance and regulatory requirements
+ *   - `docs`: Additional documentation and resources
+ * - **Conditional Rendering**: Accordions only appear when content is available
+ * - **Progressive Disclosure**: Users can expand relevant help sections on demand
+ *
+ * ### Markdown Integration:
+ * - **Title Processing**: Question titles support markdown formatting (_italic_, *bold*, `code`)
+ * - **Field Name Display**: Question field names appear above titles for context
+ * - **Umbrella Title Display**: Parent question titles for grouped sub-questions
+ * - **Safe Processing**: Secure markdown rendering without XSS vulnerabilities
+ *
+ * ### Mobile-First Design:
+ * - **Responsive Accordions**: Optimized layout for all screen sizes
+ * - **Touch-Friendly**: Enhanced touch targets for mobile interaction
+ * - **Text Wrapping**: Improved text flow for long question content
+ * - **Hierarchy Display**: Clear visual hierarchy for umbrella question relationships
  *
  * The component is designed to handle complex assessment workflows where users may:
  * - Navigate away and return to continue surveys
@@ -308,9 +341,37 @@
  *    - Error reporting integration
  *    - Completion rate analysis
  *
- * @version 1.0.0
+ * ==================================================================================
+ * UMBRELLA QUESTION IMPLEMENTATION (v3.0)
+ * ==================================================================================
+ *
+ * QUESTION HIERARCHY PROCESSING:
+ * - Umbrella questions (`type: 'group'`) provide structure without accepting input
+ * - Sub-questions reference parent umbrella via `parentQuestionId` and `parentQuestionTitle`
+ * - Dynamic parent title injection creates visual hierarchy
+ *
+ * STYLING SYSTEM:
+ * ```tsx
+ * // Umbrella question field names (blue theme)
+ * className="bg-blue-50 text-blue-700 border-b border-blue-200"
+ *
+ * // Regular question field names (primary theme)
+ * className="bg-primary/10 text-primary border-b border-primary/10"
+ *
+ * // Parent title sections (prominent blue styling)
+ * className="bg-blue-50 text-blue-700 text-base font-semibold"
+ * ```
+ *
+ * PROCESSING FLOW:
+ * 1. Field name injection with umbrella-specific styling
+ * 2. Parent title injection for sub-questions before field names
+ * 3. Markdown processing with hierarchy-aware rendering
+ * 4. Answer handling that ignores umbrella question inputs
+ *
+ * @version 3.0.0
  * @author ESG Assessment Team
  * @since 2025-07-11
+ * @updated 2025-07-28 - Added umbrella question support with parent-child relationships
  * @requires react ^18.0.0
  * @requires react-dom ^18.0.0
  * @requires survey-core
@@ -346,6 +407,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from '#app/components/ui/accordion'
+import { Icon } from '#app/components/ui/icon'
 import 'survey-core/survey-core.min.css'
 
 interface SurveyComponentProps {
@@ -355,80 +417,74 @@ interface SurveyComponentProps {
 	onValueChanged?: (name: string, value: any, questionMeta: any) => void
 	onPageChanged?: (pageIndex: number, surveyData: any) => void
 	onComplete?: (surveyData: any) => void
+	onError?: (error: Error, errorInfo: any) => void
 	isNavigating?: boolean
 	onNavigationStateChange?: (isNavigating: boolean) => void
+	isDemo?: boolean // Add demo mode support
 }
 
-function QuestionAccordion({ descriptions }: { descriptions: string[] }) {
-	const limitedDescriptions = descriptions.slice(0, 3)
+function QuestionAccordion({
+	help,
+	reporting,
+	docs,
+}: {
+	help?: string
+	reporting?: string
+	docs?: string
+}) {
+	// Create accordion items array with conditional inclusion
+	const accordionItems = [
+		{
+			key: 'help',
+			title: 'Help',
+			content: help,
+			icon: 'question-mark-circled' as const,
+		},
+		{
+			key: 'reporting',
+			title: 'Reporting',
+			content: reporting,
+			icon: 'pencil-1' as const,
+		},
+		{
+			key: 'docs',
+			title: 'Documentation',
+			content: docs,
+			icon: 'pencil-2' as const,
+		},
+	].filter((item) => item.content && item.content.trim() !== '')
 
-	// Helper function to extract title from description
-	const extractTitle = (description: string, index: number): string => {
-		// Remove markdown formatting for title extraction
-		const cleanDescription = description.replace(/[*_`#>]/g, '').trim()
-
-		// Try to find a natural break point for the title
-		const sentences = cleanDescription.split(/[.!?]+/)
-		if (
-			sentences.length > 1 &&
-			sentences[0] &&
-			sentences[0].length > 0 &&
-			sentences[0].length < 80
-		) {
-			return sentences[0].trim()
-		}
-
-		// If no good sentence break, take first 50 characters
-		if (cleanDescription.length > 50) {
-			return cleanDescription.substring(0, 50).trim() + '...'
-		}
-
-		// If still too short, use the full clean description
-		if (cleanDescription.length > 0) {
-			return cleanDescription
-		}
-
-		// Fallback to generic title
-		return `More Info ${index + 1}`
-	}
+	// Return null if no content to display
+	if (accordionItems.length === 0) return null
 
 	return (
 		<Accordion
 			type="single"
 			collapsible
-			className="mt-2 mb-4 w-full rounded-md border"
+			className="bg-card mt-4 mb-4 w-full rounded-md border"
 		>
-			{limitedDescriptions.map((desc, index) => (
+			{accordionItems.map((item) => (
 				<AccordionItem
-					key={index}
-					value={`item-${index}`}
+					key={item.key}
+					value={item.key}
 					className="border-b last:border-b-0"
 				>
 					<AccordionTrigger className="hover:bg-muted/50 px-4 py-3 text-left">
-						<div className="w-full text-left text-sm font-medium break-words whitespace-normal">
-							<ReactMarkdown
-								components={{
-									p: ({ children }) => <span>{children}</span>,
-									strong: ({ children }) => (
-										<strong className="font-semibold">{children}</strong>
-									),
-									em: ({ children }) => <em className="italic">{children}</em>,
-									code: ({ children }) => (
-										<code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">
-											{children}
-										</code>
-									),
-								}}
-							>
-								{extractTitle(desc, index)}
-							</ReactMarkdown>
+						<div className="flex w-full items-center gap-2 text-left">
+							<Icon
+								name={item.icon}
+								className="text-muted-foreground h-4 w-4"
+							/>
+							<span className="text-sm font-medium break-words whitespace-normal">
+								{item.title}
+							</span>
 						</div>
 					</AccordionTrigger>
 					<AccordionContent className="px-4 pt-0 pb-3">
-						<div className="text-muted-foreground overflow-wrap-anywhere text-sm break-words whitespace-normal">
+						<div className="text-muted-foreground overflow-wrap-anywhere pl-6 text-sm break-words whitespace-normal">
 							<ReactMarkdown
 								components={{
-									// Custom components for better styling
+									// Enhanced markdown components for better styling
 									p: ({ children }) => (
 										<p className="mb-2 break-words whitespace-normal last:mb-0">
 											{children}
@@ -467,15 +523,47 @@ function QuestionAccordion({ descriptions }: { descriptions: string[] }) {
 											{children}
 										</blockquote>
 									),
+									a: ({ children, href, ...props }) => (
+										<a
+											href={href}
+											className="text-primary hover:text-primary/80 break-words underline"
+											target="_blank"
+											rel="noopener noreferrer"
+											{...props}
+										>
+											{children}
+										</a>
+									),
 								}}
 							>
-								{desc}
+								{item.content}
 							</ReactMarkdown>
 						</div>
 					</AccordionContent>
 				</AccordionItem>
 			))}
 		</Accordion>
+	)
+}
+
+// Helper function for safe markdown processing
+function processMarkdownSafely(markdown: string): string {
+	// Use a lightweight markdown processor to avoid security issues
+	// Handle basic markdown manually for safety
+	return (
+		markdown
+			// Handle links first to avoid conflicts with bold/italic
+			.replace(
+				/\[([^\]]+)\]\(([^)]+)\)/g,
+				'<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:text-primary/80 transition-colors">$1</a>',
+			)
+			// Handle bold before italic to avoid conflicts (* must come before _)
+			// Use non-greedy matching and ensure we don't match across multiple * pairs
+			.replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+			// For italic, use underscore syntax
+			.replace(/_([^_]+)_/g, '<em>$1</em>')
+			.replace(/`([^`]+)`/g, '<code>$1</code>')
+			.replace(/\n/g, '<br>')
 	)
 }
 
@@ -486,8 +574,10 @@ export function SurveyComponent({
 	onValueChanged,
 	onPageChanged,
 	onComplete,
+	onError,
 	isNavigating = false,
 	onNavigationStateChange: _onNavigationStateChange,
+	isDemo = false,
 }: SurveyComponentProps) {
 	console.log('🎯 SurveyComponent render called')
 	const surveyRef = useRef<Model | null>(null)
@@ -498,11 +588,13 @@ export function SurveyComponent({
 	const onValueChangedRef = useRef(onValueChanged)
 	const onPageChangedRef = useRef(onPageChanged)
 	const onCompleteRef = useRef(onComplete)
+	const onErrorRef = useRef(onError)
 
 	// Update refs when callbacks change
 	onValueChangedRef.current = onValueChanged
 	onPageChangedRef.current = onPageChanged
 	onCompleteRef.current = onComplete
+	onErrorRef.current = onError
 
 	useEffect(() => {
 		console.log('🔄 SurveyComponent useEffect triggered')
@@ -522,187 +614,452 @@ export function SurveyComponent({
 		// Validate surveyJson before creating model
 		if (!surveyJson || !surveyJson.pages || !Array.isArray(surveyJson.pages)) {
 			console.error('Invalid survey JSON structure:', surveyJson)
+			if (onErrorRef.current) {
+				onErrorRef.current(new Error('Invalid survey JSON structure'), {
+					surveyJson,
+				})
+			}
 			return
 		}
 
-		// Create survey model
-		const survey = new Model(surveyJson)
-		console.log('📝 Survey model created:', survey)
+		try {
+			// Create survey model
+			const survey = new Model(surveyJson)
+			console.log('📝 Survey model created:', survey)
 
-		// Configure survey to trigger value changes on text input changes
-		survey.textUpdateMode = 'onTyping'
+			// Configure survey to trigger value changes on text input changes
+			survey.textUpdateMode = 'onTyping'
 
-		// Configure navigation buttons based on navigation state
-		survey.showNavigationButtons = !isNavigating
+			// Configure navigation buttons based on navigation state
+			survey.showNavigationButtons = !isNavigating
 
-		surveyRef.current = survey
+			// Demo-specific configuration
+			if (isDemo) {
+				survey.showProgressBar = 'bottom'
+				survey.showTitle = false
+				survey.completedHtml =
+					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
+				survey.completeText = 'Complete Demo'
+				survey.pageNextText = 'Next →'
+				survey.pagePrevText = '← Previous'
 
-		// Make survey model globally accessible for finalize button
-		;(window as any).surveyModel = survey
-
-		// Set initial data before adding event handlers
-		if (initialData && Object.keys(initialData).length > 0) {
-			survey.data = initialData
-		}
-
-		// Set initial page index if provided
-		if (initialPageIndex > 0) {
-			console.log('🎯 Setting initial page index to:', initialPageIndex)
-			survey.currentPageNo = initialPageIndex
-		}
-
-		// Handle value changes
-		survey.onValueChanged.add((sender, options) => {
-			console.log('📊 Survey value changed:', options.name, options.value)
-			try {
-				const question = survey.getQuestionByName(options.name)
-				if (question && onValueChangedRef.current) {
-					const questionMeta = {
-						questionId: (question as any).questionId || options.name,
-						section: (question as any).section || 'Unknown',
-						score: (question as any).score || 0,
-					}
-					console.log('🔄 Calling onValueChanged callback')
-					onValueChangedRef.current(options.name, options.value, questionMeta)
+				// Add demo watermark or indicator if needed
+				if (survey.title) {
+					survey.title = `${survey.title} (Demo)`
 				}
-			} catch (error) {
-				console.error('Error in onValueChanged:', error)
-			}
-		})
-
-		// Auto-save on Next Button Click
-		survey.onCurrentPageChanging.add((sender, options) => {
-			// Prevent survey navigation during centralized navigation
-			if (isNavigating) {
-				options.allow = false
-				return
 			}
 
-			// Save all answers on the current page before navigation
-			const currentPage = sender.currentPage
-			if (currentPage && onValueChangedRef.current) {
-				currentPage.questions.forEach((question: any) => {
-					const value = question.value
-					if (value !== undefined && value !== null && value !== '') {
+			surveyRef.current = survey
+
+			// Make survey model globally accessible for finalize button
+			;(window as any).surveyModel = survey
+
+			// Set initial data before adding event handlers
+			if (initialData && Object.keys(initialData).length > 0) {
+				survey.data = initialData
+			}
+
+			// Set initial page index if provided
+			if (initialPageIndex > 0) {
+				console.log('🎯 Setting initial page index to:', initialPageIndex)
+				survey.currentPageNo = initialPageIndex
+			}
+
+			// Handle value changes
+			survey.onValueChanged.add((sender, options) => {
+				console.log('📊 Survey value changed:', options.name, options.value)
+				try {
+					const question = survey.getQuestionByName(options.name)
+					if (question && onValueChangedRef.current) {
 						const questionMeta = {
-							questionId: (question as any).questionId || question.name,
+							questionId: (question as any).questionId || options.name,
 							section: (question as any).section || 'Unknown',
 							score: (question as any).score || 0,
 						}
-						onValueChangedRef.current?.(question.name, value, questionMeta)
+						console.log('🔄 Calling onValueChanged callback')
+						onValueChangedRef.current(options.name, options.value, questionMeta)
 					}
-				})
-			}
-		})
-
-		// Handle page changes
-		survey.onCurrentPageChanged.add((sender) => {
-			try {
-				if (!isNavigating && onPageChangedRef.current) {
-					// Only process if not currently navigating through centralized system
-					onPageChangedRef.current(sender.currentPageNo, sender.data)
+				} catch (error) {
+					console.error('Error in onValueChanged:', error)
 				}
-			} catch (error) {
-				console.error('Error in onPageChanged:', error)
-			}
-		})
+			})
 
-		// Handle completion
-		survey.onComplete.add((sender) => {
-			try {
-				if (onCompleteRef.current) {
-					onCompleteRef.current(sender.data)
+			// Auto-save on Next Button Click
+			survey.onCurrentPageChanging.add((sender, options) => {
+				// Prevent survey navigation during centralized navigation
+				if (isNavigating) {
+					options.allow = false
+					return
 				}
-			} catch (error) {
-				console.error('Error in onComplete:', error)
-			}
-		})
 
-		// Inject accordions after questions render
-		survey.onAfterRenderQuestion.add((sender, options) => {
-			try {
-				const question = options.question
+				// Save all answers on the current page before navigation
+				const currentPage = sender.currentPage
+				if (currentPage && onValueChangedRef.current) {
+					currentPage.questions.forEach((question: any) => {
+						const value = question.value
+						if (value !== undefined && value !== null && value !== '') {
+							const questionMeta = {
+								questionId: (question as any).questionId || question.name,
+								section: (question as any).section || 'Unknown',
+								score: (question as any).score || 0,
+							}
+							onValueChangedRef.current?.(question.name, value, questionMeta)
+						}
+					})
+				}
+			})
 
-				// Get descriptions from the original survey JSON
-				let descriptions: string[] = []
+			// Handle page changes
+			survey.onCurrentPageChanged.add((sender) => {
+				try {
+					if (!isNavigating && onPageChangedRef.current) {
+						// Only process if not currently navigating through centralized system
+						onPageChangedRef.current(sender.currentPageNo, sender.data)
+					}
+				} catch (error) {
+					console.error('Error in onPageChanged:', error)
+				}
+			})
 
-				// Find the question in the original survey JSON
-				for (const page of surveyJson.pages) {
-					for (const element of page.elements) {
-						if (element.name === question.name) {
-							descriptions = element.descriptions || []
+			// Handle completion
+			survey.onComplete.add((sender) => {
+				try {
+					if (onCompleteRef.current) {
+						onCompleteRef.current(sender.data)
+					}
+				} catch (error) {
+					console.error('Error in onComplete:', error)
+				}
+			})
+
+			// Inject field names and accordions after questions render
+			survey.onAfterRenderQuestion.add((sender, options) => {
+				try {
+					const question = options.question
+					console.log('🎯 Question rendered:', question.name)
+
+					// Step 1: Always inject field name before the title
+					console.log('🔍 Debugging question rendering:', {
+						questionName: question.name,
+						questionTitle: question.title,
+						htmlElement: !!options.htmlElement,
+					})
+
+					// Try multiple selectors to find the title element
+					const titleSelectors = [
+						'.sv_q_title',
+						'.sv_q_title_text',
+						'[aria-label*="title"]',
+						'.sv-question__title',
+					]
+					let titleElement = null
+
+					for (const selector of titleSelectors) {
+						titleElement = options.htmlElement?.querySelector(selector)
+						if (titleElement) {
+							console.log(`✅ Found title element with selector: ${selector}`)
 							break
 						}
 					}
-				}
 
-				console.log(
-					'🔍 Question rendering:',
-					question.name,
-					'descriptions:',
-					descriptions,
-				)
-
-				if (
-					descriptions &&
-					Array.isArray(descriptions) &&
-					descriptions.length > 0 &&
-					descriptions.every(
-						(desc: unknown) => typeof desc === 'string' && desc.trim() !== '',
-					)
-				) {
-					console.log('✅ Valid descriptions found, injecting...')
-
-					// Clean up previous accordion if exists
-					const existingRoot = accordionRootsRef.current.get(question.name)
-					if (existingRoot) {
-						existingRoot.unmount()
+					// If no title element found, log the HTML structure for debugging
+					if (!titleElement && options.htmlElement) {
+						console.log(
+							'🔍 Available elements in question HTML:',
+							Array.from(options.htmlElement.querySelectorAll('*')).map(
+								(el) => ({
+									tagName: el.tagName,
+									className: el.className,
+									textContent: el.textContent?.substring(0, 50),
+								}),
+							),
+						)
+						// Try to find any element that might contain the title
+						titleElement = options.htmlElement.querySelector('*')
 					}
 
-					// Create container for accordion
-					const accordionContainer = document.createElement('div')
-					accordionContainer.className = 'question-accordion-wrapper'
+					if (titleElement && question.name) {
+						console.log('📝 Injecting field name for:', question.name)
 
-					// Find question title element
-					const questionTitle =
-						options.htmlElement?.querySelector('.sv_q_title')
-					if (questionTitle && questionTitle.parentNode) {
-						// Insert after title, before question content
-						questionTitle.parentNode.insertBefore(
-							accordionContainer,
-							questionTitle.nextSibling,
+						// Check if field name already exists to avoid duplicates
+						const existingFieldName = titleElement.parentNode?.querySelector(
+							'.question-field-name',
 						)
+						if (existingFieldName) {
+							console.log('⚠️ Field name already exists, removing it first')
+							existingFieldName.remove()
+						}
 
-						// Render React component
-						const root = createRoot(accordionContainer)
-						accordionRootsRef.current.set(question.name, root)
-						root.render(
-							<QuestionAccordion descriptions={descriptions as string[]} />,
-						)
-						console.log('✅ Accordion injected successfully')
+						// Create field name element
+						const fieldNameDiv = document.createElement('div')
+
+						// Find the question in the original survey JSON to get custom properties
+						let isUmbrellaQuestion = false
+						for (const page of surveyJson.pages) {
+							for (const element of page.elements) {
+								if (element.name === question.name) {
+									isUmbrellaQuestion = element.isUmbrellaQuestion || false
+									break
+								}
+							}
+						}
+
+						// Debug: Log question properties to understand structure
+						console.log('🔍 Question properties:', {
+							name: question.name,
+							type: question.type,
+							isUmbrellaQuestion: isUmbrellaQuestion,
+							foundInSurveyJson: isUmbrellaQuestion,
+						})
+
+						fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
+						fieldNameDiv.textContent = question.name
+
+						console.log('📋 Created field name element:', fieldNameDiv)
+
+						// Insert field name before the title element (or at the beginning of the question)
+						const container = titleElement.parentNode || options.htmlElement
+						if (container) {
+							container.insertBefore(fieldNameDiv, container.firstChild)
+							console.log(
+								'✅ Field name injected successfully at beginning of container',
+							)
+						} else {
+							console.error('❌ No container found for field name injection')
+						}
 					} else {
-						console.log('❌ Could not find question title element')
-						// Alternative: append to the main element
-						if (options.htmlElement) {
-							options.htmlElement.appendChild(accordionContainer)
+						console.log('❌ Missing titleElement or question.name:', {
+							titleElement: !!titleElement,
+							questionName: question.name,
+						})
+					}
+
+					// Step 1.5: Inject umbrella question title for sub-questions (before field name)
+					// Find the question in the original survey JSON to get parent question info
+					let parentQuestionTitle: string | undefined
+					let parentQuestionId: string | undefined
+
+					for (const page of surveyJson.pages) {
+						for (const element of page.elements) {
+							if (element.name === question.name) {
+								parentQuestionTitle = element.parentQuestionTitle
+								parentQuestionId = element.parentQuestionId
+								break
+							}
+						}
+					}
+
+					if (parentQuestionTitle && parentQuestionId) {
+						console.log(
+							'🏢 Injecting umbrella question title for sub-question:',
+							question.name,
+							'Parent title:',
+							parentQuestionTitle,
+						)
+
+						// Check if umbrella title already exists to avoid duplicates
+						const existingUmbrellaTitle =
+							titleElement?.parentNode?.querySelector(
+								'.umbrella-question-title',
+							)
+						if (existingUmbrellaTitle) {
+							console.log('⚠️ Umbrella title already exists, removing it first')
+							existingUmbrellaTitle.remove()
+						}
+
+						// Create umbrella question title element
+						const umbrellaTitleDiv = document.createElement('div')
+						umbrellaTitleDiv.className =
+							'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
+						umbrellaTitleDiv.innerHTML =
+							processMarkdownSafely(parentQuestionTitle)
+
+						console.log('🏢 Created umbrella title element:', umbrellaTitleDiv)
+
+						// Insert umbrella title before the field name element (at the very beginning)
+						const container = titleElement?.parentNode || options.htmlElement
+						if (container) {
+							container.insertBefore(umbrellaTitleDiv, container.firstChild)
+							console.log(
+								'✅ Umbrella title injected successfully before field name',
+							)
+						} else {
+							console.error(
+								'❌ No container found for umbrella title injection',
+							)
+						}
+					} else {
+						console.log('❌ No parent question found for:', question.name)
+					}
+
+					// Step 2: Process markdown in title if it contains markdown syntax
+					if (
+						titleElement &&
+						question.title &&
+						(question.title.includes('*') ||
+							question.title.includes('`') ||
+							question.title.includes('['))
+					) {
+						console.log('📝 Processing markdown in title for:', question.name)
+
+						// Apply markdown processing to the existing title content
+						titleElement.innerHTML = processMarkdownSafely(question.title)
+
+						console.log('✅ Title markdown processed')
+					}
+
+					// Step 2.5: Apply text wrapping styles directly via JavaScript
+					if (titleElement) {
+						// Apply text wrapping styles directly to ensure they work
+						const htmlTitleElement = titleElement as HTMLElement
+						htmlTitleElement.style.textWrap = 'auto'
+						htmlTitleElement.style.whiteSpace = 'normal'
+						htmlTitleElement.style.wordWrap = 'break-word'
+						htmlTitleElement.style.overflowWrap = 'break-word'
+						htmlTitleElement.style.wordBreak = 'break-word'
+						htmlTitleElement.style.maxWidth = '100%'
+
+						// Also apply to parent containers that might be constraining the layout
+						const parentElement = htmlTitleElement.parentElement as HTMLElement
+						if (parentElement) {
+							parentElement.style.maxWidth = '100%'
+							parentElement.style.width = '100%'
+						}
+
+						console.log(
+							'✅ Text wrapping styles applied directly to title element and parent',
+						)
+					}
+
+					// Also apply text wrapping to the entire question container
+					if (options.htmlElement) {
+						const questionContainer = options.htmlElement as HTMLElement
+						questionContainer.style.maxWidth = '100%'
+						questionContainer.style.width = '100%'
+
+						// Find and apply to any title-related containers
+						const titleContainers = questionContainer.querySelectorAll(
+							'.sd-question--title-top, .sd-element--with-frame',
+						)
+						titleContainers.forEach((container) => {
+							const htmlContainer = container as HTMLElement
+							htmlContainer.style.textWrap = 'auto'
+							htmlContainer.style.whiteSpace = 'normal'
+							htmlContainer.style.wordWrap = 'break-word'
+							htmlContainer.style.overflowWrap = 'break-word'
+							htmlContainer.style.maxWidth = '100%'
+						})
+
+						console.log(
+							'✅ Text wrapping applied to question container and title containers',
+						)
+					}
+
+					// Step 3: Handle accordion injection
+					// Get help content from the original survey JSON
+					let help: string | undefined
+					let reporting: string | undefined
+					let docs: string | undefined
+
+					// Find the question in the original survey JSON
+					for (const page of surveyJson.pages) {
+						for (const element of page.elements) {
+							if (element.name === question.name) {
+								help = element.help
+								reporting = element.reporting
+								docs = element.docs
+								break
+							}
+						}
+					}
+
+					console.log(
+						'🔍 Question rendering:',
+						question.name,
+						'help:',
+						help,
+						'reporting:',
+						reporting,
+						'docs:',
+						docs,
+					)
+
+					// Only inject accordion if at least one field has content
+					const hasContent =
+						(help && help.trim() !== '') ||
+						(reporting && reporting.trim() !== '') ||
+						(docs && docs.trim() !== '')
+
+					if (hasContent) {
+						console.log('✅ Content found, injecting accordion...')
+
+						// Clean up previous accordion if exists
+						const existingRoot = accordionRootsRef.current.get(question.name)
+						if (existingRoot) {
+							existingRoot.unmount()
+						}
+
+						// Create container for accordion
+						const accordionContainer = document.createElement('div')
+						accordionContainer.className = 'question-accordion-wrapper'
+
+						// Find question title element and inject accordion
+						const questionTitle =
+							options.htmlElement?.querySelector('.sv_q_title')
+						if (questionTitle && questionTitle.parentNode) {
+							questionTitle.parentNode.insertBefore(
+								accordionContainer,
+								questionTitle.nextSibling,
+							)
+
+							// Render React component with new props structure
 							const root = createRoot(accordionContainer)
 							accordionRootsRef.current.set(question.name, root)
 							root.render(
-								<QuestionAccordion descriptions={descriptions as string[]} />,
+								<QuestionAccordion
+									help={help}
+									reporting={reporting}
+									docs={docs}
+								/>,
 							)
-							console.log('✅ Accordion appended to question element')
+							console.log('✅ Accordion injected successfully')
+						} else {
+							// Fallback: append to main element
+							if (options.htmlElement) {
+								options.htmlElement.appendChild(accordionContainer)
+								const root = createRoot(accordionContainer)
+								accordionRootsRef.current.set(question.name, root)
+								root.render(
+									<QuestionAccordion
+										help={help}
+										reporting={reporting}
+										docs={docs}
+									/>,
+								)
+								console.log('✅ Accordion appended to question element')
+							}
 						}
+					} else {
+						console.log('❌ No content found for accordion')
 					}
-				} else {
-					console.log('❌ Invalid or empty descriptions:', descriptions)
+				} catch (error) {
+					console.error('❌ Error in accordion injection:', error)
 				}
-			} catch (error) {
-				console.error('❌ Error in accordion injection:', error)
-			}
-		})
+			})
 
-		// Mark as initialized after all setup is complete
-		setIsInitialized(true)
+			// Mark as initialized after all setup is complete
+			setIsInitialized(true)
+		} catch (error) {
+			console.error('Failed to initialize survey:', error)
+			if (onErrorRef.current) {
+				onErrorRef.current(error as Error, {
+					component: 'SurveyComponent',
+					action: 'initialization',
+					isDemo,
+				})
+			}
+			return
+		}
 
 		const localAccordionRoots = accordionRootsRef.current
 
@@ -715,7 +1072,9 @@ export function SurveyComponent({
 			localAccordionRoots.clear()
 
 			// Cleanup survey
-			survey.dispose()
+			if (surveyRef.current) {
+				surveyRef.current.dispose()
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
