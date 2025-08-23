@@ -73,7 +73,7 @@ following columns:
 | `questionId` | Unique identifier for the question   | String  | `env-001`, `soc-015`                            |
 | `name`       | Field name for forms (snake_case)    | String  | `energy_source`, `water_usage`                  |
 | `type`       | Question type                        | Enum    | `radiogroup`, `text`, `group`                   |
-| `title`      | Question text displayed to users     | String  | `What is your primary **energy source**?`       |
+| `title`      | Question text displayed to users     | String  | `What is your primary *energy source*?`         |
 | `section`    | Category grouping                    | String  | `Environmental Impact`, `Social Responsibility` |
 | `isRequired` | Boolean flag for mandatory questions | Boolean | `TRUE`, `FALSE`                                 |
 | `score`      | Point weight for assessment          | Number  | `10`, `5`, `0`                                  |
@@ -181,10 +181,14 @@ accordion format:
 The platform supports GitHub-flavored markdown in question titles and help
 content:
 
+> **Note**: The platform uses single asterisk syntax (`*text*`) for bold text
+> and underscore syntax (`_text_`) for italic text throughout all components to
+> maintain consistency.
+
 ### Basic Formatting
 
 ```markdown
-**Bold text** for emphasis _Italic text_ for subtle emphasis  
+_Bold text_ for emphasis _Italic text_ for subtle emphasis  
 `Code snippets` for technical terms
 ```
 
@@ -207,7 +211,7 @@ content:
 ### Question Title Examples
 
 ```markdown
-How do you assess your vineyard's **water usage**? Does your company have a
+How do you assess your vineyard's _water usage_? Does your company have a
 _formal_ environmental policy? Please describe your `carbon footprint`
 calculation method.
 ```
@@ -215,7 +219,7 @@ calculation method.
 ### Help Content Examples
 
 ```markdown
-**Consider the following factors:**
+_Consider the following factors:_
 
 - Direct water consumption
 - Irrigation efficiency

@@ -99,7 +99,7 @@
  *   questionId: 'env-001',
  *   name: 'water_usage',
  *   type: 'radiogroup',
- *   title: 'How do you assess your vineyard\'s **water usage**?',
+ *   title: 'How do you assess your vineyard\'s *water usage*?',
  *   help: 'Consider irrigation systems and water recycling',
  *   reporting: 'Report monthly usage to environmental agency',
  *   docs: 'See water management guidelines document',
@@ -450,11 +450,11 @@ export const assessmentQuestions: QuestionConfig[] = [
 		name: 'question_S1.1',
 		type: 'radiogroup' as const,
 		title:
-			"L'impresa ha formalizzato all'interno di un documento scritto e reso disponibile a tutte le parti interessate, il proprio impegno a rispettare i diritti umani in coerenza con gli standard internazionali (Principi Guida Onu / Linee Guida OCSE)?\n\nTEST TITLE MESSAGE\n\nQuesto è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, *italic*, **grassetto**, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three",
+			"L'impresa ha formalizzato all'interno di un documento scritto e reso disponibile a tutte le parti interessate, il proprio impegno a rispettare i diritti umani in coerenza con gli standard internazionali (Principi Guida Onu / Linee Guida OCSE)?\n\nTEST TITLE MESSAGE\n\nQuesto è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three",
 		help: "Il primo passo è impegnarsi pubblicamente a rispettare i diritti umani. Per fare questo occorre:\n- Sensibilizzare la direzione e il personale\n- Sviluppare e sottoscrivere un impegno al rispetto dei diritti umani\n- Assegnare le responsabilità ai membri rilevanti dell'alta dirigenza e del personale\n- Sensibilizzare il personale, i soci e i lavoratori agricoli",
 		reporting:
-			'TEST REPORTING MESSAGE\n\nQuesto è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, *italic*, **grassetto**, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
-		docs: 'TEST DOCS MESSAGE\n\nQuesto è contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, *italic*, **grassetto**, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
+			'TEST REPORTING MESSAGE\n\nQuesto è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
+		docs: 'TEST DOCS MESSAGE\n\nQuesto è contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
 		section: 'SEZIONE I | Impegnarsi',
 		choices: [
 			'Non adottato',
@@ -2091,9 +2091,9 @@ export function convertToSurveyJsFormat(questions: QuestionConfig[]) {
 												'<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:text-primary/80 transition-colors">$1</a>',
 											)
 											// Handle bold before italic to avoid conflicts
-											.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-											// Handle italic
-											.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+											.replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+											// Handle italic with underscore syntax
+											.replace(/_([^_]+)_/g, '<em>$1</em>')
 											// Handle code
 											.replace(
 												/`([^`]+)`/g,

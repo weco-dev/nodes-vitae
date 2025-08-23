@@ -36,7 +36,7 @@
  * - **Progressive Disclosure**: Users can expand relevant help sections on demand
  *
  * ### Markdown Integration:
- * - **Title Processing**: Question titles support markdown formatting (*italic*, **bold**, `code`)
+ * - **Title Processing**: Question titles support markdown formatting (_italic_, *bold*, `code`)
  * - **Field Name Display**: Question field names appear above titles for context
  * - **Umbrella Title Display**: Parent question titles for grouped sub-questions
  * - **Safe Processing**: Secure markdown rendering without XSS vulnerabilities
@@ -354,10 +354,10 @@
  * ```tsx
  * // Umbrella question field names (blue theme)
  * className="bg-blue-50 text-blue-700 border-b border-blue-200"
- * 
- * // Regular question field names (primary theme)  
+ *
+ * // Regular question field names (primary theme)
  * className="bg-primary/10 text-primary border-b border-primary/10"
- * 
+ *
  * // Parent title sections (prominent blue styling)
  * className="bg-blue-50 text-blue-700 text-base font-semibold"
  * ```
@@ -369,7 +369,7 @@
  * 4. Answer handling that ignores umbrella question inputs
  *
  * @version 3.0.0
- * @author ESG Assessment Team  
+ * @author ESG Assessment Team
  * @since 2025-07-11
  * @updated 2025-07-28 - Added umbrella question support with parent-child relationships
  * @requires react ^18.0.0
@@ -557,11 +557,11 @@ function processMarkdownSafely(markdown: string): string {
 				/\[([^\]]+)\]\(([^)]+)\)/g,
 				'<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary underline hover:text-primary/80 transition-colors">$1</a>',
 			)
-			// Handle bold before italic to avoid conflicts (** must come before *)
-			// Use non-greedy matching and ensure we don't match across multiple ** pairs
-			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-			// For italic, make sure we don't match bold markers
-			.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+			// Handle bold before italic to avoid conflicts (* must come before _)
+			// Use non-greedy matching and ensure we don't match across multiple * pairs
+			.replace(/\*([^*]+)\*/g, '<strong>$1</strong>')
+			// For italic, use underscore syntax
+			.replace(/_([^_]+)_/g, '<em>$1</em>')
 			.replace(/`([^`]+)`/g, '<code>$1</code>')
 			.replace(/\n/g, '<br>')
 	)
@@ -615,7 +615,9 @@ export function SurveyComponent({
 		if (!surveyJson || !surveyJson.pages || !Array.isArray(surveyJson.pages)) {
 			console.error('Invalid survey JSON structure:', surveyJson)
 			if (onErrorRef.current) {
-				onErrorRef.current(new Error('Invalid survey JSON structure'), { surveyJson })
+				onErrorRef.current(new Error('Invalid survey JSON structure'), {
+					surveyJson,
+				})
 			}
 			return
 		}
@@ -625,400 +627,392 @@ export function SurveyComponent({
 			const survey = new Model(surveyJson)
 			console.log('📝 Survey model created:', survey)
 
-		// Configure survey to trigger value changes on text input changes
-		survey.textUpdateMode = 'onTyping'
+			// Configure survey to trigger value changes on text input changes
+			survey.textUpdateMode = 'onTyping'
 
-		// Configure navigation buttons based on navigation state
-		survey.showNavigationButtons = !isNavigating
+			// Configure navigation buttons based on navigation state
+			survey.showNavigationButtons = !isNavigating
 
-		// Demo-specific configuration
-		if (isDemo) {
-			survey.showProgressBar = 'bottom'
-			survey.showTitle = false
-			survey.completedHtml = '<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
-			survey.completeText = 'Complete Demo'
-			survey.pageNextText = 'Next →'
-			survey.pagePrevText = '← Previous'
-			
-			// Add demo watermark or indicator if needed
-			if (survey.title) {
-				survey.title = `${survey.title} (Demo)`
-			}
-		}
+			// Demo-specific configuration
+			if (isDemo) {
+				survey.showProgressBar = 'bottom'
+				survey.showTitle = false
+				survey.completedHtml =
+					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
+				survey.completeText = 'Complete Demo'
+				survey.pageNextText = 'Next →'
+				survey.pagePrevText = '← Previous'
 
-		surveyRef.current = survey
-
-		// Make survey model globally accessible for finalize button
-		;(window as any).surveyModel = survey
-
-		// Set initial data before adding event handlers
-		if (initialData && Object.keys(initialData).length > 0) {
-			survey.data = initialData
-		}
-
-		// Set initial page index if provided
-		if (initialPageIndex > 0) {
-			console.log('🎯 Setting initial page index to:', initialPageIndex)
-			survey.currentPageNo = initialPageIndex
-		}
-
-		// Handle value changes
-		survey.onValueChanged.add((sender, options) => {
-			console.log('📊 Survey value changed:', options.name, options.value)
-			try {
-				const question = survey.getQuestionByName(options.name)
-				if (question && onValueChangedRef.current) {
-					const questionMeta = {
-						questionId: (question as any).questionId || options.name,
-						section: (question as any).section || 'Unknown',
-						score: (question as any).score || 0,
-					}
-					console.log('🔄 Calling onValueChanged callback')
-					onValueChangedRef.current(options.name, options.value, questionMeta)
+				// Add demo watermark or indicator if needed
+				if (survey.title) {
+					survey.title = `${survey.title} (Demo)`
 				}
-			} catch (error) {
-				console.error('Error in onValueChanged:', error)
-			}
-		})
-
-		// Auto-save on Next Button Click
-		survey.onCurrentPageChanging.add((sender, options) => {
-			// Prevent survey navigation during centralized navigation
-			if (isNavigating) {
-				options.allow = false
-				return
 			}
 
-			// Save all answers on the current page before navigation
-			const currentPage = sender.currentPage
-			if (currentPage && onValueChangedRef.current) {
-				currentPage.questions.forEach((question: any) => {
-					const value = question.value
-					if (value !== undefined && value !== null && value !== '') {
+			surveyRef.current = survey
+
+			// Make survey model globally accessible for finalize button
+			;(window as any).surveyModel = survey
+
+			// Set initial data before adding event handlers
+			if (initialData && Object.keys(initialData).length > 0) {
+				survey.data = initialData
+			}
+
+			// Set initial page index if provided
+			if (initialPageIndex > 0) {
+				console.log('🎯 Setting initial page index to:', initialPageIndex)
+				survey.currentPageNo = initialPageIndex
+			}
+
+			// Handle value changes
+			survey.onValueChanged.add((sender, options) => {
+				console.log('📊 Survey value changed:', options.name, options.value)
+				try {
+					const question = survey.getQuestionByName(options.name)
+					if (question && onValueChangedRef.current) {
 						const questionMeta = {
-							questionId: (question as any).questionId || question.name,
+							questionId: (question as any).questionId || options.name,
 							section: (question as any).section || 'Unknown',
 							score: (question as any).score || 0,
 						}
-						onValueChangedRef.current?.(question.name, value, questionMeta)
+						console.log('🔄 Calling onValueChanged callback')
+						onValueChangedRef.current(options.name, options.value, questionMeta)
 					}
-				})
-			}
-		})
-
-		// Handle page changes
-		survey.onCurrentPageChanged.add((sender) => {
-			try {
-				if (!isNavigating && onPageChangedRef.current) {
-					// Only process if not currently navigating through centralized system
-					onPageChangedRef.current(sender.currentPageNo, sender.data)
+				} catch (error) {
+					console.error('Error in onValueChanged:', error)
 				}
-			} catch (error) {
-				console.error('Error in onPageChanged:', error)
-			}
-		})
+			})
 
-		// Handle completion
-		survey.onComplete.add((sender) => {
-			try {
-				if (onCompleteRef.current) {
-					onCompleteRef.current(sender.data)
+			// Auto-save on Next Button Click
+			survey.onCurrentPageChanging.add((sender, options) => {
+				// Prevent survey navigation during centralized navigation
+				if (isNavigating) {
+					options.allow = false
+					return
 				}
-			} catch (error) {
-				console.error('Error in onComplete:', error)
-			}
-		})
 
-		// Inject field names and accordions after questions render
-		survey.onAfterRenderQuestion.add((sender, options) => {
-			try {
-				const question = options.question
-				console.log('🎯 Question rendered:', question.name)
+				// Save all answers on the current page before navigation
+				const currentPage = sender.currentPage
+				if (currentPage && onValueChangedRef.current) {
+					currentPage.questions.forEach((question: any) => {
+						const value = question.value
+						if (value !== undefined && value !== null && value !== '') {
+							const questionMeta = {
+								questionId: (question as any).questionId || question.name,
+								section: (question as any).section || 'Unknown',
+								score: (question as any).score || 0,
+							}
+							onValueChangedRef.current?.(question.name, value, questionMeta)
+						}
+					})
+				}
+			})
 
-				// Step 1: Always inject field name before the title
-				console.log('🔍 Debugging question rendering:', {
-					questionName: question.name,
-					questionTitle: question.title,
-					htmlElement: !!options.htmlElement,
-				})
-
-				// Try multiple selectors to find the title element
-				const titleSelectors = [
-					'.sv_q_title',
-					'.sv_q_title_text',
-					'[aria-label*="title"]',
-					'.sv-question__title',
-				]
-				let titleElement = null
-
-				for (const selector of titleSelectors) {
-					titleElement = options.htmlElement?.querySelector(selector)
-					if (titleElement) {
-						console.log(`✅ Found title element with selector: ${selector}`)
-						break
+			// Handle page changes
+			survey.onCurrentPageChanged.add((sender) => {
+				try {
+					if (!isNavigating && onPageChangedRef.current) {
+						// Only process if not currently navigating through centralized system
+						onPageChangedRef.current(sender.currentPageNo, sender.data)
 					}
+				} catch (error) {
+					console.error('Error in onPageChanged:', error)
 				}
+			})
 
-				// If no title element found, log the HTML structure for debugging
-				if (!titleElement && options.htmlElement) {
-					console.log(
-						'🔍 Available elements in question HTML:',
-						Array.from(options.htmlElement.querySelectorAll('*')).map((el) => ({
-							tagName: el.tagName,
-							className: el.className,
-							textContent: el.textContent?.substring(0, 50),
-						})),
-					)
-					// Try to find any element that might contain the title
-					titleElement = options.htmlElement.querySelector('*')
+			// Handle completion
+			survey.onComplete.add((sender) => {
+				try {
+					if (onCompleteRef.current) {
+						onCompleteRef.current(sender.data)
+					}
+				} catch (error) {
+					console.error('Error in onComplete:', error)
 				}
+			})
 
-				if (titleElement && question.name) {
-					console.log('📝 Injecting field name for:', question.name)
+			// Inject field names and accordions after questions render
+			survey.onAfterRenderQuestion.add((sender, options) => {
+				try {
+					const question = options.question
+					console.log('🎯 Question rendered:', question.name)
 
-					// Check if field name already exists to avoid duplicates
-					const existingFieldName = titleElement.parentNode?.querySelector(
-						'.question-field-name',
-					)
-					if (existingFieldName) {
-						console.log('⚠️ Field name already exists, removing it first')
-						existingFieldName.remove()
+					// Step 1: Always inject field name before the title
+					console.log('🔍 Debugging question rendering:', {
+						questionName: question.name,
+						questionTitle: question.title,
+						htmlElement: !!options.htmlElement,
+					})
+
+					// Try multiple selectors to find the title element
+					const titleSelectors = [
+						'.sv_q_title',
+						'.sv_q_title_text',
+						'[aria-label*="title"]',
+						'.sv-question__title',
+					]
+					let titleElement = null
+
+					for (const selector of titleSelectors) {
+						titleElement = options.htmlElement?.querySelector(selector)
+						if (titleElement) {
+							console.log(`✅ Found title element with selector: ${selector}`)
+							break
+						}
 					}
 
-					// Create field name element
-					const fieldNameDiv = document.createElement('div')
+					// If no title element found, log the HTML structure for debugging
+					if (!titleElement && options.htmlElement) {
+						console.log(
+							'🔍 Available elements in question HTML:',
+							Array.from(options.htmlElement.querySelectorAll('*')).map(
+								(el) => ({
+									tagName: el.tagName,
+									className: el.className,
+									textContent: el.textContent?.substring(0, 50),
+								}),
+							),
+						)
+						// Try to find any element that might contain the title
+						titleElement = options.htmlElement.querySelector('*')
+					}
 
-					// Find the question in the original survey JSON to get custom properties
-					let isUmbrellaQuestion = false
+					if (titleElement && question.name) {
+						console.log('📝 Injecting field name for:', question.name)
+
+						// Check if field name already exists to avoid duplicates
+						const existingFieldName = titleElement.parentNode?.querySelector(
+							'.question-field-name',
+						)
+						if (existingFieldName) {
+							console.log('⚠️ Field name already exists, removing it first')
+							existingFieldName.remove()
+						}
+
+						// Create field name element
+						const fieldNameDiv = document.createElement('div')
+
+						// Find the question in the original survey JSON to get custom properties
+						let isUmbrellaQuestion = false
+						for (const page of surveyJson.pages) {
+							for (const element of page.elements) {
+								if (element.name === question.name) {
+									isUmbrellaQuestion = element.isUmbrellaQuestion || false
+									break
+								}
+							}
+						}
+
+						// Debug: Log question properties to understand structure
+						console.log('🔍 Question properties:', {
+							name: question.name,
+							type: question.type,
+							isUmbrellaQuestion: isUmbrellaQuestion,
+							foundInSurveyJson: isUmbrellaQuestion,
+						})
+
+						fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
+						fieldNameDiv.textContent = question.name
+
+						console.log('📋 Created field name element:', fieldNameDiv)
+
+						// Insert field name before the title element (or at the beginning of the question)
+						const container = titleElement.parentNode || options.htmlElement
+						if (container) {
+							container.insertBefore(fieldNameDiv, container.firstChild)
+							console.log(
+								'✅ Field name injected successfully at beginning of container',
+							)
+						} else {
+							console.error('❌ No container found for field name injection')
+						}
+					} else {
+						console.log('❌ Missing titleElement or question.name:', {
+							titleElement: !!titleElement,
+							questionName: question.name,
+						})
+					}
+
+					// Step 1.5: Inject umbrella question title for sub-questions (before field name)
+					// Find the question in the original survey JSON to get parent question info
+					let parentQuestionTitle: string | undefined
+					let parentQuestionId: string | undefined
+
 					for (const page of surveyJson.pages) {
 						for (const element of page.elements) {
 							if (element.name === question.name) {
-								isUmbrellaQuestion = element.isUmbrellaQuestion || false
+								parentQuestionTitle = element.parentQuestionTitle
+								parentQuestionId = element.parentQuestionId
 								break
 							}
 						}
 					}
 
-					// Debug: Log question properties to understand structure
-					console.log('🔍 Question properties:', {
-						name: question.name,
-						type: question.type,
-						isUmbrellaQuestion: isUmbrellaQuestion,
-						foundInSurveyJson: isUmbrellaQuestion,
-					})
-
-					fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
-					fieldNameDiv.textContent = question.name
-
-					console.log('📋 Created field name element:', fieldNameDiv)
-
-					// Insert field name before the title element (or at the beginning of the question)
-					const container = titleElement.parentNode || options.htmlElement
-					if (container) {
-						container.insertBefore(fieldNameDiv, container.firstChild)
+					if (parentQuestionTitle && parentQuestionId) {
 						console.log(
-							'✅ Field name injected successfully at beginning of container',
+							'🏢 Injecting umbrella question title for sub-question:',
+							question.name,
+							'Parent title:',
+							parentQuestionTitle,
 						)
+
+						// Check if umbrella title already exists to avoid duplicates
+						const existingUmbrellaTitle =
+							titleElement?.parentNode?.querySelector(
+								'.umbrella-question-title',
+							)
+						if (existingUmbrellaTitle) {
+							console.log('⚠️ Umbrella title already exists, removing it first')
+							existingUmbrellaTitle.remove()
+						}
+
+						// Create umbrella question title element
+						const umbrellaTitleDiv = document.createElement('div')
+						umbrellaTitleDiv.className =
+							'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
+						umbrellaTitleDiv.innerHTML =
+							processMarkdownSafely(parentQuestionTitle)
+
+						console.log('🏢 Created umbrella title element:', umbrellaTitleDiv)
+
+						// Insert umbrella title before the field name element (at the very beginning)
+						const container = titleElement?.parentNode || options.htmlElement
+						if (container) {
+							container.insertBefore(umbrellaTitleDiv, container.firstChild)
+							console.log(
+								'✅ Umbrella title injected successfully before field name',
+							)
+						} else {
+							console.error(
+								'❌ No container found for umbrella title injection',
+							)
+						}
 					} else {
-						console.error('❌ No container found for field name injection')
+						console.log('❌ No parent question found for:', question.name)
 					}
-				} else {
-					console.log('❌ Missing titleElement or question.name:', {
-						titleElement: !!titleElement,
-						questionName: question.name,
-					})
-				}
 
-				// Step 1.5: Inject umbrella question title for sub-questions (before field name)
-				// Find the question in the original survey JSON to get parent question info
-				let parentQuestionTitle: string | undefined
-				let parentQuestionId: string | undefined
+					// Step 2: Process markdown in title if it contains markdown syntax
+					if (
+						titleElement &&
+						question.title &&
+						(question.title.includes('*') ||
+							question.title.includes('`') ||
+							question.title.includes('['))
+					) {
+						console.log('📝 Processing markdown in title for:', question.name)
 
-				for (const page of surveyJson.pages) {
-					for (const element of page.elements) {
-						if (element.name === question.name) {
-							parentQuestionTitle = element.parentQuestionTitle
-							parentQuestionId = element.parentQuestionId
-							break
+						// Apply markdown processing to the existing title content
+						titleElement.innerHTML = processMarkdownSafely(question.title)
+
+						console.log('✅ Title markdown processed')
+					}
+
+					// Step 2.5: Apply text wrapping styles directly via JavaScript
+					if (titleElement) {
+						// Apply text wrapping styles directly to ensure they work
+						const htmlTitleElement = titleElement as HTMLElement
+						htmlTitleElement.style.textWrap = 'auto'
+						htmlTitleElement.style.whiteSpace = 'normal'
+						htmlTitleElement.style.wordWrap = 'break-word'
+						htmlTitleElement.style.overflowWrap = 'break-word'
+						htmlTitleElement.style.wordBreak = 'break-word'
+						htmlTitleElement.style.maxWidth = '100%'
+
+						// Also apply to parent containers that might be constraining the layout
+						const parentElement = htmlTitleElement.parentElement as HTMLElement
+						if (parentElement) {
+							parentElement.style.maxWidth = '100%'
+							parentElement.style.width = '100%'
+						}
+
+						console.log(
+							'✅ Text wrapping styles applied directly to title element and parent',
+						)
+					}
+
+					// Also apply text wrapping to the entire question container
+					if (options.htmlElement) {
+						const questionContainer = options.htmlElement as HTMLElement
+						questionContainer.style.maxWidth = '100%'
+						questionContainer.style.width = '100%'
+
+						// Find and apply to any title-related containers
+						const titleContainers = questionContainer.querySelectorAll(
+							'.sd-question--title-top, .sd-element--with-frame',
+						)
+						titleContainers.forEach((container) => {
+							const htmlContainer = container as HTMLElement
+							htmlContainer.style.textWrap = 'auto'
+							htmlContainer.style.whiteSpace = 'normal'
+							htmlContainer.style.wordWrap = 'break-word'
+							htmlContainer.style.overflowWrap = 'break-word'
+							htmlContainer.style.maxWidth = '100%'
+						})
+
+						console.log(
+							'✅ Text wrapping applied to question container and title containers',
+						)
+					}
+
+					// Step 3: Handle accordion injection
+					// Get help content from the original survey JSON
+					let help: string | undefined
+					let reporting: string | undefined
+					let docs: string | undefined
+
+					// Find the question in the original survey JSON
+					for (const page of surveyJson.pages) {
+						for (const element of page.elements) {
+							if (element.name === question.name) {
+								help = element.help
+								reporting = element.reporting
+								docs = element.docs
+								break
+							}
 						}
 					}
-				}
 
-				if (parentQuestionTitle && parentQuestionId) {
 					console.log(
-						'🏢 Injecting umbrella question title for sub-question:',
+						'🔍 Question rendering:',
 						question.name,
-						'Parent title:',
-						parentQuestionTitle,
+						'help:',
+						help,
+						'reporting:',
+						reporting,
+						'docs:',
+						docs,
 					)
 
-					// Check if umbrella title already exists to avoid duplicates
-					const existingUmbrellaTitle = titleElement?.parentNode?.querySelector(
-						'.umbrella-question-title',
-					)
-					if (existingUmbrellaTitle) {
-						console.log('⚠️ Umbrella title already exists, removing it first')
-						existingUmbrellaTitle.remove()
-					}
+					// Only inject accordion if at least one field has content
+					const hasContent =
+						(help && help.trim() !== '') ||
+						(reporting && reporting.trim() !== '') ||
+						(docs && docs.trim() !== '')
 
-					// Create umbrella question title element
-					const umbrellaTitleDiv = document.createElement('div')
-					umbrellaTitleDiv.className =
-						'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
-					umbrellaTitleDiv.innerHTML =
-						processMarkdownSafely(parentQuestionTitle)
+					if (hasContent) {
+						console.log('✅ Content found, injecting accordion...')
 
-					console.log('🏢 Created umbrella title element:', umbrellaTitleDiv)
-
-					// Insert umbrella title before the field name element (at the very beginning)
-					const container = titleElement?.parentNode || options.htmlElement
-					if (container) {
-						container.insertBefore(umbrellaTitleDiv, container.firstChild)
-						console.log(
-							'✅ Umbrella title injected successfully before field name',
-						)
-					} else {
-						console.error('❌ No container found for umbrella title injection')
-					}
-				} else {
-					console.log('❌ No parent question found for:', question.name)
-				}
-
-				// Step 2: Process markdown in title if it contains markdown syntax
-				if (
-					titleElement &&
-					question.title &&
-					(question.title.includes('*') ||
-						question.title.includes('`') ||
-						question.title.includes('['))
-				) {
-					console.log('📝 Processing markdown in title for:', question.name)
-
-					// Apply markdown processing to the existing title content
-					titleElement.innerHTML = processMarkdownSafely(question.title)
-
-					console.log('✅ Title markdown processed')
-				}
-
-				// Step 2.5: Apply text wrapping styles directly via JavaScript
-				if (titleElement) {
-					// Apply text wrapping styles directly to ensure they work
-					const htmlTitleElement = titleElement as HTMLElement
-					htmlTitleElement.style.textWrap = 'auto'
-					htmlTitleElement.style.whiteSpace = 'normal'
-					htmlTitleElement.style.wordWrap = 'break-word'
-					htmlTitleElement.style.overflowWrap = 'break-word'
-					htmlTitleElement.style.wordBreak = 'break-word'
-					htmlTitleElement.style.maxWidth = '100%'
-
-					// Also apply to parent containers that might be constraining the layout
-					const parentElement = htmlTitleElement.parentElement as HTMLElement
-					if (parentElement) {
-						parentElement.style.maxWidth = '100%'
-						parentElement.style.width = '100%'
-					}
-
-					console.log(
-						'✅ Text wrapping styles applied directly to title element and parent',
-					)
-				}
-
-				// Also apply text wrapping to the entire question container
-				if (options.htmlElement) {
-					const questionContainer = options.htmlElement as HTMLElement
-					questionContainer.style.maxWidth = '100%'
-					questionContainer.style.width = '100%'
-
-					// Find and apply to any title-related containers
-					const titleContainers = questionContainer.querySelectorAll(
-						'.sd-question--title-top, .sd-element--with-frame',
-					)
-					titleContainers.forEach((container) => {
-						const htmlContainer = container as HTMLElement
-						htmlContainer.style.textWrap = 'auto'
-						htmlContainer.style.whiteSpace = 'normal'
-						htmlContainer.style.wordWrap = 'break-word'
-						htmlContainer.style.overflowWrap = 'break-word'
-						htmlContainer.style.maxWidth = '100%'
-					})
-
-					console.log(
-						'✅ Text wrapping applied to question container and title containers',
-					)
-				}
-
-				// Step 3: Handle accordion injection
-				// Get help content from the original survey JSON
-				let help: string | undefined
-				let reporting: string | undefined
-				let docs: string | undefined
-
-				// Find the question in the original survey JSON
-				for (const page of surveyJson.pages) {
-					for (const element of page.elements) {
-						if (element.name === question.name) {
-							help = element.help
-							reporting = element.reporting
-							docs = element.docs
-							break
+						// Clean up previous accordion if exists
+						const existingRoot = accordionRootsRef.current.get(question.name)
+						if (existingRoot) {
+							existingRoot.unmount()
 						}
-					}
-				}
 
-				console.log(
-					'🔍 Question rendering:',
-					question.name,
-					'help:',
-					help,
-					'reporting:',
-					reporting,
-					'docs:',
-					docs,
-				)
+						// Create container for accordion
+						const accordionContainer = document.createElement('div')
+						accordionContainer.className = 'question-accordion-wrapper'
 
-				// Only inject accordion if at least one field has content
-				const hasContent =
-					(help && help.trim() !== '') ||
-					(reporting && reporting.trim() !== '') ||
-					(docs && docs.trim() !== '')
+						// Find question title element and inject accordion
+						const questionTitle =
+							options.htmlElement?.querySelector('.sv_q_title')
+						if (questionTitle && questionTitle.parentNode) {
+							questionTitle.parentNode.insertBefore(
+								accordionContainer,
+								questionTitle.nextSibling,
+							)
 
-				if (hasContent) {
-					console.log('✅ Content found, injecting accordion...')
-
-					// Clean up previous accordion if exists
-					const existingRoot = accordionRootsRef.current.get(question.name)
-					if (existingRoot) {
-						existingRoot.unmount()
-					}
-
-					// Create container for accordion
-					const accordionContainer = document.createElement('div')
-					accordionContainer.className = 'question-accordion-wrapper'
-
-					// Find question title element and inject accordion
-					const questionTitle =
-						options.htmlElement?.querySelector('.sv_q_title')
-					if (questionTitle && questionTitle.parentNode) {
-						questionTitle.parentNode.insertBefore(
-							accordionContainer,
-							questionTitle.nextSibling,
-						)
-
-						// Render React component with new props structure
-						const root = createRoot(accordionContainer)
-						accordionRootsRef.current.set(question.name, root)
-						root.render(
-							<QuestionAccordion
-								help={help}
-								reporting={reporting}
-								docs={docs}
-							/>,
-						)
-						console.log('✅ Accordion injected successfully')
-					} else {
-						// Fallback: append to main element
-						if (options.htmlElement) {
-							options.htmlElement.appendChild(accordionContainer)
+							// Render React component with new props structure
 							const root = createRoot(accordionContainer)
 							accordionRootsRef.current.set(question.name, root)
 							root.render(
@@ -1028,27 +1022,40 @@ export function SurveyComponent({
 									docs={docs}
 								/>,
 							)
-							console.log('✅ Accordion appended to question element')
+							console.log('✅ Accordion injected successfully')
+						} else {
+							// Fallback: append to main element
+							if (options.htmlElement) {
+								options.htmlElement.appendChild(accordionContainer)
+								const root = createRoot(accordionContainer)
+								accordionRootsRef.current.set(question.name, root)
+								root.render(
+									<QuestionAccordion
+										help={help}
+										reporting={reporting}
+										docs={docs}
+									/>,
+								)
+								console.log('✅ Accordion appended to question element')
+							}
 						}
+					} else {
+						console.log('❌ No content found for accordion')
 					}
-				} else {
-					console.log('❌ No content found for accordion')
+				} catch (error) {
+					console.error('❌ Error in accordion injection:', error)
 				}
-			} catch (error) {
-				console.error('❌ Error in accordion injection:', error)
-			}
-		})
+			})
 
-		// Mark as initialized after all setup is complete
-		setIsInitialized(true)
-
+			// Mark as initialized after all setup is complete
+			setIsInitialized(true)
 		} catch (error) {
 			console.error('Failed to initialize survey:', error)
 			if (onErrorRef.current) {
-				onErrorRef.current(error as Error, { 
+				onErrorRef.current(error as Error, {
 					component: 'SurveyComponent',
 					action: 'initialization',
-					isDemo 
+					isDemo,
 				})
 			}
 			return
