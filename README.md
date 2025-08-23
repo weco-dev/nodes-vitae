@@ -181,15 +181,10 @@ accordion format:
 The platform supports GitHub-flavored markdown in question titles and help
 content:
 
-> **Note**: The platform uses single asterisk syntax (`*text*`) for bold text
-> and underscore syntax (`_text_`) for italic text throughout all components to
-> maintain consistency.
-
 ### Basic Formatting
 
 ```markdown
-_Bold text_ for emphasis _Italic text_ for subtle emphasis  
-`Code snippets` for technical terms
+_Bold text_ for emphasis _Italic text_ for subtle emphasis
 ```
 
 ### Links
