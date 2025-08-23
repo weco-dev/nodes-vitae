@@ -241,7 +241,7 @@ export function AssessmentNavigation({
 
 				{/* Desktop/Tablet: Horizontal Layout */}
 				<div className="hidden items-center gap-2 sm:flex">
-					<Button
+					{/* <Button
 						variant="outline"
 						size="sm"
 						onClick={onNavigatePrevious}
@@ -253,7 +253,7 @@ export function AssessmentNavigation({
 					>
 						<Icon name="arrow-left" className="h-4 w-4" />
 						<span className="hidden md:inline">Previous</span>
-					</Button>
+					</Button> */}
 					<Select
 						value={section}
 						onValueChange={handleSectionChange}
@@ -278,7 +278,7 @@ export function AssessmentNavigation({
 							))}
 						</SelectContent>
 					</Select>
-					<Button
+					{/* <Button
 						variant="outline"
 						size="sm"
 						onClick={onNavigateNext}
@@ -290,7 +290,7 @@ export function AssessmentNavigation({
 					>
 						<span className="hidden md:inline">Next</span>
 						<Icon name="arrow-right" className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 
