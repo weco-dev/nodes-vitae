@@ -94,7 +94,8 @@ export async function action({ request }: Route.ActionArgs) {
 			}
 			const answer = JSON.parse(answerStr)
 
-			saveDemoAnswerToLocalStorage(questionName, answer)
+			// Note: localStorage save happens on client side in handleValueChanged
+			// This action is only for analytics tracking
 
 			// Track analytics for demo
 			const questionMetaStr = formData.get('questionMeta')
@@ -410,7 +411,10 @@ export default function DemoTake() {
 				})
 			}
 
-			// Save to localStorage
+			// Save to localStorage on client side
+			saveDemoAnswerToLocalStorage(name, value)
+
+			// Also submit to server for analytics tracking
 			void fetcher.submit(
 				{
 					intent: 'save-answer',
