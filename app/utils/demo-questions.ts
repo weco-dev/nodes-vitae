@@ -28,11 +28,11 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		name: 'company_info',
 		type: 'text' as const,
 		title:
-			'Informazioni sulla tua azienda: settore di attività, dimensioni e struttura organizzativa',
-		help: 'Fornisci una breve descrizione del settore in cui opera la tua azienda, le dimensioni approssimative (numero di dipendenti, fatturato) e la struttura organizzativa generale.',
+			'Informazioni sulla tua azienda: settore di attività, dimensioni e struttura organizzativa. \n\n MARKDOWN TEST \n\n Questo è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
+		help: 'Fornisci una breve descrizione del settore in cui opera la tua azienda, le dimensioni approssimative (numero di dipendenti, fatturato) e la struttura organizzativa generale.  \n\n MARKDOWN TEST \n\n Questo è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three',
 		reporting:
-			"Queste informazioni sono essenziali per contestualizzare la valutazione ESG rispetto al settore e alle caratteristiche specifiche dell'azienda.",
-		docs: "Consulta la documentazione aziendale standard per le informazioni di base sull'organizzazione.",
+			"Queste informazioni sono essenziali per contestualizzare la valutazione ESG rispetto al settore e alle caratteristiche specifiche dell'azienda.  \n\n MARKDOWN TEST \n\n Questo è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three",
+		docs: "Consulta la documentazione aziendale standard per le informazioni di base sull'organizzazione.  \n\n MARKDOWN TEST \n\n Questo è un contenuto di test per verificare varie funzionalità Markdown. \n\nAndare a capo, _italic_, *grassetto*, [link](https://we.co.it/) e una lista: \n- one\n- two\n- three",
 		section: 'SEZIONE 0',
 		isRequired: true,
 		score: 1,
