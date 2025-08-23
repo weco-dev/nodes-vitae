@@ -125,6 +125,10 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   │   ├── take.tsx    # Main assessment interface (88 questions)
 │   │   │   ├── review.tsx  # Assessment review interface
 │   │   │   └── complete.tsx # Success confirmation
+│   │   ├── demo+/          # Demo Assessment workflow (NEW v4.0)
+│   │   │   ├── _layout.tsx # Demo layout with navigation (no auth required)
+│   │   │   ├── take.tsx    # Demo assessment interface (25 questions)
+│   │   │   └── complete.tsx # Demo completion & conversion page
 │   │   ├── dashboard+/     # Main dashboard and management
 │   │   │   ├── _layout.tsx # Dashboard layout
 │   │   │   ├── index.tsx   # Dashboard home
@@ -154,6 +158,9 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 │   │   │   └── github.server.ts # GitHub OAuth provider
 │   │   ├── assessment.server.ts    # Assessment backend utilities
 │   │   ├── assessment-questions.ts # ESG question configuration (88 questions with v2.0 enhancements)
+│   │   ├── demo-questions.ts # Demo question configuration (25 questions - NEW v4.0)
+│   │   ├── demo-storage.ts # Demo localStorage persistence utilities (NEW v4.0)
+│   │   ├── demo-analytics.ts # Demo analytics and conversion tracking (NEW v4.0)
 │   │   ├── auth.server.ts  # Authentication utilities
 │   │   ├── cache.server.ts # Server-side caching
 │   │   ├── client-hints.tsx # Client hints utilities
@@ -211,9 +218,12 @@ This is a comprehensive ESG (Environmental, Social, Governance) assessment platf
 ├── data/                  # Data files and uploads
 │   └── uploads/           # File upload storage
 │       ├── assessment-questions.xlsx # Source Excel file (88+ questions - updated for v3.0 with umbrella support)
+│       ├── demo-assessment-questions.xlsx # Demo Excel file (25 questions for demo system - NEW v4.0)
 │       └── *.* # Other uploaded files
 ├── scripts/               # Utility scripts
-│   └── import-questions.ts # Excel-to-TypeScript question importer (enhanced for v3.0 with umbrella question support)
+│   ├── import-questions.ts # Excel-to-TypeScript question importer (enhanced for v3.0 with umbrella question support)
+│   ├── import-demo-questions.ts # Excel-to-TypeScript demo question importer (NEW v4.0)
+│   └── create-demo-excel.ts # Script to generate demo questions Excel file (NEW v4.0)
 ├── prisma/                # Database schema and migrations
 │   ├── migrations/        # Database migration files
 │   │   ├── 20250711123650_add_assessment_models/ # Assessment models
@@ -436,6 +446,7 @@ npm run dev            # Start development server with mocks
 npm run dev:no-mocks   # Start without API mocks
 npm run setup          # Initial project setup
 npm run import-questions # Import assessment questions from Excel
+npm run import-demo-questions # Import demo questions from Excel (NEW v4.0)
 ```
 
 ### Testing
@@ -466,6 +477,10 @@ npx prisma db seed       # Seed development data
 npm run import-questions  # Import questions from Excel file
 # Data file: data/uploads/assessment-questions.xlsx
 # Output: app/utils/assessment-questions.ts
+
+npm run import-demo-questions  # Import demo questions from Excel file (NEW v4.0)
+# Data file: data/uploads/demo-assessment-questions.xlsx
+# Output: app/utils/demo-questions.ts
 ```
 
 ## Deployment
@@ -570,6 +585,8 @@ export function ErrorBoundary() {
 ### Overview
 Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 questions across 7 sections, implemented with SurveyJS integration and real-time persistence.
 
+**NEW: Demo Assessment System (v4.0)** - Standalone demo experience with 25 questions, localStorage persistence, and comprehensive analytics tracking. No authentication required, providing full UI fidelity for user engagement and conversion.
+
 ### Key Components
 
 #### Frontend Components
@@ -637,10 +654,14 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
   - Bulk import operations with comprehensive error handling
 
 #### Route Structure
-- **assessment+/** - Assessment workflow
+- **assessment+/** - Assessment workflow (Production)
   - `take.tsx` - Main assessment interface with umbrella question support ⭐ **ENHANCED v3.0**
   - `review.tsx` - Assessment review interface
   - `complete.tsx` - Success confirmation
+- **demo+/** - Demo assessment workflow ⭐ **NEW v4.0**
+  - `_layout.tsx` - Demo layout with navigation (no auth required)
+  - `take.tsx` - Demo assessment interface (25 questions with localStorage)
+  - `complete.tsx` - Demo completion & conversion page
 - **dashboard+/assessment** - Assessment management
   - `assessments.tsx` - Assessment listing and management
   - `assessment.$id.tsx` - Individual assessment details
@@ -655,9 +676,12 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 #### Technical Features
 - **Real-time auto-save** during assessment completion
 - **Progress persistence** across sessions with `currentPageIndex`
+- **localStorage persistence** for demo system (no database required) ⭐ **NEW v4.0**
 - **Comprehensive error handling** and recovery mechanisms
 - **Enhanced responsive design** with mobile-first approach ⭐ **IMPROVED**
 - **Unified navigation system** with progress indicators and section selection ⭐ **NEW**
+- **Demo analytics tracking** with conversion measurement ⭐ **NEW v4.0**
+- **Marketing integration** with demo CTAs throughout landing page ⭐ **NEW v4.0**
 - **Umbrella question hierarchy** with parent-child relationships ⭐ **NEW v3.0**
 - **Visual differentiation** between regular questions (round) and umbrella questions (square blue) ⭐ **NEW v3.0**
 - **Progress filtering** that excludes umbrella questions from completion calculations ⭐ **NEW v3.0**
@@ -668,22 +692,67 @@ Comprehensive ESG (Environmental, Social, Governance) assessment system with 88 
 - **Touch-optimized controls** for mobile devices ⭐ **NEW**
 - **Dual progress metrics** (mandatory vs. total questions) ⭐ **NEW**
 
-### Recent Improvements (July 2025) ⭐ **ESG Assessment System v3.0**
-Based on recent commits and comprehensive enhancements:
+### Recent Improvements (July-August 2025) ⭐ **ESG Assessment System v4.0**
 
-1. **ESG Assessment System v3.0**: Umbrella question support with hierarchical organization
+### Latest Changes (August 2025) - Based on Last 9 Git Commits
+
+#### Recent Commits Summary:
+1. **db6f32d** - Merge branch 'feature/copy-250819' into dev
+2. **3ec96be** - chore: fix playwright error (marketing page)
+3. **0b5b4db** - chore: clean eslint errors (marketing improvements)
+4. **21b67a7** - landing: fix copy in Benefits and CTA sections
+5. **b741afa** - landing: change copy in second content block
+6. **f81282e** - landing: change first block copy
+7. **146899a** - landing: update main nav links
+8. **7747f09** - refactor: format demo questions for improved readability
+9. **98e9614** - feat: implement demo assessment form (MAJOR FEATURE)
+
+### Major Feature Addition: Demo Assessment System ⭐ **NEW v4.0**
+
+**Complete standalone demo experience implemented:**
+- **No authentication required** - fully accessible demo assessment
+- **25 demo questions** across all 7 ESG sections with localStorage persistence
+- **Full UI fidelity** - maintains production design and functionality
+- **Analytics tracking** - comprehensive user journey and conversion tracking
+- **Marketing integration** - demo CTAs throughout landing page
+- **Mobile responsive** - complete responsive design implementation
+
+#### New Demo Routes Structure:
+```
+demo+/                          # Demo route group (NEW)
+├── _layout.tsx                 # Demo layout with navigation
+├── take.tsx                    # Main demo assessment interface
+└── complete.tsx                # Completion & conversion page
+```
+
+#### New Demo Utilities:
+- **demo-questions.ts** - 25 curated demo questions configuration
+- **demo-storage.ts** - localStorage-based persistence system
+- **demo-analytics.ts** - comprehensive analytics and conversion tracking
+- **import-demo-questions.ts** - Excel import script for demo questions
+
+#### Landing Page Marketing Enhancements:
+- **Updated Italian copy** - refined messaging and value propositions
+- **Demo CTAs integration** - multiple conversion paths with analytics
+- **Responsive design improvements** - enhanced mobile experience
+- **Benefits and features sections** - clearer value communication
+
+### Previous Major Versions:
+
+#### **ESG Assessment System v3.0**: Umbrella question support with hierarchical organization
    - Umbrella questions (`type: 'group'`) for navigation-only organization
    - Parent-child relationships via `parentQuestionId` field
    - Visual differentiation with square blue indicators vs round green/gray for regular questions
    - Progress filtering that excludes umbrella questions from completion calculations
    - Parent title injection for sub-questions showing umbrella context
 
-2. **ESG Assessment System v2.0**: Complete overhaul with enhanced help structure
+#### **ESG Assessment System v2.0**: Complete overhaul with enhanced help structure
    - Three-column accordion system (Help, Reporting, Documentation)
    - Markdown support in question titles with field name display
    - 88+ Italian ESG questions with semantic field structure
    - Enhanced progressive disclosure and content organization
 
+#### **Technical Improvements**:
 3. **AssessmentNavigation Component**: Enhanced with umbrella question support
 4. **Enhanced State Management**: `useAssessmentNavigation` hook prevents navigation conflicts
 5. **Improved Mobile UX**: Enhanced responsive design with touch-optimized controls
@@ -701,7 +770,8 @@ Based on recent commits and comprehensive enhancements:
   "xlsx": "^0.18.5",
   "@tabler/icons-react": "^3.34.0",
   "vaul": "^1.1.2",
-  "tw-animate-css": "^1.2.9"
+  "tw-animate-css": "^1.2.9",
+  "lucide-react": "^0.525.0"
 }
 ```
 
