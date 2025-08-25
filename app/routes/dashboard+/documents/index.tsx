@@ -1,26 +1,13 @@
 import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-} from '#app/components/ui/card.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
-import { Icon } from 'lucide-react'
-import { documents } from '../../../../data/uploads/documents/documents'
-import { type Route } from './+types/index'
-import { Link, useLoaderData } from 'react-router'
-import { url } from 'inspector'
-
-export async function loader({ request }: Route.LoaderArgs) {
-	const userId = await requireUserId(request)
-	const url = new URL(request.url)
-	return { domain: url.origin }
-}
+	documents,
+	documentGroups,
+} from '../../../../data/uploads/documents/documents'
+import DocumentCard from './components/documentCard'
 
 export default function DocumentsRoute() {
-	const { domain } = useLoaderData<typeof loader>()
 	const documentsList = documents
-	const path = domain
+	console.log('Documents: ', documents)
+	console.log('Document groups: ', documentGroups)
 	return (
 		<div className="flex flex-1 flex-col">
 			<div className="@container/main flex flex-1 flex-col gap-2">
@@ -33,43 +20,26 @@ export default function DocumentsRoute() {
 									Documentazione
 								</h1>
 								<p className="text-muted-foreground text-lg">
-									Manage and track your ESG assessment progress
+									Consulta e scarica la documentazione utile a compilare il
+									questionario
 								</p>
 							</div>
 						</div>
 
-						{/* Documents cards */}
-						<div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-							{documentsList.map((document) => (
-								<Link
-									key={document.id}
-									to={`/downloads/${document.fileName}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<Card>
-										<CardHeader className="flex flex-row items-center justify-between space-y-0">
-											<CardTitle className="text-sm font-medium">
-												Total Assessments
-											</CardTitle>
-											{/* <Icon
-										name="file-text"
-										className="text-muted-foreground h-4 w-4"
-									/> */}
-										</CardHeader>
-										<CardContent>
-											<div className="text-2xl font-bold">{document.title}</div>
-											<p className="text-muted-foreground text-xs">
-												{document.author}
-											</p>
-											<p className="text-muted-foreground text-xs">
-												{document.year}
-											</p>
-										</CardContent>
-									</Card>
-								</Link>
-							))}
-						</div>
+						{/* Documents cards with groups */}
+						{documentGroups.map((group) => (
+							<div key={group}>
+								<h2 className="mb-4 text-2xl font-semibold">{group}</h2>
+
+								<div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+									{documentsList
+										.filter((document) => document.group === group)
+										.map((document) => (
+											<DocumentCard key={document.index} document={document} />
+										))}
+								</div>
+							</div>
+						))}
 					</div>
 				</div>
 			</div>
