@@ -50,8 +50,13 @@ const data = {
 	},
 	navMain: [
 		{
-			title: 'ESG Assessment',
+			title: 'Questionari',
 			url: '/dashboard/assessments',
+			icon: IconClipboardCheck,
+		},
+		{
+			title: 'Documentazione',
+			url: '/dashboard/documents',
 			icon: IconClipboardCheck,
 		},
 	],

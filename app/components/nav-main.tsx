@@ -103,7 +103,7 @@ export function NavMain({
 					<SidebarMenuItem className="flex items-center gap-2">
 						<SidebarMenuButton
 							tooltip={
-								openAssessment ? 'Continue assessment' : 'Start assessment'
+								openAssessment ? 'Continua questionario' : 'Inizia questionario'
 							}
 							className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
 							asChild
@@ -111,7 +111,9 @@ export function NavMain({
 							<Link to="/assessment/take">
 								<IconCirclePlusFilled />
 								<span>
-									{openAssessment ? 'Continue assessment' : 'Start assessment'}
+									{openAssessment
+										? 'Continua questionario'
+										: 'Inizia questionario'}
 								</span>
 							</Link>
 						</SidebarMenuButton>
