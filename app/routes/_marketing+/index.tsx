@@ -19,6 +19,7 @@ import { Separator } from '#app/components/ui/separator'
 import { getUserId } from '#app/utils/auth.server.ts'
 import { trackDemoConversion } from '#app/utils/demo-analytics.ts'
 import { type Route } from './+types/index'
+import ResultsCard from './results-card'
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await getUserId(request)
@@ -287,29 +288,36 @@ export default function Index() {
 				</div>
 			</section>
 
-			{/* CTA Section */}
+			{/* Results Section */}
 			<section className="bg-primary/10 text-foreground px-4 py-20">
-				<div className="container mx-auto text-center">
+				<div className="container mx-auto text-center lg:max-w-10/12">
 					<h2 className="text-primary mb-4 text-4xl font-bold">
 						Cosa ottieni con <br />
 						<span className="text-foreground">Vitae</span>
 					</h2>
 
-					<div className="grid gap-8 lg:grid-cols-2">
-						<div>
-							<h3 className="mb-2 text-xl font-semibold">
+					<div className="grid gap-8 lg:grid-cols-2 lg:grid-rows-1">
+						<div className="flex h-full flex-col space-y-8">
+							<h3 className="text-primary text-2xl font-semibold">
 								Se compili il questionario in autonomia
 							</h3>
-
-							<Accordion type="multiple" className="text-left">
-								<AccordionItem value="item-1">
-									<AccordionTrigger className="text-xl">
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon
+										name="search-check"
+										className="text-primary h-12 w-12"
+									/>
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Score e allineamento agli standard
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ricevi una valutazione che indica il tuo livello di
-										compliance rispetto agli standard sui diritti umani presi a
-										riferimento:
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ricevi una valutazione che indica il tuo livello di
+											compliance rispetto agli standard sui diritti umani presi
+											a riferimento:
+										</p>
 										<ul className="list-disc pl-5">
 											<li>
 												Principi Guida delle Nazioni Unite su Imprese e Diritti
@@ -326,46 +334,65 @@ export default function Index() {
 												Disciplinare Equalitas per la sostenibilità vitivinicola
 											</li>
 										</ul>
-									</AccordionContent>
-								</AccordionItem>
-								<AccordionItem value="item-2">
-									<AccordionTrigger className="text-xl">
+									</div>
+								</div>
+							</div>
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon name="pencil" className="text-primary h-12 w-12" />
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Rendicontazione
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ti segnaliamo quali requisiti sociali del questionario sono
-										richiesti dal report di sostenibilità VSME (Voluntary
-										Sustainability Reporting Standard for non-listed SMEs)
-									</AccordionContent>
-								</AccordionItem>
-							</Accordion>
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ti segnaliamo quali requisiti sociali del questionario
+											sono richiesti dal report di sostenibilità VSME (Voluntary
+											Sustainability Reporting Standard for non-listed SMEs)
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div>
-							<h3 className="text-primary-foreground mb-2 text-xl font-semibold">
+						<div className="flex h-full flex-col space-y-8">
+							<h3 className="text-primary text-2xl font-semibold">
 								Se richiedi un supporto consulenziale
 							</h3>
-							<Accordion type="multiple" className="text-left">
-								<AccordionItem value="item-3">
-									<AccordionTrigger className="text-xl">
+							<div className="flex items-start space-x-4 text-left">
+								<div>
+									<Icon name="wrench" className="text-primary h-12 w-12" />
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Guida e strumenti
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ti guidiamo nella compilazione del questionario
-										identificando le azioni necessarie a migliorare la tua
-										gestione. Ottieni guide e template per la realizzazione di
-										policy e procedure.
-									</AccordionContent>
-								</AccordionItem>
-								<AccordionItem value="item-4">
-									<AccordionTrigger className="text-xl">
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ti guidiamo nella compilazione del questionario
+											identificando le azioni necessarie a migliorare la tua
+											gestione. Ottieni guide e template per la realizzazione di
+											policy e procedure
+										</p>
+									</div>
+								</div>
+							</div>
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon name="leaf" className="text-primary h-12 w-12" />
+								</div>
+								<div>
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Report di sostenibilità
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Integriamo i requisiti ESG mancanti e ti supportiamo nella
-										redazione di un report di sostenibilità.
-									</AccordionContent>
-								</AccordionItem>
-							</Accordion>
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Integriamo i requisiti ESG mancanti e ti supportiamo nella
+											redazione di un report di sostenibilità
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
