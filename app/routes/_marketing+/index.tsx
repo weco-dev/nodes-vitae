@@ -211,7 +211,7 @@ export default function Index() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="text-muted-foreground text-center lg:text-left">
-								<div className="flex-col space-y-8 lg:flex lg:items-end lg:justify-between lg:space-y-0">
+								<div className="flex-col space-y-8 lg:grid lg:grid-cols-2 lg:items-end lg:space-y-0">
 									<ul>
 										<li>
 											<Icon name="check" className="text-primary">
@@ -229,7 +229,7 @@ export default function Index() {
 											</Icon>
 										</li>
 									</ul>
-									<div>
+									<div className="place-self-end">
 										<Button
 											variant="outline"
 											size="lg"
@@ -256,7 +256,8 @@ export default function Index() {
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="text-muted-foreground text-center lg:text-left">
-								<div className="flex-col space-y-8 lg:flex lg:items-end lg:justify-between lg:space-y-0">
+								{/* <div className="flex-col space-y-8 lg:flex-row lg:items-end lg:justify-between lg:space-y-0"> */}
+								<div className="flex-col space-y-8 lg:grid lg:grid-cols-2 lg:items-end lg:space-y-0">
 									<ul className="lg:mr-4">
 										<li>
 											<Icon name="check" className="text-primary">
@@ -274,7 +275,7 @@ export default function Index() {
 											</Icon>
 										</li>
 									</ul>
-									<div>
+									<div className="lg:place-self-end">
 										<Button size="lg" className="text-md px-8 py-3" asChild>
 											<Link to="/login">Inizia il questionario</Link>
 										</Button>
@@ -375,7 +376,39 @@ export default function Index() {
 				id="contact"
 				className="bg-card text-card-foreground border-border border-t px-4 py-16"
 			>
-				<div className="container mx-auto">
+				<div className="container mx-auto lg:max-w-10/12">
+					<div className="space-y-8">
+						<p className="text-muted-foreground text-sm">
+							Questa piattaforma è stata realizzata nell’ambito del progetto
+							“VITAE” NODES, finanziato dal MUR sui fondi M4C2 - Investimento
+							1.5 Avviso “Ecosistemi dell’Innovazione”, nell’ambito del PNRR
+							finanziato dall’Unione europea – NextGenerationEU (Grant agreement
+							Cod. n.ECS00000036).
+						</p>
+						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 space-y-8 lg:grid-cols-4 lg:space-y-0">
+							<img
+								src="/public/img/next-gen-eu.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/mur.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/italia-domani.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/nodes.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+						</div>
+					</div>
+					<Separator className="bg-border my-8" />
 					<div className="grid gap-8 md:grid-cols-4">
 						<div>
 							<div className="mb-4 flex items-center space-x-2">
@@ -477,38 +510,7 @@ export default function Index() {
 						</div>
 					</div>
 					<Separator className="bg-border my-8" />
-					<div>
-						<div className="text-muted-foreground">
-							Questa piattaforma è stata realizzata nell’ambito del progetto
-							“VITAE” NODES, finanziato dal MUR sui fondi M4C2 - Investimento
-							1.5 Avviso “Ecosistemi dell’Innovazione”, nell’ambito del PNRR
-							finanziato dall’Unione europea – NextGenerationEU (Grant agreement
-							Cod. n.ECS00000036)
-						</div>
-						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 lg:grid-cols-4">
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-						</div>
-					</div>
-					<Separator className="bg-border my-8" />
+
 					<div className="flex flex-col items-center justify-between md:flex-row">
 						<p className="text-muted-foreground text-sm">
 							© 2025 Vitae. Tutti i diritti riservati.
