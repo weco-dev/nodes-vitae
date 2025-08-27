@@ -107,7 +107,7 @@ export default function Index() {
 
 			{/* Benefits Section */}
 			<section id="benefits" className="bg-primary/10 px-4 py-20">
-				<div className="container mx-auto">
+				<div className="container mx-auto lg:max-w-10/12">
 					<div className="mb-16 text-center">
 						<h2 className="text-foreground mb-16 text-4xl font-bold">
 							Perché vale la pena capire come la tua azienda <br />
@@ -181,8 +181,8 @@ export default function Index() {
 
 			{/* Features Section */}
 			<section id="features" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto grid gap-16 lg:grid-cols-2">
-					<div className="text-left">
+				<div className="container mx-auto lg:grid lg:max-w-10/12 lg:grid-cols-2 lg:gap-16">
+					<div className="mb-8 text-center lg:mb-0 lg:text-left">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
 							Anche una piccola impresa ha <br /> un impatto sulle persone.
 							<span className="text-primary block">Sai qual è il tuo?</span>
@@ -203,15 +203,15 @@ export default function Index() {
 						</p>
 					</div>
 
-					<div className="flex flex-col gap-8">
-						<Card className="border-border/60 max-w-10/12 transition-shadow hover:shadow-lg">
+					<div className="flex flex-col gap-8 lg:items-end">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:w-12/12">
 							<CardHeader>
-								<CardTitle className="text-left text-2xl">
-									Scoprilo con il nostro questionario di prova
+								<CardTitle className="text-center text-2xl lg:text-left">
+									Scoprilo con il questionario di prova
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-muted-foreground text-left">
-								<div className="flex items-end justify-between">
+							<CardContent className="text-muted-foreground text-center lg:text-left">
+								<div className="flex-col space-y-8 lg:flex lg:items-end lg:justify-between lg:space-y-0">
 									<ul>
 										<li>
 											<Icon name="check" className="text-primary">
@@ -249,15 +249,15 @@ export default function Index() {
 								</div>
 							</CardContent>
 						</Card>
-						<Card className="border-border/60 max-w-10/12 transition-shadow hover:shadow-lg">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:w-12/12">
 							<CardHeader>
-								<CardTitle className="text-left text-2xl">
+								<CardTitle className="text-center text-2xl lg:text-left">
 									Esegui la valutazione completa
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-muted-foreground text-left">
-								<div className="flex items-end justify-between">
-									<ul>
+							<CardContent className="text-muted-foreground text-center lg:text-left">
+								<div className="flex-col space-y-8 lg:flex lg:items-end lg:justify-between lg:space-y-0">
+									<ul className="lg:mr-4">
 										<li>
 											<Icon name="check" className="text-primary">
 												89 domande
@@ -287,9 +287,12 @@ export default function Index() {
 			</section>
 
 			{/* CTA Section */}
-			<section className="bg-primary text-primary-foreground px-4 py-20">
+			<section className="bg-primary/10 text-foreground px-4 py-20">
 				<div className="container mx-auto text-center">
-					<h2 className="mb-4 text-4xl font-bold">Cosa ottieni con Vitae</h2>
+					<h2 className="text-primary mb-4 text-4xl font-bold">
+						Cosa ottieni con <br />
+						<span className="text-foreground">Vitae</span>
+					</h2>
 
 					<div className="grid gap-8 lg:grid-cols-2">
 						<div>
