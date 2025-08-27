@@ -1,25 +1,16 @@
 import { Link, redirect } from 'react-router'
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '#app/components/ui/accordion.tsx'
-import { Badge } from '#app/components/ui/badge'
 import { Button } from '#app/components/ui/button'
 import {
 	Card,
 	CardContent,
 	CardHeader,
 	CardTitle,
-	CardFooter,
 } from '#app/components/ui/card'
 import { Icon } from '#app/components/ui/icon'
 import { Separator } from '#app/components/ui/separator'
 import { getUserId } from '#app/utils/auth.server.ts'
 import { trackDemoConversion } from '#app/utils/demo-analytics.ts'
 import { type Route } from './+types/index'
-import ResultsCard from './results-card'
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const userId = await getUserId(request)
@@ -43,16 +34,22 @@ export default function Index() {
 						</div>
 						<nav className="hidden items-center space-x-6 md:flex">
 							<a
+								href="#benefits"
+								className="text-muted-foreground hover:text-primary transition-colors"
+							>
+								Vantaggi
+							</a>
+							<a
 								href="#features"
 								className="text-muted-foreground hover:text-primary transition-colors"
 							>
 								Funzionalità
 							</a>
 							<a
-								href="#benefits"
+								href="#results"
 								className="text-muted-foreground hover:text-primary transition-colors"
 							>
-								Vantaggi
+								Risultati
 							</a>
 							<a
 								href="#contact"
@@ -289,7 +286,10 @@ export default function Index() {
 			</section>
 
 			{/* Results Section */}
-			<section className="bg-primary/10 text-foreground px-4 py-20">
+			<section
+				id="results"
+				className="bg-primary/10 text-foreground px-4 py-20"
+			>
 				<div className="container mx-auto text-center lg:max-w-10/12">
 					<h2 className="text-primary mb-4 text-4xl font-bold">
 						Cosa ottieni con <br />
@@ -398,9 +398,15 @@ export default function Index() {
 				</div>
 			</section>
 
+			{/* CTA Section */}
+			<section
+				id="contact"
+				className="bg-primary/10 text-foreground px-4 py-20"
+			></section>
+
 			{/* Footer */}
 			<footer
-				id="contact"
+				id="footer"
 				className="bg-card text-card-foreground border-border border-t px-4 py-16"
 			>
 				<div className="container mx-auto lg:max-w-10/12">
@@ -442,116 +448,111 @@ export default function Index() {
 								<Icon name="sun" className="text-primary h-8 w-8" />
 								<span className="text-2xl font-bold">Vitae</span>
 							</div>
-							<p className="text-muted-foreground mb-4">
-								La piattaforma ESG dedicata alle aziende vitivinicole italiane.
+							<p className="text-muted-foreground">
+								Valutazione etica d'impresa
 							</p>
-							<div className="flex space-x-4">
-								<Icon
-									name="github-logo"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-								<Icon
-									name="link-2"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-								<Icon
-									name="envelope-closed"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-							</div>
+							<p className="text-muted-foreground/50 text-sm">
+								Nodes Vitae è un progetto di Weco impresa sociale nell’ambito
+								del PNRR
+								<Link to="https://we.co.it/studio-di-fattibilita/">
+									<span className="hover:text-primary block font-bold">
+										Vuoi saperne di più?
+									</span>
+								</Link>
+							</p>
 						</div>
 						<div>
-							<h3 className="mb-4 text-lg font-semibold">Prodotto</h3>
+							<h3 className="mb-4 text-lg font-semibold">Weco</h3>
 							<ul className="text-muted-foreground space-y-2">
 								<li>
-									<a href="#" className="hover:text-primary">
-										Funzionalità
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Prezzi
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Demo
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										API
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="mb-4 text-lg font-semibold">Supporto</h3>
-							<ul className="text-muted-foreground space-y-2">
-								<li>
-									<a href="#" className="hover:text-primary">
-										Centro Assistenza
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Documentazione
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Webinar
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Community
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="mb-4 text-lg font-semibold">Azienda</h3>
-							<ul className="text-muted-foreground space-y-2">
-								<li>
-									<a href="#" className="hover:text-primary">
+									<Link
+										to="https://we.co.it/chi-siamo/"
+										className="hover:text-primary"
+									>
 										Chi siamo
-									</a>
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
-										Blog
-									</a>
+									<Link
+										to="https://we.co.it/consulenze/"
+										className="hover:text-primary"
+									>
+										Consulenze
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
-										Carriere
-									</a>
+									<Link
+										to="https://we.co.it/progetti/"
+										className="hover:text-primary"
+									>
+										Progetti
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
+									<Link
+										to="https://we.co.it/contatti/"
+										className="hover:text-primary"
+									>
 										Contatti
-									</a>
+									</Link>
 								</li>
 							</ul>
 						</div>
-					</div>
-					<Separator className="bg-border my-8" />
-
-					<div className="flex flex-col items-center justify-between md:flex-row">
-						<p className="text-muted-foreground text-sm">
-							© 2025 Vitae. Tutti i diritti riservati.
-						</p>
-						<div className="text-muted-foreground mt-4 flex space-x-6 text-sm md:mt-0">
-							<a href="#" className="hover:text-primary">
-								Privacy Policy
-							</a>
-							<a href="#" className="hover:text-primary">
-								Termini di Servizio
-							</a>
-							<a href="#" className="hover:text-primary">
-								Cookie Policy
-							</a>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Percorsi correlati</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<Link
+										to="https://we.co.it/contatti/"
+										className="hover:text-primary"
+									>
+										Sostenibilità per le imprese
+									</Link>
+									<span className="text-muted-foreground/50 block text-sm">
+										Servizi di consulenza
+									</span>
+								</li>
+								<li>
+									<Link
+										to="https://accademiadellavigna.it/"
+										className="hover:text-primary"
+									>
+										Accademia della Vigna
+									</Link>
+									<span className="text-muted-foreground/50 block text-sm">
+										Assunzione e formazione della manodopera nel vitivinicolo
+									</span>
+								</li>
+							</ul>
+						</div>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Informazioni</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<Link
+										to="https://github.com/weco-dev/nodes-vitae"
+										className="hover:text-primary"
+									>
+										Codice sorgente
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="https://we.co.it/privacy-policy"
+										className="hover:text-primary"
+									>
+										Privacy policy
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="https://we.co.it/cookie-policy"
+										className="hover:text-primary"
+									>
+										Cookie policy
+									</Link>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>
