@@ -181,10 +181,10 @@ export default function Index() {
 
 			{/* Features Section */}
 			<section id="features" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto">
-					<div className="mb-16 text-center">
+				<div className="container mx-auto grid gap-16 lg:grid-cols-2">
+					<div className="text-left">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
-							Anche una piccola impresa ha un impatto sulle persone.
+							Anche una piccola impresa ha <br /> un impatto sulle persone.
 							<span className="text-primary block">Sai qual è il tuo?</span>
 						</h2>
 						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
@@ -202,50 +202,85 @@ export default function Index() {
 							azienda?
 						</p>
 					</div>
-					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:col-start-2">
+
+					<div className="flex flex-col gap-8">
+						<Card className="border-border/60 max-w-10/12 transition-shadow hover:shadow-lg">
 							<CardHeader>
-								<CardTitle className="text-center text-xl">
+								<CardTitle className="text-left text-2xl">
 									Scoprilo con il nostro questionario di prova
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-center">
-								<p>25 Domande</p>
-								<p>5 minuti</p>
-								<p>Senza registrazione</p>
+							<CardContent className="text-muted-foreground text-left">
+								<div className="flex items-end justify-between">
+									<ul>
+										<li>
+											<Icon name="check" className="text-primary">
+												25 domande
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												5 minuti
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												Senza registrazione
+											</Icon>
+										</li>
+									</ul>
+									<div>
+										<Button
+											variant="outline"
+											size="lg"
+											className="text-md text-secondary-foreground px-8 py-3"
+											asChild
+										>
+											<Link
+												to="/demo/take"
+												onClick={() =>
+													trackDemoConversion('demo_clicked', 'hero')
+												}
+											>
+												Prova la demo
+											</Link>
+										</Button>
+									</div>
+								</div>
 							</CardContent>
-							<CardFooter className="justify-center">
-								<Button
-									variant="outline"
-									size="lg"
-									className="px-8 py-3 text-lg"
-									asChild
-								>
-									<Link
-										to="/demo/take"
-										onClick={() => trackDemoConversion('demo_clicked', 'hero')}
-									>
-										Prova la demo
-									</Link>
-								</Button>
-							</CardFooter>
 						</Card>
-						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+						<Card className="border-border/60 max-w-10/12 transition-shadow hover:shadow-lg">
 							<CardHeader>
-								<CardTitle className="text-center text-xl">
+								<CardTitle className="text-left text-2xl">
 									Esegui la valutazione completa
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-center">
-								<p>89 Domande</p>
-								<p>In autonomia o con supporto</p>
-								<p>Salva i risultati</p>
+							<CardContent className="text-muted-foreground text-left">
+								<div className="flex items-end justify-between">
+									<ul>
+										<li>
+											<Icon name="check" className="text-primary">
+												89 domande
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												In autonomia o con supporto
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												Salva i risultati
+											</Icon>
+										</li>
+									</ul>
+									<div>
+										<Button size="lg" className="text-md px-8 py-3" asChild>
+											<Link to="/login">Inizia il questionario</Link>
+										</Button>
+									</div>
+								</div>
 							</CardContent>
-							<CardFooter className="justify-center">
-								<Button size="lg" className="px-8 py-3 text-lg" asChild>
-									<Link to="/login">Inizia il questionario</Link>
-								</Button>
-							</CardFooter>
 						</Card>
 					</div>
 				</div>
