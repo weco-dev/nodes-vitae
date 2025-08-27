@@ -18,15 +18,14 @@ export default function DocumentCard({ document }: { document: Document }) {
 		>
 			<Card className="gap-1">
 				<CardHeader className="flex flex-row items-center justify-between space-y-0">
-					<CardTitle className="text-sm font-medium">
-						{document.number}
+					<CardTitle className="text-md font-medium">
+						<Icon name="file-down" /> {document.number}
 					</CardTitle>
-					<Icon name="file-down" />
 				</CardHeader>
 				<CardContent>
-					<div className="text-2xl font-bold">{document.title}</div>
-					<p className="text-muted-foreground text-xs">{document.author}</p>
-					<p className="text-muted-foreground text-xs">{document.year}</p>
+					<div className="text-xl font-bold">{document.title}</div>
+					{/* <p className="text-muted-foreground text-xs">{document.author}</p>
+					<p className="text-muted-foreground text-xs">{document.year}</p> */}
 				</CardContent>
 			</Card>
 		</Link>
