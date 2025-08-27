@@ -85,6 +85,9 @@ export default function Index() {
 						migliorare la responsabilità sociale della tua impresa.
 					</p>
 					<div className="flex flex-col justify-center gap-4 sm:flex-row">
+						<Button size="lg" className="px-8 py-3 text-lg" asChild>
+							<Link to="/login">Inizia il questionario</Link>
+						</Button>
 						<Button
 							variant="outline"
 							size="lg"
@@ -98,15 +101,86 @@ export default function Index() {
 								Prova la demo
 							</Link>
 						</Button>
-						<Button size="lg" className="px-8 py-3 text-lg" asChild>
-							<Link to="/login">Inizia il questionario</Link>
-						</Button>
+					</div>
+				</div>
+			</section>
+
+			{/* Benefits Section */}
+			<section id="benefits" className="bg-primary/10 px-4 py-20">
+				<div className="container mx-auto">
+					<div className="mb-16 text-center">
+						<h2 className="text-foreground mb-16 text-4xl font-bold">
+							Perché vale la pena capire come la tua azienda <br />
+							<span className="text-primary">
+								tutela i diritti delle persone con cui lavora?
+							</span>
+						</h2>
+						<div className="grid justify-around gap-8 px-4 lg:grid-cols-3">
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon name="scale" className="h-10 w-10 text-green-500" />
+										<h2>Compliance normativa</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Le normative europee e le linee guida internazionali
+										richiedono alle imprese di conoscere, prevenire, mitigare e
+										comunicare i rischi legati ai diritti umani lungo tutta la
+										filiera. Dotarsi di strumenti di autovalutazione e gestione
+										responsabile è oggi una misura preventiva per non farsi
+										trovare impreparati.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon
+											name="chart-no-axes-combined"
+											className="h-10 w-10 text-green-500"
+										/>
+										<h2>Opportunità di mercato</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Sempre più acquirenti — dalle cooperative ai distributori,
+										fino ai gruppi GDO — valutano i fornitori anche in base alla
+										loro capacità di gestire responsabilmente le relazioni con i
+										lavoratori.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon
+											name="handshake"
+											className="h-10 w-10 text-green-500"
+										/>
+										<h2>Fiducia e reputazione</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Un’impresa che investe nel capitale umano e si prende cura
+										delle persone dimostra visione, responsabilità e attenzione
+										al futuro. Rispettare la dignità del lavoro, garantire
+										condizioni eque e costruire relazioni corrette con
+										dipendenti e fornitori rafforza la fiducia della comunità e
+										il valore del brand.
+									</p>
+								</CardContent>
+							</Card>
+						</div>
 					</div>
 				</div>
 			</section>
 
 			{/* Features Section */}
-			<section id="features" className="bg-primary/10 px-4 py-20">
+			<section id="features" className="bg-secondary/30 px-4 py-20">
 				<div className="container mx-auto">
 					<div className="mb-16 text-center">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
@@ -173,239 +247,6 @@ export default function Index() {
 								</Button>
 							</CardFooter>
 						</Card>
-					</div>
-				</div>
-			</section>
-
-			{/* Demo Section */}
-			<section className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-20 dark:from-blue-950/20 dark:to-indigo-950/20">
-				<div className="container mx-auto">
-					<div className="mx-auto max-w-4xl text-center">
-						<div className="mb-6">
-							<Badge variant="outline" className="mb-4">
-								<Icon name="arrow-right" className="mr-2 h-4 w-4" />
-								Demo Gratuita
-							</Badge>
-							<h2 className="text-foreground mb-4 text-4xl font-bold">
-								Scopri la Piattaforma in 5 Minuti
-							</h2>
-							<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-								Prova subito il nostro sistema di valutazione ESG con 25 domande
-								rappresentative. Nessuna registrazione richiesta.
-							</p>
-						</div>
-
-						<div className="mb-8 grid gap-6 md:grid-cols-3">
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-blue-100 p-3 dark:bg-blue-900">
-									<Icon
-										name="clock"
-										className="h-6 w-6 text-blue-600 dark:text-blue-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">5 Minuti</h3>
-								<p className="text-muted-foreground text-sm">
-									Tempo medio di completamento
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-green-100 p-3 dark:bg-green-900">
-									<Icon
-										name="check"
-										className="h-6 w-6 text-green-600 dark:text-green-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">25 Domande</h3>
-								<p className="text-muted-foreground text-sm">
-									Esempi da tutte le sezioni ESG
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-purple-100 p-3 dark:bg-purple-900">
-									<Icon
-										name="check"
-										className="h-6 w-6 text-purple-600 dark:text-purple-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">Senza Registrazione</h3>
-								<p className="text-muted-foreground text-sm">
-									Inizia subito, dati salvati localmente
-								</p>
-							</div>
-						</div>
-
-						<div className="flex flex-col justify-center gap-4 sm:flex-row">
-							<Button size="lg" className="px-8 py-3 text-lg" asChild>
-								<Link
-									to="/demo/take"
-									onClick={() => trackDemoConversion('demo_clicked', 'section')}
-								>
-									<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-									Inizia la Demo
-								</Link>
-							</Button>
-							<Button
-								variant="outline"
-								size="lg"
-								className="px-8 py-3 text-lg"
-								asChild
-							>
-								<Link to="/about">
-									<Icon name="question-mark-circled" className="mr-2 h-5 w-5" />
-									Scopri di Più
-								</Link>
-							</Button>
-						</div>
-
-						<div className="mt-8 rounded-lg bg-blue-50 p-4 dark:bg-blue-950/30">
-							<p className="text-muted-foreground text-sm">
-								<Icon
-									name="question-mark-circled"
-									className="mr-1 inline h-4 w-4"
-								/>
-								La demo mostra le funzionalità principali della piattaforma con
-								dati di esempio. Per accedere alla valutazione completa con 88+
-								domande, crea un account gratuito.
-							</p>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* Benefits Section */}
-			<section id="benefits" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto">
-					<div className="mb-16 text-center">
-						<h2 className="text-foreground mb-4 text-4xl font-bold">
-							Perché vale la pena capire come la tua azienda tutela i diritti
-							delle persone con cui lavora?
-						</h2>
-						<div className="grid gap-8 lg:grid-cols-3">
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Compliance normativa
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Le normative europee e le linee guida internazionali
-										richiedono alle imprese di conoscere, prevenire, mitigare e
-										comunicare i rischi legati ai diritti umani lungo tutta la
-										filiera. Dotarsi di strumenti di autovalutazione e gestione
-										responsabile è oggi una misura preventiva per non farsi
-										trovare impreparati.
-									</p>
-								</CardContent>
-							</Card>
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Opportunità di mercato
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Sempre più acquirenti — dalle cooperative ai distributori,
-										fino ai gruppi GDO — valutano i fornitori anche in base alla
-										loro capacità di gestire responsabilmente le relazioni con i
-										lavoratori.
-									</p>
-								</CardContent>
-							</Card>
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Fiducia e reputazione
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Un’impresa che investe nel capitale umano e si prende cura
-										delle persone dimostra visione, responsabilità e attenzione
-										al futuro. Rispettare la dignità del lavoro, garantire
-										condizioni eque e costruire relazioni corrette con
-										dipendenti e fornitori rafforza la fiducia della comunità e
-										il valore del brand.
-									</p>
-								</CardContent>
-							</Card>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* Benefits Section - Variant */}
-			<section id="benefits-variant" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto">
-					<div className="mb-16 text-center">
-						<h2 className="text-foreground mb-4 text-4xl font-bold">
-							Perché vale la pena capire come la tua azienda tutela i diritti
-							delle persone con cui lavora?
-						</h2>
-						<div className="grid gap-8 lg:grid-cols-3">
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Compliance normativa
-									</h3>
-									<p className="text-muted-foreground">
-										Le normative europee e le linee guida internazionali
-										richiedono alle imprese di conoscere, prevenire, mitigare e
-										comunicare i rischi legati ai diritti umani lungo tutta la
-										filiera. Dotarsi di strumenti di autovalutazione e gestione
-										responsabile è oggi una misura preventiva per non farsi
-										trovare impreparati.
-									</p>
-								</div>
-							</div>
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Opportunità di mercato
-									</h3>
-									<p className="text-muted-foreground">
-										Sempre più acquirenti — dalle cooperative ai distributori,
-										fino ai gruppi GDO — valutano i fornitori anche in base alla
-										loro capacità di gestire responsabilmente le relazioni con i
-										lavoratori.
-									</p>
-								</div>
-							</div>
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Fiducia e reputazione
-									</h3>
-									<p className="text-muted-foreground">
-										Un’impresa che investe nel capitale umano e si prende cura
-										delle persone dimostra visione, responsabilità e attenzione
-										al futuro. Rispettare la dignità del lavoro, garantire
-										condizioni eque e costruire relazioni corrette con
-										dipendenti e fornitori rafforza la fiducia della comunità e
-										il valore del brand.
-									</p>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 			</section>
