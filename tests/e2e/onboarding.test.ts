@@ -89,7 +89,7 @@ test('onboarding with link', async ({ page, getOnboardingData }) => {
 	await expect(page).toHaveURL(`/dashboard`)
 
 	await page.getByRole('button', { name: onboardingData.name }).click()
-	await page.getByRole('menuitem', { name: 'Profile', exact: true }).click()
+	await page.getByRole('menuitem', { name: 'Profilo', exact: true }).click()
 
 	await page.getByRole('button', { name: onboardingData.name }).click()
 	await page.getByRole('menuitem', { name: 'Logout', exact: true }).click()
