@@ -113,7 +113,7 @@ export default function Index() {
 								tutela i diritti delle persone con cui lavora?
 							</span>
 						</h2>
-						<div className="grid justify-around gap-8 px-4 lg:grid-cols-3">
+						<div className="grid justify-around gap-20 px-4 lg:grid-cols-3">
 							<Card className="border-border/60 transition-shadow hover:shadow-lg">
 								<CardHeader>
 									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
