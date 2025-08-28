@@ -285,9 +285,6 @@ requirements.
 4. **Deploy** using your preferred hosting platform
 5. **Monitor** assessment completion and analytics
 
-For detailed development instructions, see the
-[Development Guide](./docs/development.md).
-
 ---
 
 ## License
