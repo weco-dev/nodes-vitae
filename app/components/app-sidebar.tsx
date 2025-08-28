@@ -22,8 +22,6 @@ import {
 	IconFileAi,
 	IconFileDescription,
 	IconFileWord,
-	IconHelp,
-	IconInnerShadowTop,
 	IconReport,
 	IconSettings,
 } from '@tabler/icons-react'

@@ -1,10 +1,7 @@
 import {
-	IconCreditCard,
 	IconDotsVertical,
 	IconLogout,
-	IconNotification,
 	IconUserCircle,
-	// IconNotes,
 } from '@tabler/icons-react'
 import { useRef } from 'react'
 import { Link, Form } from 'react-router'
