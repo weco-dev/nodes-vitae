@@ -184,7 +184,8 @@ content:
 ### Basic Formatting
 
 ```markdown
-_Bold text_ for emphasis _Italic text_ for subtle emphasis
+*Bold text* for emphasis 
+_Italic text_ for subtle emphasis
 ```
 
 ### Links
