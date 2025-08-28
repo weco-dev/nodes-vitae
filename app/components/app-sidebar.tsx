@@ -127,7 +127,7 @@ const data = {
 	],
 	navSettings: [
 		{
-			title: 'Settings',
+			title: 'Impostazioni',
 			url: '/dashboard/settings',
 			icon: IconSettings,
 			// items: [
@@ -145,11 +145,11 @@ const data = {
 			// 	},
 			// ],
 		},
-		{
-			title: 'Get Help',
-			url: '#',
-			icon: IconHelp,
-		},
+		// {
+		// 	title: 'Contattaci',
+		// 	url: '/#contact',
+		// 	icon: IconHelp,
+		// },
 	],
 }
 
@@ -164,7 +164,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							className="data-[slot=sidebar-menu-button]:!p-1.5"
 						>
 							<a href="/">
-								<IconInnerShadowTop className="!size-5" />
 								<span className="text-base font-semibold">Vitae</span>
 							</a>
 						</SidebarMenuButton>

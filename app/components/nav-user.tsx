@@ -92,10 +92,10 @@ export function NavUser() {
 							<DropdownMenuItem asChild>
 								<Link to="/dashboard/settings/profile">
 									<IconUserCircle />
-									Profile
+									Profilo
 								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem asChild>
+							{/* <DropdownMenuItem asChild>
 								<Link to="/dashboard/settings/#">
 									<IconCreditCard />
 									Billing
@@ -106,7 +106,7 @@ export function NavUser() {
 									<IconNotification />
 									Notifications
 								</Link>
-							</DropdownMenuItem>
+							</DropdownMenuItem> */}
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<Form action="/logout" method="POST" ref={formRef}>
