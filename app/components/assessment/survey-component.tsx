@@ -639,9 +639,9 @@ export function SurveyComponent({
 				survey.showTitle = false
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
-				survey.completeText = 'Complete Demo'
-				survey.pageNextText = 'Next →'
-				survey.pagePrevText = '← Previous'
+				survey.completeText = 'Completa la demo'
+				survey.pageNextText = 'Prossima →'
+				survey.pagePrevText = '← Precedente'
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {

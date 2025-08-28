@@ -62,15 +62,15 @@
  * ```tsx
  * // Filter out umbrella questions (type: 'group') from progress calculations
  * const answerableQuestions = questions.filter(q => q.type !== 'group')
- * 
+ *
  * // Mandatory completion percentage (excludes umbrella questions)
  * const mandatoryAnswerable = answerableQuestions.filter(q => q.isRequired)
- * const mandatoryAnswered = mandatoryAnswerable.filter(q => 
+ * const mandatoryAnswered = mandatoryAnswerable.filter(q =>
  *   answeredQuestions.has(q.questionId)).length
  * const mandatoryPercentage = (mandatoryAnswered / mandatoryAnswerable.length) * 100
  *
  * // Total completion percentage (excludes umbrella questions)
- * const allAnswered = answerableQuestions.filter(q => 
+ * const allAnswered = answerableQuestions.filter(q =>
  *   answeredQuestions.has(q.questionId)).length
  * const totalPercentage = (allAnswered / answerableQuestions.length) * 100
  * ```
@@ -370,11 +370,11 @@ export function ResponsiveProgressBar({
 				{/* Mobile progress indicator */}
 				<div className="mt-2 flex flex-col items-center gap-1">
 					<div className="text-muted-foreground text-xs">
-						Question {currentIndex + 1} of {questions.length}
+						Domanda {currentIndex + 1} di {questions.length}
 						{isNavigating && ' (navigating...)'}
 					</div>
 					<div className="text-muted-foreground text-xs">
-						Mandatory: {mandatoryPercentage}% | Total: {totalPercentage}%
+						Obbligatorie: {mandatoryPercentage}% | Totali: {totalPercentage}%
 					</div>
 				</div>
 			</div>
@@ -438,8 +438,8 @@ export function ResponsiveProgressBar({
 						{isNavigating && ' (navigating...)'}
 					</div>
 					<div>
-						Mandatory: {mandatoryPercentage}% ({mandatoryAnswered}/
-						{mandatoryTotal}) | Total: {totalPercentage}% ({allAnswered}/
+						Obbligatorie: {mandatoryPercentage}% ({mandatoryAnswered}/
+						{mandatoryTotal}) | Totali: {totalPercentage}% ({allAnswered}/
 						{questions.length})
 					</div>
 				</div>

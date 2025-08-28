@@ -740,17 +740,18 @@ export default function AssessmentTake() {
 					<Separator orientation="vertical" className="h-6" />
 					<div className="min-w-0 flex-1">
 						<h1 className="truncate text-lg font-semibold">
-							Human Rights Due Diligence Assessment
+							Due Diligence Diritti Umani
 						</h1>
 						{missingQuestions.length > 0 && (
 							<p className="text-muted-foreground truncate text-xs">
-								{missingQuestions.length} mandatory questions remaining
+								Rimangono {missingQuestions.length} domande obbligatorie senza
+								risposta
 							</p>
 						)}
 					</div>
 					<Button onClick={handleFinalize} size="sm" className="shrink-0">
 						<Icon name="check" className="mr-2 h-4 w-4" />
-						Finalize Assessment
+						Invia il questionario
 					</Button>
 				</div>
 			</header>
