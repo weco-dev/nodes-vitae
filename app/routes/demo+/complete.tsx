@@ -99,18 +99,6 @@ function DemoResultsContent({
 	const choiceAnalysis = getMostAnsweredChoice()
 	const recommendation = getRecommendationByChoice(choiceAnalysis.choice)
 
-	// Mock recommendations based on typical ESG improvement areas
-	const mockRecommendations = [
-		'Develop a comprehensive human rights due diligence policy',
-		'Implement systematic supply chain risk assessment procedures',
-		'Enhance stakeholder engagement and communication processes',
-		'Establish regular monitoring and evaluation mechanisms',
-		'Create formal grievance and remediation procedures',
-	].slice(
-		0,
-		Math.max(2, Math.min(5, Math.floor(sessionStats.questionsAnswered / 5))),
-	)
-
 	return (
 		<>
 			{/* Completion Header */}
