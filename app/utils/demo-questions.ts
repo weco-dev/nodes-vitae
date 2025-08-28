@@ -12,7 +12,7 @@ import { demoRadio01, demoRadio02 } from "./assessment/radiogroup-answers"
 export interface DemoQuestionConfig {
 	questionId: string
 	name: string
-	type: 'radiogroup' | 'text'
+	type: 'radiogroup' | 'text' | 'group'
 	title: string
 	help?: string
 	reporting?: string
@@ -253,7 +253,10 @@ export function convertDemoToSurveyJsFormat(
  * Get only the answerable questions (excludes umbrella/group questions)
  */
 export function getDemoAnswerableQuestions() {
-	return demoAssessmentQuestions
+	//return demoAssessmentQuestions
+	return demoAssessmentQuestions.filter(question => 
+		question.type !== 'group'  // Exclude group/umbrella questions
+	)
 }
 
 /**
