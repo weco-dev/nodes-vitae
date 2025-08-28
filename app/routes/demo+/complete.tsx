@@ -94,21 +94,10 @@ function DemoResultsContent({
 	onContactClick: () => void
 }) {
 	// Now this runs only on the client where localStorage is available
+
 	const sessionStats = getDemoSessionStats()
 	const choiceAnalysis = getMostAnsweredChoice()
 	const recommendation = getRecommendationByChoice(choiceAnalysis.choice)
-
-	// Mock recommendations based on typical ESG improvement areas
-	const mockRecommendations = [
-		'Develop a comprehensive human rights due diligence policy',
-		'Implement systematic supply chain risk assessment procedures',
-		'Enhance stakeholder engagement and communication processes',
-		'Establish regular monitoring and evaluation mechanisms',
-		'Create formal grievance and remediation procedures',
-	].slice(
-		0,
-		Math.max(2, Math.min(5, Math.floor(sessionStats.questionsAnswered / 5))),
-	)
 
 	return (
 		<>
@@ -120,10 +109,11 @@ function DemoResultsContent({
 						className="h-8 w-8 text-green-600 dark:text-green-400"
 					/>
 				</div>
-				<h1 className="mb-2 text-3xl font-bold">Demo Complete! 🎉</h1>
+				<h1 className="mb-2 text-3xl font-bold">Demo completata! 🎉</h1>
 				<p className="text-muted-foreground text-lg">
-					You've experienced our ESG assessment system with{' '}
-					{sessionStats.questionsAnswered} questions
+					Hai completato il questionario demo rispondendo a{' '}
+					{sessionStats.questionsAnswered} domande. <br />
+					Ecco un riepilogo dei tuoi risultati e i prossimi passi consigliati.
 				</p>
 			</div>
 
@@ -135,23 +125,23 @@ function DemoResultsContent({
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
 								<Icon name="file-text" className="h-5 w-5" />
-								Demo Results Overview
+								Panoramica risultati
 							</CardTitle>
 							<CardDescription>
-								Based on your {sessionStats.questionsAnswered} responses (sample
-								results)
+								Hai risposto a {sessionStats.questionsAnswered} domande
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="space-y-3">
 								<div className="text-muted-foreground flex items-center justify-between text-sm">
-									<span>Questions Answered</span>
+									<span>Domande risposte</span>
 									<span className="font-medium">
-										{sessionStats.questionsAnswered} of 25
+										{sessionStats.questionsAnswered} di{' '}
+										{sessionStats.answerableQuestions}
 									</span>
 								</div>
 								<div className="text-muted-foreground flex items-center justify-between text-sm">
-									<span>Completion Rate</span>
+									<span>Tasso di completamento</span>
 									<span className="font-medium">
 										{Math.round(sessionStats.completionRate * 100)}%
 									</span>
@@ -166,7 +156,7 @@ function DemoResultsContent({
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
 									<Icon name="question-mark-circled" className="h-5 w-5" />
-									Raccomandazione Personalizzata
+									Cosa puoi fare ora?
 								</CardTitle>
 								<CardDescription>
 									{choiceAnalysis.choice ? (
@@ -200,14 +190,80 @@ function DemoResultsContent({
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2">
 								<Icon name="question-mark-circled" className="h-5 w-5" />
-								Sample Recommendations
+								Cosa puoi fare ora?
 							</CardTitle>
 							<CardDescription>
-								Key areas for ESG improvement (example suggestions)
+								Raccomandazioni basate sulle tue risposte
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<ul className="space-y-3">
+							<div>
+								<p className="text-muted-foreground mb-2 italic">
+									Se la maggioranza delle tue risposte è “Non ci ho mai pensato”
+									o “Per niente importante”
+								</p>
+								<ul className="mb-4 space-y-2">
+									<li>
+										<Icon name="check" className="text-primary">
+											Iniziare a valutare i rischi nella tua attività
+											quotidiana, come suggerisce il primo principio OCSE.
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											Impegnarti a raccogliere informazioni e a creare una base
+											di conoscenza: chi lavora per te, in che condizioni, con
+											quali contratti.
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											Scoprire strumenti semplici e guidati per fare i primi
+											passi: il nostro questionario completo può aiutarti in
+											modo pratico.
+										</Icon>
+									</li>
+								</ul>
+							</div>
+							<div>
+								<p className="text-muted-foreground mb-2 italic">
+									Se la maggioranza delle tue risposte è “A volte ci penso ma
+									non ho fatto nulla al riguardo” o “Poco importante”
+								</p>
+								<p className="mb-4 space-y-2">
+									Hai già identificato alcuni temi importanti per i diritti dei
+									lavoratori, ma secondo i principi OCSE è fondamentale passare
+									dalla consapevolezza all’azione. Solo così potrai prevenire o
+									ridurre possibili rischi.
+								</p>
+							</div>
+							<div>
+								<p className="text-muted-foreground mb-2 italic">
+									Se la maggioranza delle tue risposte è “Si e ho agito per
+									assicurarmene” o “Molto importante” [3]
+								</p>
+								<ul className="mb-4 space-y-2">
+									<li>
+										<Icon name="check" className="text-primary">
+											Creare un sistema di monitoraggio continuo, anche
+											documentando le buone pratiche che già applichi.
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											Comunicare questi impegni ai tuoi partner e collaboratori.
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											Considerare piccoli strumenti di verifica regolare e
+											accesso a sistemi di reclamo, per garantire miglioramenti
+											continui.
+										</Icon>
+									</li>
+								</ul>
+							</div>
+							{/* <ul className="space-y-3">
 								{mockRecommendations.map((rec, index) => (
 									<li key={index} className="flex items-start gap-3">
 										<Icon
@@ -217,7 +273,7 @@ function DemoResultsContent({
 										<span className="text-sm">{rec}</span>
 									</li>
 								))}
-							</ul>
+							</ul> */}
 						</CardContent>
 					</Card>
 				</div>
@@ -228,27 +284,34 @@ function DemoResultsContent({
 					<Card className="border-primary/20 border-2">
 						<CardHeader>
 							<CardTitle className="text-center">
-								Ready for the Full Experience?
+								Vuoi procedere con la valutazione completa?
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="mb-4 space-y-2 text-center">
-								<p className="text-muted-foreground text-sm">
-									Get access to the complete assessment with:
-								</p>
-								<ul className="text-muted-foreground space-y-1 text-xs">
-									<li>• 88+ comprehensive questions</li>
-									<li>• Detailed scoring methodology</li>
-									<li>• Professional reports (PDF)</li>
-									<li>• Progress tracking & history</li>
-									<li>• Industry benchmarking</li>
+								<ul className="text-muted-foreground space-y-1 text-left text-sm">
+									<li>
+										<Icon name="check" className="text-primary">
+											89 domande
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											In autonomia o con supporto
+										</Icon>
+									</li>
+									<li>
+										<Icon name="check" className="text-primary">
+											Salva i risultati
+										</Icon>
+									</li>
 								</ul>
 							</div>
 
 							<Button className="w-full" size="lg" asChild>
 								<Link to="/signup" onClick={onSignupClick}>
 									<Icon name="plus" className="mr-2 h-4 w-4" />
-									Create Free Account
+									Crea il tuo account gratuito
 								</Link>
 							</Button>
 
@@ -258,7 +321,7 @@ function DemoResultsContent({
 								onClick={onRestartDemo}
 							>
 								<Icon name="reset" className="mr-2 h-4 w-4" />
-								Try Demo Again
+								Riprova la demo
 							</Button>
 						</CardContent>
 					</Card>
@@ -268,71 +331,36 @@ function DemoResultsContent({
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2 text-sm">
 								<Icon name="question-mark-circled" className="h-4 w-4" />
-								About This Demo
+								Informazioni su questa demo
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="text-muted-foreground space-y-2 text-sm">
-							<p>
-								This demo used 25 sample questions from our full ESG assessment
-								framework.
-							</p>
-							<p>
-								The complete assessment provides detailed insights into your
-								organization's ESG maturity and compliance readiness.
-							</p>
+							<p>La piattaforma è ancora in fase di sviluppo.....</p>
 						</CardContent>
 					</Card>
 
 					{/* Support Links */}
 					<Card>
-						<CardContent className="pt-6">
+						<CardContent>
 							<div className="space-y-3 text-center">
-								<Link
-									to="/about"
-									className="text-muted-foreground hover:text-foreground block text-sm transition-colors"
-									onClick={onLearnMoreClick}
-								>
-									Learn More About Our Platform
-								</Link>
-								<Separator />
-								<Link
-									to="/support"
-									className="text-muted-foreground hover:text-foreground block text-sm transition-colors"
-									onClick={onContactClick}
-								>
-									Contact Sales Team
-								</Link>
-								<Separator />
 								<Link
 									to="/"
 									className="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+									onClick={onLearnMoreClick}
 								>
-									Return to Home
+									Ritorna all'inizio
+								</Link>
+								<Separator />
+								<Link
+									to="/#contact"
+									className="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+									onClick={onContactClick}
+								>
+									Contatta i nostri consulenti
 								</Link>
 							</div>
 						</CardContent>
 					</Card>
-				</div>
-			</div>
-
-			{/* Additional Information */}
-			<div className="mt-12 text-center">
-				<div className="bg-muted/30 rounded-lg p-6">
-					<h3 className="mb-2 font-semibold">Why Choose Our ESG Assessment?</h3>
-					<div className="text-muted-foreground grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
-						<div className="flex items-center gap-2">
-							<Icon name="check" className="h-4 w-4" />
-							<span>Industry-standard framework</span>
-						</div>
-						<div className="flex items-center gap-2">
-							<Icon name="arrow-right" className="h-4 w-4" />
-							<span>Actionable insights</span>
-						</div>
-						<div className="flex items-center gap-2">
-							<Icon name="avatar" className="h-4 w-4" />
-							<span>Expert support</span>
-						</div>
-					</div>
 				</div>
 			</div>
 		</>

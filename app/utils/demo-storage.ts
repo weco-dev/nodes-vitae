@@ -12,6 +12,8 @@
  * - Automatic cleanup and data isolation from production
  */
 
+import { getDemoAnswerableQuestionsCount } from "./demo-questions"
+
 const DEMO_STORAGE_KEY = 'vitae-demo-assessment'
 const DEMO_ANALYTICS_KEY = 'vitae-demo-analytics'
 
@@ -230,26 +232,31 @@ export function getDemoAnalyticsEvents(): DemoAnalyticsEvent[] {
 	}
 }
 
+// export function countTotalQuestions(): number {
+// 	// For demo, we assume a fixed number of questions
+// 	return 13
+// }
+
 /**
  * Get demo session statistics
  */
 export function getDemoSessionStats(): {
+	answerableQuestions: number
 	questionsAnswered: number
 	sessionDuration: number
 	completionRate: number
 	isCompleted: boolean
 } {
 	const demoData = getDemoDataFromLocalStorage()
+	const answerableQuestions = getDemoAnswerableQuestionsCount()
 	const questionsAnswered = Object.keys(demoData.surveyData).length
 	const sessionDuration = Date.now() - demoData.startTime
-
-	// Assume 25 total demo questions for completion rate
-	const totalQuestions = 25
-	const completionRate = questionsAnswered / totalQuestions
+	const completionRate = questionsAnswered / answerableQuestions
 
 	return {
 		questionsAnswered,
 		sessionDuration,
+		answerableQuestions,
 		completionRate,
 		isCompleted: demoData.isCompleted,
 	}
@@ -321,29 +328,23 @@ export function getRecommendationByChoice(choice: string | null): {
 	description: string
 } {
 	switch (choice) {
-		case 'non adottato':
+		case '01':
 			return {
 				title: "C'è spazio per migliorare.",
 				description:
 					'Ricorda che sei coresponsabile di eventuali situazioni di sfruttamento che riguardano i tuoi fornitori di manodopera, è importante conoscere i rischi e capire come prevenirli. Inoltre oggi i clienti, i distributori e anche le norme chiedono alle imprese di mostrare attenzione ai diritti delle persone. Non si tratta solo di legge, ma anche di qualità, reputazione e accesso al mercato.',
 			}
-		case 'parzialmente adottato':
+		case '02':
 			return {
 				title: 'Sei sulla strada giusta!',
 				description:
 					'Hai già intrapreso alcune azioni importanti per la sostenibilità e i diritti umani. Ora è il momento di sistematizzare e approfondire questi sforzi per ottenere un impatto più significativo e duraturo.',
 			}
-		case 'totalmente adottato':
+		case '03':
 			return {
-				title: 'Eccellente lavoro!',
+				title: 'Ottimo punto di partenza!',
 				description:
 					'La tua azienda dimostra un forte impegno verso la sostenibilità e i diritti umani. Continua su questa strada e considera di diventare un leader nel tuo settore, condividendo le tue best practice con altre aziende.',
-			}
-		case 'non applicabile':
-			return {
-				title: 'Valuta la tua situazione specifica.',
-				description:
-					'Molte delle pratiche potrebbero non essere direttamente applicabili alla tua realtà aziendale. Ti consigliamo di approfondire con esperti del settore per identificare le azioni più rilevanti per il tuo contesto specifico.',
 			}
 		default:
 			return {
@@ -373,24 +374,19 @@ export function getMostAnsweredChoice(): {
 			let normalizedChoice: string | null = null
 
 			// Normalize choices to base categories, including "ancora" variations
-			if (answer === 'non adottato' || answer === 'non ancora adottato') {
-				normalizedChoice = 'non adottato'
+			if (answer === 'Non ci ho mai pensato' || answer === 'Per niente importante') {
+				normalizedChoice = 'Non ci ho mai pensato'
 			} else if (
-				answer === 'parzialmente adottato' ||
-				answer === 'parzialmente ancora adottato'
+				answer === 'A volte ci penso ma non ho fatto nulla al riguardo' ||
+				answer === 'Poco importante'
 			) {
-				normalizedChoice = 'parzialmente adottato'
+				normalizedChoice = 'Poco importante'
 			} else if (
-				answer === 'totalmente adottato' ||
-				answer === 'totalmente ancora adottato'
+				answer === 'Sì e ho agito per assicurarmene' ||
+				answer === 'Molto importante'
 			) {
-				normalizedChoice = 'totalmente adottato'
-			} else if (
-				answer === 'non applicabile' ||
-				answer === 'non ancora applicabile'
-			) {
-				normalizedChoice = 'non applicabile'
-			}
+				normalizedChoice = 'Molto importante'
+			} 
 
 			if (normalizedChoice) {
 				choiceCounts[normalizedChoice] =
