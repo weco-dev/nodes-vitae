@@ -1,10 +1,5 @@
 import { Link } from 'react-router'
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-} from '#app/components/ui/card.tsx'
+import { Card, CardContent } from '#app/components/ui/card.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { type Document } from '../../../../../data/uploads/documents/documents'
 
