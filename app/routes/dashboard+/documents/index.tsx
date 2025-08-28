@@ -31,7 +31,7 @@ export default function DocumentsRoute() {
 							<div key={group}>
 								<h2 className="mb-4 text-2xl font-semibold">{group}</h2>
 
-								<div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+								<div className="mb-8 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
 									{documentsList
 										.filter((document) => document.group === group)
 										.map((document) => (
