@@ -396,8 +396,8 @@ export default function Index() {
 						</div>
 					</div>
 				</div>
-				<section id="contact" className="mt-10">
-					<Card className="border-primary mx-auto text-center transition-shadow hover:shadow-lg lg:w-6/12">
+				<section id="contact" className="container mt-10">
+					<Card className="border-primary mx-auto text-center transition-shadow hover:shadow-lg lg:w-5/12">
 						<CardContent className="space-y-4">
 							<h2 className="text-3xl font-semibold">
 								Vuoi saperne di più o richiedere
