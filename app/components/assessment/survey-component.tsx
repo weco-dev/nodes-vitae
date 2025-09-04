@@ -436,21 +436,21 @@ function QuestionAccordion({
 	const accordionItems = [
 		{
 			key: 'help',
-			title: 'Help',
+			title: 'Aiuto',
 			content: help,
-			icon: 'question-mark-circled' as const,
+			icon: 'circle-question-mark' as const,
 		},
 		{
 			key: 'reporting',
 			title: 'Reporting',
 			content: reporting,
-			icon: 'pencil-1' as const,
+			icon: 'pen-line' as const,
 		},
 		{
 			key: 'docs',
-			title: 'Documentation',
+			title: 'Documentazione',
 			content: docs,
-			icon: 'pencil-2' as const,
+			icon: 'book-text' as const,
 		},
 	].filter((item) => item.content && item.content.trim() !== '')
 
@@ -639,9 +639,9 @@ export function SurveyComponent({
 				survey.showTitle = false
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
-				survey.completeText = 'Complete Demo'
-				survey.pageNextText = 'Next →'
-				survey.pagePrevText = '← Previous'
+				survey.completeText = 'Completa la demo'
+				survey.pageNextText = 'Prossima →'
+				survey.pagePrevText = '← Precedente'
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {

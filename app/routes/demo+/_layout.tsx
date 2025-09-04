@@ -27,14 +27,14 @@ export default function DemoLayout() {
 							className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
 						>
 							<Icon name="arrow-left" className="h-4 w-4" />
-							<span className="hidden sm:inline">Back to Home</span>
-							<span className="sm:hidden">Back</span>
+							<span className="hidden sm:inline">Indietro</span>
+							<span className="sm:hidden">Indietro</span>
 						</Link>
 						<div className="bg-border h-6 w-px" />
 						<div className="flex items-center gap-2">
 							<div className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
 							<span className="text-muted-foreground text-sm font-medium">
-								Demo Mode
+								Questionario Demo
 							</span>
 						</div>
 					</div>
@@ -42,10 +42,10 @@ export default function DemoLayout() {
 					<div className="flex items-center gap-3">
 						<div className="text-muted-foreground hidden items-center gap-2 text-xs sm:flex">
 							<Icon name="check" className="h-3 w-3" />
-							<span>No registration required</span>
+							<span>Senza registrazione</span>
 						</div>
-						<Button variant="outline" size="sm" asChild>
-							<Link to="/signup">Create Account</Link>
+						<Button size="sm" asChild>
+							<Link to="/signup">Crea account</Link>
 						</Button>
 					</div>
 				</div>
@@ -56,7 +56,7 @@ export default function DemoLayout() {
 			</main>
 
 			{/* Demo footer with additional context */}
-			<footer className="bg-muted/30 border-t">
+			{/* <footer className="bg-muted/30 border-t">
 				<div className="container py-4">
 					<div className="text-muted-foreground flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
 						<div className="flex items-center gap-4">
@@ -87,7 +87,7 @@ export default function DemoLayout() {
 						</div>
 					</div>
 				</div>
-			</footer>
+			</footer> */}
 		</div>
 	)
 }

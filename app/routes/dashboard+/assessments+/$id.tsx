@@ -38,6 +38,7 @@
  */
 
 import { format } from 'date-fns'
+import { it } from 'date-fns/locale'
 import { Edit, Check, X } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useLoaderData, useFetcher } from 'react-router'
@@ -220,11 +221,12 @@ export default function AssessmentDetailRoute() {
 							</div>
 							<div className="text-muted-foreground flex gap-4 text-sm">
 								<span>
-									Created: {format(new Date(assessment.createdAt), 'PPP')}
+									Iniziato: {format(new Date(assessment.createdAt), 'dd MMM yyyy', { locale: it })}
 								</span>
 								{assessment.completedAt && (
 									<span>
-										Completed: {format(new Date(assessment.completedAt), 'PPP')}
+										Completato:{' '}
+										{format(new Date(assessment.completedAt), 'dd MMM yyyy', { locale: it })}
 									</span>
 								)}
 							</div>
@@ -237,14 +239,14 @@ export default function AssessmentDetailRoute() {
 									<div className="flex items-center justify-between">
 										<div>
 											<p className="text-primary/70 text-sm font-medium">
-												Total Questions
+												Domande totali
 											</p>
 											<p className="text-primary text-2xl font-bold">
 												{stats.totalQuestions}
 											</p>
 										</div>
 										<Icon
-											name="question-mark-circled"
+											name="clipboard-list"
 											className="text-primary h-8 w-8"
 										/>
 									</div>
@@ -256,13 +258,16 @@ export default function AssessmentDetailRoute() {
 									<div className="flex items-center justify-between">
 										<div>
 											<p className="text-primary/70 text-sm font-medium">
-												Answered
+												Risposte
 											</p>
 											<p className="text-primary text-2xl font-bold">
 												{stats.answeredQuestions}
 											</p>
 										</div>
-										<Icon name="check" className="text-primary h-8 w-8" />
+										<Icon
+											name="circle-check-big"
+											className="text-primary h-8 w-8"
+										/>
 									</div>
 								</CardContent>
 							</Card>
@@ -272,13 +277,16 @@ export default function AssessmentDetailRoute() {
 									<div className="flex items-center justify-between">
 										<div>
 											<p className="text-primary/70 text-sm font-medium">
-												Remaining
+												Senza risposta
 											</p>
 											<p className="text-primary text-2xl font-bold">
 												{stats.unansweredQuestions}
 											</p>
 										</div>
-										<Icon name="clock" className="text-primary h-8 w-8" />
+										<Icon
+											name="circle-dashed"
+											className="text-primary h-8 w-8"
+										/>
 									</div>
 								</CardContent>
 							</Card>
@@ -288,13 +296,16 @@ export default function AssessmentDetailRoute() {
 									<div className="flex items-center justify-between">
 										<div>
 											<p className="text-primary/70 text-sm font-medium">
-												Completion
+												Avanzamento
 											</p>
 											<p className="text-primary text-2xl font-bold">
 												{stats.completionPercentage}%
 											</p>
 										</div>
-										<Icon name="sun" className="text-primary h-8 w-8" />
+										<Icon
+											name="loader-circle"
+											className="text-primary h-8 w-8"
+										/>
 									</div>
 									<Progress
 										value={stats.completionPercentage}
@@ -310,13 +321,13 @@ export default function AssessmentDetailRoute() {
 								<div className="flex items-center gap-3">
 									<Icon name="check" className="text-primary h-6 w-6" />
 									<h2 className="text-foreground text-2xl font-bold">
-										Answered Questions
+										Dettaglio risposte
 									</h2>
 									<Badge
 										variant="default"
 										className="bg-primary text-primary-foreground"
 									>
-										{stats.answeredQuestions} completed
+										{stats.answeredQuestions} completate
 									</Badge>
 								</div>
 
@@ -340,14 +351,14 @@ export default function AssessmentDetailRoute() {
 																className="text-primary h-6 w-6"
 															/>
 															<span className="text-xl font-semibold">
-																Answers
+																Risposte
 															</span>
 														</div>
 														<Badge
 															variant="secondary"
 															className="bg-primary/10 text-primary px-3 py-1 text-sm"
 														>
-															{answers.length} questions
+															{answers.length} domande
 														</Badge>
 													</div>
 												</AccordionTrigger>

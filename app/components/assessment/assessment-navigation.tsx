@@ -197,7 +197,7 @@ export function AssessmentNavigation({
 							)}
 						>
 							<Icon name="arrow-left" className="h-3 w-3" />
-							<span className="sr-only">Previous</span>
+							<span className="sr-only">Precedente</span>
 						</Button>
 						<Select
 							value={section}
@@ -234,14 +234,14 @@ export function AssessmentNavigation({
 							)}
 						>
 							<Icon name="arrow-right" className="h-3 w-3" />
-							<span className="sr-only">Next</span>
+							<span className="sr-only">Prossima</span>
 						</Button>
 					</div>
 				</div>
 
 				{/* Desktop/Tablet: Horizontal Layout */}
 				<div className="hidden items-center gap-2 sm:flex">
-					<Button
+					{/* <Button
 						variant="outline"
 						size="sm"
 						onClick={onNavigatePrevious}
@@ -253,7 +253,7 @@ export function AssessmentNavigation({
 					>
 						<Icon name="arrow-left" className="h-4 w-4" />
 						<span className="hidden md:inline">Previous</span>
-					</Button>
+					</Button> */}
 					<Select
 						value={section}
 						onValueChange={handleSectionChange}
@@ -278,7 +278,7 @@ export function AssessmentNavigation({
 							))}
 						</SelectContent>
 					</Select>
-					<Button
+					{/* <Button
 						variant="outline"
 						size="sm"
 						onClick={onNavigateNext}
@@ -290,7 +290,7 @@ export function AssessmentNavigation({
 					>
 						<span className="hidden md:inline">Next</span>
 						<Icon name="arrow-right" className="h-4 w-4" />
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 
@@ -498,12 +498,12 @@ export function AssessmentNavigation({
 				{/* Mobile: Stacked Progress Info */}
 				<div className="space-y-2 sm:hidden">
 					<div className="flex items-center justify-between text-xs">
-						<span className="font-medium">
-							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
-							completed
-						</span>
 						<span className="text-muted-foreground">
 							{currentQuestion} / {totalQuestions}
+						</span>
+						<span className="font-medium">
+							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
+							completato
 						</span>
 					</div>
 					<div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
@@ -520,12 +520,11 @@ export function AssessmentNavigation({
 				<div className="hidden sm:block">
 					<div className="mb-2 flex items-center justify-between">
 						<div className="text-sm font-medium">
-							Progress{' '}
-							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
-							completed
+							Risposte {currentQuestion} / {totalQuestions}
 						</div>
 						<div className="text-sm font-medium">
-							Question {currentQuestion} / {totalQuestions}
+							Compleato:{' '}
+							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
 						</div>
 					</div>
 					<div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">

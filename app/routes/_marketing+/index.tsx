@@ -1,18 +1,10 @@
 import { Link, redirect } from 'react-router'
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '#app/components/ui/accordion.tsx'
-import { Badge } from '#app/components/ui/badge'
 import { Button } from '#app/components/ui/button'
 import {
 	Card,
 	CardContent,
 	CardHeader,
 	CardTitle,
-	CardFooter,
 } from '#app/components/ui/card'
 import { Icon } from '#app/components/ui/icon'
 import { Separator } from '#app/components/ui/separator'
@@ -42,16 +34,22 @@ export default function Index() {
 						</div>
 						<nav className="hidden items-center space-x-6 md:flex">
 							<a
+								href="#benefits"
+								className="text-muted-foreground hover:text-primary transition-colors"
+							>
+								Vantaggi
+							</a>
+							<a
 								href="#features"
 								className="text-muted-foreground hover:text-primary transition-colors"
 							>
 								Funzionalità
 							</a>
 							<a
-								href="#benefits"
+								href="#results"
 								className="text-muted-foreground hover:text-primary transition-colors"
 							>
-								Vantaggi
+								Risultati
 							</a>
 							<a
 								href="#contact"
@@ -105,10 +103,84 @@ export default function Index() {
 				</div>
 			</section>
 
-			{/* Features Section */}
-			<section id="features" className="bg-primary/10 px-4 py-20">
-				<div className="container mx-auto">
+			{/* Benefits Section */}
+			<section id="benefits" className="bg-primary/10 px-4 py-20">
+				<div className="container mx-auto lg:max-w-10/12">
 					<div className="mb-16 text-center">
+						<h2 className="text-foreground mb-16 text-4xl font-bold">
+							Perché vale la pena capire come la tua azienda <br />
+							<span className="text-primary">
+								tutela i diritti delle persone con cui lavora?
+							</span>
+						</h2>
+						<div className="grid justify-around gap-20 px-4 lg:grid-cols-3">
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon name="scale" className="h-10 w-10 text-green-500" />
+										<h2>Compliance normativa</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Le normative europee e le linee guida internazionali
+										richiedono alle imprese di conoscere, prevenire, mitigare e
+										comunicare i rischi legati ai diritti umani lungo tutta la
+										filiera. Dotarsi di strumenti di autovalutazione e gestione
+										responsabile è oggi una misura preventiva per non farsi
+										trovare impreparati.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon
+											name="chart-no-axes-combined"
+											className="h-10 w-10 text-green-500"
+										/>
+										<h2>Opportunità di mercato</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Sempre più acquirenti — dalle cooperative ai distributori,
+										fino ai gruppi GDO — valutano i fornitori anche in base alla
+										loro capacità di gestire responsabilmente le relazioni con i
+										lavoratori.
+									</p>
+								</CardContent>
+							</Card>
+							<Card className="border-border/60 transition-shadow hover:shadow-lg">
+								<CardHeader>
+									<CardTitle className="flex flex-col items-center gap-6 text-center text-xl">
+										<Icon
+											name="handshake"
+											className="h-10 w-10 text-green-500"
+										/>
+										<h2>Fiducia e reputazione</h2>
+									</CardTitle>
+								</CardHeader>
+								<CardContent className="text-muted-foreground text-center">
+									<p>
+										Un’impresa che investe nel capitale umano e si prende cura
+										delle persone dimostra visione, responsabilità e attenzione
+										al futuro. Rispettare la dignità del lavoro, garantire
+										condizioni eque e costruire relazioni corrette con
+										dipendenti e fornitori rafforza la credibilità e il valore
+										del brand.
+									</p>
+								</CardContent>
+							</Card>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* Features Section */}
+			<section id="features" className="bg-secondary/30 px-4 py-20">
+				<div className="container mx-auto lg:grid lg:max-w-10/12 lg:grid-cols-2 lg:gap-16">
+					<div className="mb-8 text-center lg:mb-0 lg:text-left">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
 							Anche una piccola impresa ha un impatto sulle persone.
 							<span className="text-primary block">Sai qual è il tuo?</span>
@@ -120,316 +192,132 @@ export default function Index() {
 							internazionali e con le certificazioni più usate nel settore
 							agrifood.
 						</p>
-						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl font-bold">
 							Quanto sei già attento ai diritti umani?
 						</p>
-						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl font-bold">
 							Cosa significa affrontare questo tema nella gestione della tua
 							azienda?
 						</p>
 					</div>
-					<div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:col-start-2">
+
+					<div className="flex flex-col gap-8 lg:items-end">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:w-12/12">
 							<CardHeader>
-								<CardTitle className="text-center text-xl">
-									Scoprilo con il nostro questionario di prova
+								<CardTitle className="text-center text-2xl lg:text-left">
+									Scoprilo con il questionario di prova
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-center">
-								<p>25 Domande</p>
-								<p>5 minuti</p>
-								<p>Senza registrazione</p>
+							<CardContent className="text-muted-foreground text-center lg:text-left">
+								<div className="flex-col space-y-8 lg:grid lg:grid-cols-2 lg:items-end lg:space-y-0">
+									<ul>
+										<li>
+											<Icon name="check" className="text-primary">
+												25 domande
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												5 minuti
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												Senza registrazione
+											</Icon>
+										</li>
+									</ul>
+									<div className="place-self-end">
+										<Button
+											variant="outline"
+											size="lg"
+											className="text-md text-secondary-foreground px-8 py-3"
+											asChild
+										>
+											<Link
+												to="/demo/take"
+												onClick={() =>
+													trackDemoConversion('demo_clicked', 'hero')
+												}
+											>
+												Prova la demo
+											</Link>
+										</Button>
+									</div>
+								</div>
 							</CardContent>
-							<CardFooter className="justify-center">
-								<Button
-									variant="outline"
-									size="lg"
-									className="px-8 py-3 text-lg"
-									asChild
-								>
-									<Link
-										to="/demo/take"
-										onClick={() => trackDemoConversion('demo_clicked', 'hero')}
-									>
-										Prova la demo
-									</Link>
-								</Button>
-							</CardFooter>
 						</Card>
-						<Card className="border-border/60 transition-shadow hover:shadow-lg">
+						<Card className="border-border/60 transition-shadow hover:shadow-lg lg:w-12/12">
 							<CardHeader>
-								<CardTitle className="text-center text-xl">
+								<CardTitle className="text-center text-2xl lg:text-left">
 									Esegui la valutazione completa
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="text-center">
-								<p>89 Domande</p>
-								<p>In autonomia o con supporto</p>
-								<p>Salva i risultati</p>
+							<CardContent className="text-muted-foreground text-center lg:text-left">
+								{/* <div className="flex-col space-y-8 lg:flex-row lg:items-end lg:justify-between lg:space-y-0"> */}
+								<div className="flex-col space-y-8 lg:grid lg:grid-cols-2 lg:items-end lg:space-y-0">
+									<ul className="lg:mr-4">
+										<li>
+											<Icon name="check" className="text-primary">
+												89 domande
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												In autonomia o con supporto
+											</Icon>
+										</li>
+										<li>
+											<Icon name="check" className="text-primary">
+												Salva i risultati
+											</Icon>
+										</li>
+									</ul>
+									<div className="lg:place-self-end">
+										<Button size="lg" className="text-md px-8 py-3" asChild>
+											<Link to="/login">Inizia il questionario</Link>
+										</Button>
+									</div>
+								</div>
 							</CardContent>
-							<CardFooter className="justify-center">
-								<Button size="lg" className="px-8 py-3 text-lg" asChild>
-									<Link to="/login">Inizia il questionario</Link>
-								</Button>
-							</CardFooter>
 						</Card>
 					</div>
 				</div>
 			</section>
 
-			{/* Demo Section */}
-			<section className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-20 dark:from-blue-950/20 dark:to-indigo-950/20">
-				<div className="container mx-auto">
-					<div className="mx-auto max-w-4xl text-center">
-						<div className="mb-6">
-							<Badge variant="outline" className="mb-4">
-								<Icon name="arrow-right" className="mr-2 h-4 w-4" />
-								Demo Gratuita
-							</Badge>
-							<h2 className="text-foreground mb-4 text-4xl font-bold">
-								Scopri la Piattaforma in 5 Minuti
-							</h2>
-							<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
-								Prova subito il nostro sistema di valutazione ESG con 25 domande
-								rappresentative. Nessuna registrazione richiesta.
-							</p>
-						</div>
+			{/* Results Section */}
+			<section
+				id="results"
+				className="bg-primary/10 text-foreground px-4 py-20"
+			>
+				<div className="container mx-auto space-y-4 text-center lg:max-w-10/12">
+					<h2 className="text-primary text-4xl font-bold">
+						Cosa ottieni con <br />
+						<span className="text-foreground">Vitae</span>
+					</h2>
 
-						<div className="mb-8 grid gap-6 md:grid-cols-3">
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-blue-100 p-3 dark:bg-blue-900">
-									<Icon
-										name="clock"
-										className="h-6 w-6 text-blue-600 dark:text-blue-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">5 Minuti</h3>
-								<p className="text-muted-foreground text-sm">
-									Tempo medio di completamento
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-green-100 p-3 dark:bg-green-900">
-									<Icon
-										name="check"
-										className="h-6 w-6 text-green-600 dark:text-green-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">25 Domande</h3>
-								<p className="text-muted-foreground text-sm">
-									Esempi da tutte le sezioni ESG
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center">
-								<div className="mb-3 rounded-full bg-purple-100 p-3 dark:bg-purple-900">
-									<Icon
-										name="check"
-										className="h-6 w-6 text-purple-600 dark:text-purple-400"
-									/>
-								</div>
-								<h3 className="mb-1 font-semibold">Senza Registrazione</h3>
-								<p className="text-muted-foreground text-sm">
-									Inizia subito, dati salvati localmente
-								</p>
-							</div>
-						</div>
-
-						<div className="flex flex-col justify-center gap-4 sm:flex-row">
-							<Button size="lg" className="px-8 py-3 text-lg" asChild>
-								<Link
-									to="/demo/take"
-									onClick={() => trackDemoConversion('demo_clicked', 'section')}
-								>
-									<Icon name="arrow-right" className="mr-2 h-5 w-5" />
-									Inizia la Demo
-								</Link>
-							</Button>
-							<Button
-								variant="outline"
-								size="lg"
-								className="px-8 py-3 text-lg"
-								asChild
-							>
-								<Link to="/about">
-									<Icon name="question-mark-circled" className="mr-2 h-5 w-5" />
-									Scopri di Più
-								</Link>
-							</Button>
-						</div>
-
-						<div className="mt-8 rounded-lg bg-blue-50 p-4 dark:bg-blue-950/30">
-							<p className="text-muted-foreground text-sm">
-								<Icon
-									name="question-mark-circled"
-									className="mr-1 inline h-4 w-4"
-								/>
-								La demo mostra le funzionalità principali della piattaforma con
-								dati di esempio. Per accedere alla valutazione completa con 88+
-								domande, crea un account gratuito.
-							</p>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* Benefits Section */}
-			<section id="benefits" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto">
-					<div className="mb-16 text-center">
-						<h2 className="text-foreground mb-4 text-4xl font-bold">
-							Perché vale la pena capire come la tua azienda tutela i diritti
-							delle persone con cui lavora?
-						</h2>
-						<div className="grid gap-8 lg:grid-cols-3">
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Compliance normativa
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Le normative europee e le linee guida internazionali
-										richiedono alle imprese di conoscere, prevenire, mitigare e
-										comunicare i rischi legati ai diritti umani lungo tutta la
-										filiera. Dotarsi di strumenti di autovalutazione e gestione
-										responsabile è oggi una misura preventiva per non farsi
-										trovare impreparati.
-									</p>
-								</CardContent>
-							</Card>
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Opportunità di mercato
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Sempre più acquirenti — dalle cooperative ai distributori,
-										fino ai gruppi GDO — valutano i fornitori anche in base alla
-										loro capacità di gestire responsabilmente le relazioni con i
-										lavoratori.
-									</p>
-								</CardContent>
-							</Card>
-							<Card className="border-border/60 transition-shadow hover:shadow-lg">
-								<CardHeader>
-									<CardTitle className="text-center text-xl">
-										Fiducia e reputazione
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="text-center">
-									<p>
-										Un’impresa che investe nel capitale umano e si prende cura
-										delle persone dimostra visione, responsabilità e attenzione
-										al futuro. Rispettare la dignità del lavoro, garantire
-										condizioni eque e costruire relazioni corrette con
-										dipendenti e fornitori rafforza la fiducia della comunità e
-										il valore del brand.
-									</p>
-								</CardContent>
-							</Card>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* Benefits Section - Variant */}
-			<section id="benefits-variant" className="bg-secondary/30 px-4 py-20">
-				<div className="container mx-auto">
-					<div className="mb-16 text-center">
-						<h2 className="text-foreground mb-4 text-4xl font-bold">
-							Perché vale la pena capire come la tua azienda tutela i diritti
-							delle persone con cui lavora?
-						</h2>
-						<div className="grid gap-8 lg:grid-cols-3">
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Compliance normativa
-									</h3>
-									<p className="text-muted-foreground">
-										Le normative europee e le linee guida internazionali
-										richiedono alle imprese di conoscere, prevenire, mitigare e
-										comunicare i rischi legati ai diritti umani lungo tutta la
-										filiera. Dotarsi di strumenti di autovalutazione e gestione
-										responsabile è oggi una misura preventiva per non farsi
-										trovare impreparati.
-									</p>
-								</div>
-							</div>
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Opportunità di mercato
-									</h3>
-									<p className="text-muted-foreground">
-										Sempre più acquirenti — dalle cooperative ai distributori,
-										fino ai gruppi GDO — valutano i fornitori anche in base alla
-										loro capacità di gestire responsabilmente le relazioni con i
-										lavoratori.
-									</p>
-								</div>
-							</div>
-							<div className="flex items-start space-x-4 text-left">
-								<div className="bg-primary flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg">
-									<Icon
-										name="plus"
-										className="text-primary-foreground h-6 w-6"
-									/>
-								</div>
-								<div>
-									<h3 className="text-foreground mb-2 text-xl font-semibold">
-										Fiducia e reputazione
-									</h3>
-									<p className="text-muted-foreground">
-										Un’impresa che investe nel capitale umano e si prende cura
-										delle persone dimostra visione, responsabilità e attenzione
-										al futuro. Rispettare la dignità del lavoro, garantire
-										condizioni eque e costruire relazioni corrette con
-										dipendenti e fornitori rafforza la fiducia della comunità e
-										il valore del brand.
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			{/* CTA Section */}
-			<section className="bg-primary text-primary-foreground px-4 py-20">
-				<div className="container mx-auto text-center">
-					<h2 className="mb-4 text-4xl font-bold">Cosa ottieni con Vitae</h2>
-
-					<div className="grid gap-8 lg:grid-cols-2">
-						<div>
-							<h3 className="mb-2 text-xl font-semibold">
+					<div className="grid gap-8 lg:grid-cols-2 lg:grid-rows-1">
+						<div className="flex h-full flex-col space-y-8">
+							<h3 className="text-primary text-2xl font-semibold">
 								Se compili il questionario in autonomia
 							</h3>
-
-							<Accordion type="multiple" className="text-left">
-								<AccordionItem value="item-1">
-									<AccordionTrigger className="text-xl">
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon
+										name="search-check"
+										className="text-primary h-12 w-12"
+									/>
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Score e allineamento agli standard
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ricevi una valutazione che indica il tuo livello di
-										compliance rispetto agli standard sui diritti umani presi a
-										riferimento:
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ricevi una valutazione che indica il tuo livello di
+											compliance rispetto agli standard sui diritti umani presi
+											a riferimento:
+										</p>
 										<ul className="list-disc pl-5">
 											<li>
 												Principi Guida delle Nazioni Unite su Imprese e Diritti
@@ -446,204 +334,239 @@ export default function Index() {
 												Disciplinare Equalitas per la sostenibilità vitivinicola
 											</li>
 										</ul>
-									</AccordionContent>
-								</AccordionItem>
-								<AccordionItem value="item-2">
-									<AccordionTrigger className="text-xl">
+									</div>
+								</div>
+							</div>
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon name="pencil" className="text-primary h-12 w-12" />
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Rendicontazione
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ti segnaliamo quali requisiti sociali del questionario sono
-										richiesti dal report di sostenibilità VSME (Voluntary
-										Sustainability Reporting Standard for non-listed SMEs)
-									</AccordionContent>
-								</AccordionItem>
-							</Accordion>
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ti segnaliamo quali requisiti sociali del questionario
+											sono richiesti dal report di sostenibilità VSME (Voluntary
+											Sustainability Reporting Standard for non-listed SMEs)
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div>
-							<h3 className="text-primary-foreground mb-2 text-xl font-semibold">
+						<div className="flex h-full flex-col space-y-8">
+							<h3 className="text-primary text-2xl font-semibold">
 								Se richiedi un supporto consulenziale
 							</h3>
-							<Accordion type="multiple" className="text-left">
-								<AccordionItem value="item-3">
-									<AccordionTrigger className="text-xl">
+							<div className="flex items-start space-x-4 text-left">
+								<div>
+									<Icon name="wrench" className="text-primary h-12 w-12" />
+								</div>
+								<div className="flex flex-1 flex-col">
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Guida e strumenti
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Ti guidiamo nella compilazione del questionario
-										identificando le azioni necessarie a migliorare la tua
-										gestione. Ottieni guide e template per la realizzazione di
-										policy e procedure.
-									</AccordionContent>
-								</AccordionItem>
-								<AccordionItem value="item-4">
-									<AccordionTrigger className="text-xl">
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Ti guidiamo nella compilazione del questionario
+											identificando le azioni necessarie a migliorare la tua
+											gestione. Ottieni guide e template per la realizzazione di
+											policy e procedure
+										</p>
+									</div>
+								</div>
+							</div>
+							<div className="flex h-full items-start space-x-4 text-left">
+								<div>
+									<Icon name="leaf" className="text-primary h-12 w-12" />
+								</div>
+								<div>
+									<h3 className="text-foreground mb-2 text-xl font-semibold">
 										Report di sostenibilità
-									</AccordionTrigger>
-									<AccordionContent className="text-lg">
-										Integriamo i requisiti ESG mancanti e ti supportiamo nella
-										redazione di un report di sostenibilità.
-									</AccordionContent>
-								</AccordionItem>
-							</Accordion>
+									</h3>
+									<div className="text-muted-foreground text-sm">
+										<p>
+											Integriamo i requisiti ESG mancanti e ti supportiamo nella
+											redazione di un report di sostenibilità
+										</p>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+				<section id="contact" className="container mt-10">
+					<Card className="border-primary mx-auto text-center transition-shadow hover:shadow-lg lg:w-5/12">
+						<CardContent className="space-y-4">
+							<h2 className="text-3xl font-semibold">
+								Vuoi saperne di più o richiedere
+								<br /> un supporto consulenziale?
+							</h2>
+							<h2 className="text-primary text-3xl font-semibold">
+								Mettiamoci in contatto
+							</h2>
+							<span className="text-xl font-semibold">
+								<Icon name="mail" className="text-primary h-10 w-10" /> Scrivici
+								a vitae@we.co.it
+							</span>
+						</CardContent>
+					</Card>
+				</section>
 			</section>
+
+			{/* CTA Section */}
 
 			{/* Footer */}
 			<footer
-				id="contact"
+				id="footer"
 				className="bg-card text-card-foreground border-border border-t px-4 py-16"
 			>
-				<div className="container mx-auto">
+				<div className="container mx-auto lg:max-w-10/12">
+					<div className="space-y-8">
+						<p className="text-muted-foreground text-sm">
+							Questa piattaforma è stata realizzata nell’ambito del progetto
+							“VITAE” NODES, finanziato dal MUR sui fondi M4C2 - Investimento
+							1.5 Avviso “Ecosistemi dell’Innovazione”, nell’ambito del PNRR
+							finanziato dall’Unione europea – NextGenerationEU (Grant agreement
+							Cod. n.ECS00000036).
+						</p>
+						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 space-y-8 lg:grid-cols-4 lg:space-y-0">
+							<img
+								src="/public/img/next-gen-eu.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/mur.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/italia-domani.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+							<img
+								src="/public/img/nodes.png"
+								alt="Placeholder"
+								className="col-span-1 h-16"
+							/>
+						</div>
+					</div>
+					<Separator className="bg-border my-8" />
 					<div className="grid gap-8 md:grid-cols-4">
 						<div>
 							<div className="mb-4 flex items-center space-x-2">
 								<Icon name="sun" className="text-primary h-8 w-8" />
 								<span className="text-2xl font-bold">Vitae</span>
 							</div>
-							<p className="text-muted-foreground mb-4">
-								La piattaforma ESG dedicata alle aziende vitivinicole italiane.
+							<p className="text-muted-foreground">
+								Valutazione etica d'impresa
 							</p>
-							<div className="flex space-x-4">
-								<Icon
-									name="github-logo"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-								<Icon
-									name="link-2"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-								<Icon
-									name="envelope-closed"
-									className="text-muted-foreground hover:text-primary h-5 w-5 cursor-pointer"
-								/>
-							</div>
+							<p className="text-muted-foreground/50 text-sm">
+								Nodes Vitae è un progetto di Weco impresa sociale nell’ambito
+								del PNRR
+								<Link to="https://we.co.it/studio-di-fattibilita/">
+									<span className="hover:text-primary block font-bold">
+										Vuoi saperne di più?
+									</span>
+								</Link>
+							</p>
 						</div>
 						<div>
-							<h3 className="mb-4 text-lg font-semibold">Prodotto</h3>
+							<h3 className="mb-4 text-lg font-semibold">Weco</h3>
 							<ul className="text-muted-foreground space-y-2">
 								<li>
-									<a href="#" className="hover:text-primary">
-										Funzionalità
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Prezzi
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Demo
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										API
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="mb-4 text-lg font-semibold">Supporto</h3>
-							<ul className="text-muted-foreground space-y-2">
-								<li>
-									<a href="#" className="hover:text-primary">
-										Centro Assistenza
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Documentazione
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Webinar
-									</a>
-								</li>
-								<li>
-									<a href="#" className="hover:text-primary">
-										Community
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div>
-							<h3 className="mb-4 text-lg font-semibold">Azienda</h3>
-							<ul className="text-muted-foreground space-y-2">
-								<li>
-									<a href="#" className="hover:text-primary">
+									<Link
+										to="https://we.co.it/chi-siamo/"
+										className="hover:text-primary"
+									>
 										Chi siamo
-									</a>
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
-										Blog
-									</a>
+									<Link
+										to="https://we.co.it/consulenze/"
+										className="hover:text-primary"
+									>
+										Consulenze
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
-										Carriere
-									</a>
+									<Link
+										to="https://we.co.it/progetti/"
+										className="hover:text-primary"
+									>
+										Progetti
+									</Link>
 								</li>
 								<li>
-									<a href="#" className="hover:text-primary">
+									<Link
+										to="https://we.co.it/contatti/"
+										className="hover:text-primary"
+									>
 										Contatti
-									</a>
+									</Link>
 								</li>
 							</ul>
 						</div>
-					</div>
-					<Separator className="bg-border my-8" />
-					<div>
-						<div className="text-muted-foreground">
-							Questa piattaforma è stata realizzata nell’ambito del progetto
-							“VITAE” NODES, finanziato dal MUR sui fondi M4C2 - Investimento
-							1.5 Avviso “Ecosistemi dell’Innovazione”, nell’ambito del PNRR
-							finanziato dall’Unione europea – NextGenerationEU (Grant agreement
-							Cod. n.ECS00000036)
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Percorsi correlati</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<Link
+										to="/downloads/weco-consulenze-sostenibilità.pdf"
+										className="hover:text-primary"
+										reloadDocument
+									>
+										Sostenibilità per le imprese
+									</Link>
+									<span className="text-muted-foreground/50 block text-sm">
+										Servizi di consulenza
+									</span>
+								</li>
+								<li>
+									<Link
+										to="https://accademiadellavigna.it/"
+										className="hover:text-primary"
+									>
+										Accademia della Vigna
+									</Link>
+									<span className="text-muted-foreground/50 block text-sm">
+										Assunzione e formazione della manodopera nel vitivinicolo
+									</span>
+								</li>
+							</ul>
 						</div>
-						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 lg:grid-cols-4">
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-							<img
-								src="/public/img/placeholder.svg"
-								alt="Placeholder"
-								className="col-span-1 h-36 w-36"
-							/>
-						</div>
-					</div>
-					<Separator className="bg-border my-8" />
-					<div className="flex flex-col items-center justify-between md:flex-row">
-						<p className="text-muted-foreground text-sm">
-							© 2025 Vitae. Tutti i diritti riservati.
-						</p>
-						<div className="text-muted-foreground mt-4 flex space-x-6 text-sm md:mt-0">
-							<a href="#" className="hover:text-primary">
-								Privacy Policy
-							</a>
-							<a href="#" className="hover:text-primary">
-								Termini di Servizio
-							</a>
-							<a href="#" className="hover:text-primary">
-								Cookie Policy
-							</a>
+						<div>
+							<h3 className="mb-4 text-lg font-semibold">Informazioni</h3>
+							<ul className="text-muted-foreground space-y-2">
+								<li>
+									<Link
+										to="https://github.com/weco-dev/nodes-vitae"
+										className="hover:text-primary"
+									>
+										Codice sorgente
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="https://we.co.it/privacy-policy"
+										className="hover:text-primary"
+									>
+										Privacy policy
+									</Link>
+								</li>
+								<li>
+									<Link
+										to="https://we.co.it/cookie-policy"
+										className="hover:text-primary"
+									>
+										Cookie policy
+									</Link>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>

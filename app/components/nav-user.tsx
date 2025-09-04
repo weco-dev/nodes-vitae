@@ -1,11 +1,4 @@
-import {
-	IconCreditCard,
-	IconDotsVertical,
-	IconLogout,
-	IconNotification,
-	IconUserCircle,
-	// IconNotes,
-} from '@tabler/icons-react'
+import { IconDotsVertical, IconUserCircle } from '@tabler/icons-react'
 import { useRef } from 'react'
 import { Link, Form } from 'react-router'
 
@@ -25,6 +18,7 @@ import {
 	useSidebar,
 } from '#app/components/ui/sidebar'
 import { useOptionalUser } from '#app/utils/user.ts'
+import { Icon } from './ui/icon'
 
 export function NavUser() {
 	const { isMobile } = useSidebar()
@@ -92,10 +86,10 @@ export function NavUser() {
 							<DropdownMenuItem asChild>
 								<Link to="/dashboard/settings/profile">
 									<IconUserCircle />
-									Profile
+									Profilo
 								</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem asChild>
+							{/* <DropdownMenuItem asChild>
 								<Link to="/dashboard/settings/#">
 									<IconCreditCard />
 									Billing
@@ -106,13 +100,13 @@ export function NavUser() {
 									<IconNotification />
 									Notifications
 								</Link>
-							</DropdownMenuItem>
+							</DropdownMenuItem> */}
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<Form action="/logout" method="POST" ref={formRef}>
 							<DropdownMenuItem asChild>
 								<button type="submit" className="w-full">
-									<IconLogout />
+									<Icon name="log-out" />
 									Logout
 								</button>
 							</DropdownMenuItem>

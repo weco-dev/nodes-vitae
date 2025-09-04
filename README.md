@@ -184,7 +184,8 @@ content:
 ### Basic Formatting
 
 ```markdown
-_Bold text_ for emphasis _Italic text_ for subtle emphasis
+*Bold text* for emphasis 
+_Italic text_ for subtle emphasis
 ```
 
 ### Links
@@ -284,9 +285,6 @@ requirements.
 3. **Customize styling** with Tailwind CSS
 4. **Deploy** using your preferred hosting platform
 5. **Monitor** assessment completion and analytics
-
-For detailed development instructions, see the
-[Development Guide](./docs/development.md).
 
 ---
 

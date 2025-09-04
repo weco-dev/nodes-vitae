@@ -1,49 +1,70 @@
 'use client'
 
-import { IconDots, type Icon } from '@tabler/icons-react'
-import { Link } from 'react-router'
+import { useRef } from 'react'
+import { Form, Link } from 'react-router'
 
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '#app/components/ui/dropdown-menu'
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from '#app/components/ui/sidebar'
 import { cn } from '#app/utils/misc'
+import { Button } from './ui/button'
+import { Icon } from './ui/icon'
 
 export function NavSettings({
-	items,
+	//items,
 	className,
 }: {
-	items: {
-		title: string
-		url: string
-		icon: Icon
-		items?: {
-			title: string
-			url: string
-		}[]
-	}[]
+	// items: {
+	// 	title: string
+	// 	url: string
+	// 	icon: Icon
+	// 	items?: {
+	// 		title: string
+	// 		url: string
+	// 	}[]
+	// }[]
 	className?: string
 }) {
-	const { isMobile } = useSidebar()
+	//const { isMobile } = useSidebar()
+	const formRef = useRef<HTMLFormElement>(null)
 
 	return (
 		<SidebarGroup
 			className={cn('group-data-[collapsible=icon]:hidden', className)}
 		>
-			<SidebarGroupLabel>More</SidebarGroupLabel>
+			<SidebarGroupLabel>Altro</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item) => (
+				<SidebarMenuItem>
+					<SidebarMenuButton asChild>
+						<Link to="/dashboard/settings">
+							<Icon name="settings" />
+							Impostazioni
+						</Link>
+					</SidebarMenuButton>
+					<SidebarMenuButton asChild>
+						<Link to="https://we.co.it">
+							<Icon name="heart" />
+							Weco
+						</Link>
+					</SidebarMenuButton>
+					<SidebarMenuButton asChild>
+						<Form action="/logout" method="POST" ref={formRef}>
+							<Button
+								variant="ghost"
+								type="submit"
+								className="pl-0 font-normal"
+							>
+								<Icon name="log-out" />
+								Esci dalla Dashboard
+							</Button>
+						</Form>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+				{/* {items.map((item) => (
 					<SidebarMenuItem key={item.title}>
 						<SidebarMenuButton asChild>
 							<Link to={item.url}>
@@ -77,7 +98,7 @@ export function NavSettings({
 							</DropdownMenu>
 						)}
 					</SidebarMenuItem>
-				))}
+				))} */}
 			</SidebarMenu>
 		</SidebarGroup>
 	)

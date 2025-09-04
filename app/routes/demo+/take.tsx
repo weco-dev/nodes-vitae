@@ -532,12 +532,18 @@ export default function DemoTake() {
 						<div className="mb-6">
 							<div className="mb-2 flex items-center gap-3">
 								<div className="h-2 w-2 rounded-full bg-blue-500" />
-								<h1 className="text-2xl font-semibold">ESG Assessment Demo</h1>
+								<h1 className="text-2xl font-semibold">
+									Vitae Questionario Demo
+								</h1>
 							</div>
 							<p className="text-muted-foreground">
-								Experience our assessment with 25 sample questions across all
-								ESG sections. Your progress is saved locally - no account
-								required.
+								Quanto sei già attento ai diritti delle persone nella tua
+								azienda? E cosa significa rispettare questi diritti nel tuo
+								lavoro quotidiano?
+							</p>
+							<p className="text-muted-foreground">
+								Rispondi a queste poche e semplici domande per capire quanto sei
+								informato sul tema.
 							</p>
 						</div>
 
@@ -633,24 +639,15 @@ export default function DemoTake() {
 						{/* Demo Info Footer */}
 						<div className="mt-8 text-center">
 							<div className="bg-muted/30 rounded-lg p-4">
+								<p className="text-muted-foreground text-sm">
+									Questa demo ti offre un'anteprima del questionario completo
+								</p>
 								<p className="text-muted-foreground mb-2 text-sm">
-									This demo shows a subset of our full assessment system
+									Crea un account gratuito per accedere al questionario completo
 								</p>
 								<div className="flex flex-col justify-center gap-3 sm:flex-row">
-									<Button variant="outline" size="sm" asChild>
-										<Link to="/about">
-											<Icon
-												name="question-mark-circled"
-												className="mr-2 h-4 w-4"
-											/>
-											Learn More
-										</Link>
-									</Button>
 									<Button size="sm" asChild>
-										<Link to="/signup">
-											<Icon name="plus" className="mr-2 h-4 w-4" />
-											Get Full Access
-										</Link>
+										<Link to="/signup">Crea account</Link>
 									</Button>
 								</div>
 							</div>
