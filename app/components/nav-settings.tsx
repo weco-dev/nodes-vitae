@@ -4,19 +4,11 @@ import { useRef } from 'react'
 import { Form, Link } from 'react-router'
 
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '#app/components/ui/dropdown-menu'
-import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from '#app/components/ui/sidebar'
 import { cn } from '#app/utils/misc'
 import { Button } from './ui/button'
