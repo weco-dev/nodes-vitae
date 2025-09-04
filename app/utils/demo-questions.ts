@@ -21,10 +21,31 @@ export interface DemoQuestionConfig {
 	choices?: Array<{ value: string; text: string }>
 	isRequired: boolean
 	score: number
+	parentQuestionId?: string
 }
 
 // Generated demo questions - do not edit manually
 export const demoAssessmentQuestions: DemoQuestionConfig[] = [
+	{
+		questionId: 'demo-00-01',
+		name: 'Anagrafica | Domanda 0.1',
+		type: 'text' as const,
+		title:
+			`Quale è la ragione sociale della tua impresa?`,
+		section: 'Anagrafica',
+		isRequired: true,
+		score: 1,
+	},
+	{
+		questionId: 'demo-00-02',
+		name: 'Anagrafica | Domanda 0.2',
+		type: 'text' as const,
+		title:
+			`Inserisci il tuo indirizzo mail:`,
+		section: 'Anagrafica',
+		isRequired: true,
+		score: 1,
+	},
 	{
 		questionId: 'demo-01-01',
 		name: 'I. Documentazione e trasparenza | Domanda 1.1',
@@ -129,55 +150,65 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		name: 'VI. Vantaggi | Domanda 6.1.1',
 		type: 'radiogroup' as const,
 		title:
-			`Quanto è importante per la tua azienda: Prevenire il rischio di sanzioni legali legate a situazioni di sfruttamento lavorativo, anche quando queste coinvolgono fornitori esterni o intermediari di manodopera?`,
+			`*Quanto è importante per la tua azienda:*
+			Prevenire il rischio di sanzioni legali legate a situazioni di sfruttamento lavorativo, anche quando queste coinvolgono fornitori esterni o intermediari di manodopera?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
 		isRequired: true,
 		score: 1,
+		parentQuestionId: 'demo-06-01',
 	},
 	{
 		questionId: 'demo-06-01-02',
 		name: 'VI. Vantaggi | Domanda 6.1.2',
 		type: 'radiogroup' as const,
 		title:
-			`Quanto è importante per la tua azienda: Rispondere in modo efficace alle richieste di trasparenza di acquirenti nazionali e internazionali, così come alle aspettative di trasparenza dei consumatori finali?`,
+			`*Quanto è importante per la tua azienda:*
+			Rispondere in modo efficace alle richieste di trasparenza di acquirenti nazionali e internazionali, così come alle aspettative di trasparenza dei consumatori finali?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
 		isRequired: true,
 		score: 1,
+		parentQuestionId: 'demo-06-01',
 	},
 	{
 		questionId: 'demo-06-01-03',
 		name: 'VI. Vantaggi | Domanda 6.1.3',
 		type: 'radiogroup' as const,
 		title:
-			`Quanto è importante per la tua azienda: Tutelare la reputazione aziendale, prevenendo danni d’immagine e rafforzando la percezione positiva da parte di clienti, partner e istituzioni?`,
+			`*Quanto è importante per la tua azienda:*
+			Tutelare la reputazione aziendale, prevenendo danni d’immagine e rafforzando la percezione positiva da parte di clienti, partner e istituzioni?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
 		isRequired: true,
 		score: 1,
+		parentQuestionId: 'demo-06-01',
 	},
 	{
 		questionId: 'demo-06-01-04',
 		name: 'VI. Vantaggi | Domanda 6.1.4',
 		type: 'radiogroup' as const,
 		title:
-			`Adottare pratiche organizzative che facilitano il raggiungimento degli standard richiesti dalle principali certificazioni di settore, come Equalitas?`,
+			`*Quanto è importante per la tua azienda:*
+			Adottare pratiche organizzative che facilitano il raggiungimento degli standard richiesti dalle principali certificazioni di settore, come Equalitas?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
 		isRequired: true,
 		score: 1,
+		parentQuestionId: 'demo-06-01',
 	},
 	{
 		questionId: 'demo-06-01-05',
 		name: 'VI. Vantaggi | Domanda 6.1.5',
 		type: 'radiogroup' as const,
 		title:
-			`Contrastare la concorrenza sleale da parte di aziende che basano i loro prezzi su pratiche di sfruttamento, tutelando così il valore del lavoro regolare e la competitività delle imprese virtuose?`,
+			`*Quanto è importante per la tua azienda:*
+			Contrastare la concorrenza sleale da parte di aziende che basano i loro prezzi su pratiche di sfruttamento, tutelando così il valore del lavoro regolare e la competitività delle imprese virtuose?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
 		isRequired: true,
 		score: 1,
+		parentQuestionId: 'demo-06-01',
 	},
 	
 ] as const

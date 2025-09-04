@@ -156,13 +156,13 @@ export default function AssessmentReview() {
 			{/* Header Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-3">
-					<Icon name="file-text" className="text-primary h-8 w-8" />
+					<Icon name="clipboard-list" className="text-primary h-8 w-8" />
 					<div>
 						<h1 className="text-foreground text-4xl font-bold">
-							Assessment Review
+							Verifica il questionario
 						</h1>
 						<p className="text-muted-foreground mt-1 text-lg">
-							Review your responses before final submission
+							Controlla le tue risposte prima di inviare il questionario
 						</p>
 					</div>
 				</div>
@@ -173,53 +173,55 @@ export default function AssessmentReview() {
 				<Card className="border-primary/20 from-primary/5 to-primary/10 bg-gradient-to-br">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-primary flex items-center gap-2 text-sm font-medium">
-							<Icon name="file-text" className="h-4 w-4" />
-							Total Questions
+							<Icon name="clipboard-list" className="h-4 w-4" />
+							Domande
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="text-primary text-3xl font-bold">
 							{stats.totalQuestions}
 						</div>
-						<p className="text-primary/70 mt-1 text-xs">Assessment questions</p>
+						<p className="text-primary/70 mt-1 text-xs">domande</p>
 					</CardContent>
 				</Card>
 
 				<Card className="border-primary/20 from-primary/5 to-primary/10 bg-gradient-to-br">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-primary flex items-center gap-2 text-sm font-medium">
-							<Icon name="plus" className="h-4 w-4" />
-							Answered
+							<Icon name="circle-check-big" className="h-4 w-4" />
+							Risposte
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="text-primary text-3xl font-bold">
 							{stats.answeredQuestions}
 						</div>
-						<p className="text-primary/70 mt-1 text-xs">Questions completed</p>
+						<p className="text-primary/70 mt-1 text-xs">Risposte</p>
 					</CardContent>
 				</Card>
 
 				<Card className="border-primary/20 from-primary/5 to-primary/10 bg-gradient-to-br">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-primary flex items-center gap-2 text-sm font-medium">
-							<Icon name="clock" className="h-4 w-4" />
-							Remaining
+							<Icon name="circle-dashed" className="h-4 w-4" />
+							Da completare
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="text-primary text-3xl font-bold">
 							{stats.unansweredQuestions}
 						</div>
-						<p className="text-primary/70 mt-1 text-xs">Questions pending</p>
+						<p className="text-primary/70 mt-1 text-xs">
+							Domande senza risposta
+						</p>
 					</CardContent>
 				</Card>
 
 				<Card className="border-primary/20 from-primary/5 to-primary/10 bg-gradient-to-br">
 					<CardHeader className="pb-3">
 						<CardTitle className="text-primary flex items-center gap-2 text-sm font-medium">
-							<Icon name="pencil-2" className="h-4 w-4" />
-							Progress
+							<Icon name="loader-circle" className="h-4 w-4" />
+							Avanzamento
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
@@ -227,7 +229,9 @@ export default function AssessmentReview() {
 							{stats.completionPercentage}%
 						</div>
 						<Progress value={stats.completionPercentage} className="mt-2 h-2" />
-						<p className="text-primary/70 mt-1 text-xs">Assessment complete</p>
+						<p className="text-primary/70 mt-1 text-xs">
+							Questionario completato
+						</p>
 					</CardContent>
 				</Card>
 			</div>
@@ -240,8 +244,8 @@ export default function AssessmentReview() {
 					onClick={() => navigate('/assessment/take')}
 					className="flex items-center gap-2"
 				>
-					<Icon name="arrow-left" className="h-4 w-4" />
-					Continue Assessment
+					<Icon name="clipboard-copy" className="h-4 w-4" />
+					Continua il questionario
 				</Button>
 
 				<Form method="post">
@@ -253,8 +257,8 @@ export default function AssessmentReview() {
 						className="flex items-center gap-2"
 						disabled={stats.answeredQuestions === 0}
 					>
-						<Icon name="file-text" className="h-4 w-4" />
-						Save Assessment
+						<Icon name="save" className="h-4 w-4" />
+						Salva il questionario
 					</Button>
 				</Form>
 
@@ -266,8 +270,8 @@ export default function AssessmentReview() {
 						className="flex items-center gap-2"
 						disabled={stats.answeredQuestions === 0}
 					>
-						<Icon name="question-mark-circled" className="h-4 w-4" />
-						Submit and Close Assessment
+						<Icon name="clipboard-check" className="h-4 w-4" />
+						Invia il questionario
 					</Button>
 				</Form>
 			</div>

@@ -83,9 +83,6 @@ export default function Index() {
 						migliorare la responsabilità sociale della tua impresa.
 					</p>
 					<div className="flex flex-col justify-center gap-4 sm:flex-row">
-						<Button size="lg" className="px-8 py-3 text-lg" asChild>
-							<Link to="/login">Inizia il questionario</Link>
-						</Button>
 						<Button
 							variant="outline"
 							size="lg"
@@ -98,6 +95,9 @@ export default function Index() {
 							>
 								Prova la demo
 							</Link>
+						</Button>
+						<Button size="lg" className="px-8 py-3 text-lg" asChild>
+							<Link to="/login">Inizia il questionario</Link>
 						</Button>
 					</div>
 				</div>
@@ -167,8 +167,8 @@ export default function Index() {
 										delle persone dimostra visione, responsabilità e attenzione
 										al futuro. Rispettare la dignità del lavoro, garantire
 										condizioni eque e costruire relazioni corrette con
-										dipendenti e fornitori rafforza la fiducia della comunità e
-										il valore del brand.
+										dipendenti e fornitori rafforza la credibilità e il valore
+										del brand.
 									</p>
 								</CardContent>
 							</Card>
@@ -182,7 +182,7 @@ export default function Index() {
 				<div className="container mx-auto lg:grid lg:max-w-10/12 lg:grid-cols-2 lg:gap-16">
 					<div className="mb-8 text-center lg:mb-0 lg:text-left">
 						<h2 className="text-card-foreground mb-4 text-4xl font-bold">
-							Anche una piccola impresa ha <br /> un impatto sulle persone.
+							Anche una piccola impresa ha un impatto sulle persone.
 							<span className="text-primary block">Sai qual è il tuo?</span>
 						</h2>
 						<p className="text-muted-foreground mx-auto max-w-2xl text-xl">
@@ -192,10 +192,10 @@ export default function Index() {
 							internazionali e con le certificazioni più usate nel settore
 							agrifood.
 						</p>
-						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl font-bold">
 							Quanto sei già attento ai diritti umani?
 						</p>
-						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl">
+						<p className="text-muted-foreground mx-auto mt-2 max-w-2xl text-xl font-bold">
 							Cosa significa affrontare questo tema nella gestione della tua
 							azienda?
 						</p>
@@ -290,8 +290,8 @@ export default function Index() {
 				id="results"
 				className="bg-primary/10 text-foreground px-4 py-20"
 			>
-				<div className="container mx-auto text-center lg:max-w-10/12">
-					<h2 className="text-primary mb-4 text-4xl font-bold">
+				<div className="container mx-auto space-y-4 text-center lg:max-w-10/12">
+					<h2 className="text-primary text-4xl font-bold">
 						Cosa ottieni con <br />
 						<span className="text-foreground">Vitae</span>
 					</h2>
@@ -396,13 +396,26 @@ export default function Index() {
 						</div>
 					</div>
 				</div>
+				<section id="contact" className="container mt-10">
+					<Card className="border-primary mx-auto text-center transition-shadow hover:shadow-lg lg:w-5/12">
+						<CardContent className="space-y-4">
+							<h2 className="text-3xl font-semibold">
+								Vuoi saperne di più o richiedere
+								<br /> un supporto consulenziale?
+							</h2>
+							<h2 className="text-primary text-3xl font-semibold">
+								Mettiamoci in contatto
+							</h2>
+							<span className="text-xl font-semibold">
+								<Icon name="mail" className="text-primary h-10 w-10" /> Scrivici
+								a vitae@we.co.it
+							</span>
+						</CardContent>
+					</Card>
+				</section>
 			</section>
 
 			{/* CTA Section */}
-			<section
-				id="contact"
-				className="bg-primary/10 text-foreground px-4 py-20"
-			></section>
 
 			{/* Footer */}
 			<footer
@@ -503,8 +516,9 @@ export default function Index() {
 							<ul className="text-muted-foreground space-y-2">
 								<li>
 									<Link
-										to="https://we.co.it/contatti/"
+										to="/downloads/weco-consulenze-sostenibilità.pdf"
 										className="hover:text-primary"
+										reloadDocument
 									>
 										Sostenibilità per le imprese
 									</Link>

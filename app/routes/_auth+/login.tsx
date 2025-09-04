@@ -102,7 +102,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 						Accedi al tuo account
 					</h1>
 					<p className="text-muted-foreground text-sm">
-						Inserisci email e password per accedere
+						Inserisci username e password per accedere
 					</p>
 				</div>
 

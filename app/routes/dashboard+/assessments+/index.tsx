@@ -38,6 +38,7 @@
  */
 
 import { format } from 'date-fns'
+import { it } from 'date-fns/locale'
 import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router'
 import { Avatar, AvatarFallback } from '#app/components/ui/avatar.tsx'
@@ -50,13 +51,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '#app/components/ui/card.tsx'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuTrigger,
-} from '#app/components/ui/dropdown-menu.tsx'
+
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Input } from '#app/components/ui/input.tsx'
 import { Progress } from '#app/components/ui/progress.tsx'
@@ -141,11 +136,11 @@ export default function AssessmentsRoute() {
 	const getStatusIcon = (status: string) => {
 		switch (status) {
 			case 'completed':
-				return 'check'
+				return 'circle-check-big'
 			case 'open':
-				return 'clock'
+				return 'pen-line'
 			default:
-				return 'file-text'
+				return 'pen-line'
 		}
 	}
 
@@ -158,10 +153,10 @@ export default function AssessmentsRoute() {
 						<div className="mb-8 flex flex-col gap-4">
 							<div className="space-y-1">
 								<h1 className="text-3xl font-bold tracking-tight">
-									ESG Assessments
+									Questionari
 								</h1>
 								<p className="text-muted-foreground text-lg">
-									Manage and track your ESG assessment progress
+									Gestisci e visualizza i tuoi questionari
 								</p>
 							</div>
 						</div>
@@ -171,27 +166,27 @@ export default function AssessmentsRoute() {
 							<Card>
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 									<CardTitle className="text-sm font-medium">
-										Total Assessments
+										Questionari
 									</CardTitle>
 									<Icon
-										name="file-text"
+										name="clipboard-list"
 										className="text-muted-foreground h-4 w-4"
 									/>
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl font-bold">{totalAssessments}</div>
 									<p className="text-muted-foreground text-xs">
-										All time assessments
+										Questionari completati e in corso
 									</p>
 								</CardContent>
 							</Card>
 							<Card>
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 									<CardTitle className="text-sm font-medium">
-										Completed
+										Completati
 									</CardTitle>
 									<Icon
-										name="check"
+										name="clipboard-check"
 										className="text-muted-foreground h-4 w-4"
 									/>
 								</CardHeader>
@@ -200,34 +195,34 @@ export default function AssessmentsRoute() {
 										{completedAssessments}
 									</div>
 									<p className="text-muted-foreground text-xs">
-										Finished assessments
+										Questionari completati
 									</p>
 								</CardContent>
 							</Card>
 							<Card>
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 									<CardTitle className="text-sm font-medium">
-										In Progress
+										In corso
 									</CardTitle>
 									<Icon
-										name="clock"
+										name="clipboard-pen-line"
 										className="text-muted-foreground h-4 w-4"
 									/>
 								</CardHeader>
 								<CardContent>
 									<div className="text-2xl font-bold">{openAssessments}</div>
 									<p className="text-muted-foreground text-xs">
-										Ongoing assessments
+										Questionari in corso
 									</p>
 								</CardContent>
 							</Card>
 							<Card>
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 									<CardTitle className="text-sm font-medium">
-										Completion Rate
+										Tasso di completamento
 									</CardTitle>
 									<Icon
-										name="arrow-right"
+										name="percent"
 										className="text-muted-foreground h-4 w-4"
 									/>
 								</CardHeader>
@@ -249,7 +244,7 @@ export default function AssessmentsRoute() {
 										className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
 									/>
 									<Input
-										placeholder="Search assessments..."
+										placeholder="Cerca questionario..."
 										value={searchTerm}
 										onChange={(e) => setSearchTerm(e.target.value)}
 										className="pl-10"
@@ -257,13 +252,13 @@ export default function AssessmentsRoute() {
 								</div>
 								<Select value={statusFilter} onValueChange={setStatusFilter}>
 									<SelectTrigger className="w-[180px]">
-										<SelectValue placeholder="Filter by status" />
+										<SelectValue placeholder="Filtra per stato" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="all">All Status</SelectItem>
-										<SelectItem value="completed">Completed</SelectItem>
-										<SelectItem value="open">In Progress</SelectItem>
-										<SelectItem value="archived">Archived</SelectItem>
+										<SelectItem value="all">Tutti</SelectItem>
+										<SelectItem value="completed">Completati</SelectItem>
+										<SelectItem value="open">In corso</SelectItem>
+										<SelectItem value="archived">Archiviati</SelectItem>
 									</SelectContent>
 								</Select>
 							</div>
@@ -288,9 +283,9 @@ export default function AssessmentsRoute() {
 						{/* Assessments Content */}
 						<Tabs defaultValue="all" className="space-y-6">
 							<TabsList>
-								<TabsTrigger value="all">All Assessments</TabsTrigger>
-								<TabsTrigger value="completed">Completed</TabsTrigger>
-								<TabsTrigger value="open">In Progress</TabsTrigger>
+								<TabsTrigger value="all">Tutti</TabsTrigger>
+								<TabsTrigger value="completed">Completati</TabsTrigger>
+								<TabsTrigger value="open">In corso</TabsTrigger>
 							</TabsList>
 
 							<TabsContent value="all" className="space-y-4">
@@ -309,13 +304,13 @@ export default function AssessmentsRoute() {
 																	name={getStatusIcon(assessment.status)}
 																	className="h-4 w-4"
 																/>
-																Assessment #{assessment.id.slice(-6)}
+																Questionario #{assessment.id.slice(-6)}
 															</CardTitle>
 															<CardDescription>
-																ESG Assessment Report
+																Valutazione etica d'impresa
 															</CardDescription>
 														</div>
-														<DropdownMenu>
+														{/* <DropdownMenu>
 															{' '}
 															<DropdownMenuTrigger asChild>
 																<Button variant="ghost" size="sm">
@@ -335,11 +330,11 @@ export default function AssessmentsRoute() {
 																			name="arrow-right"
 																			className="mr-2 h-4 w-4"
 																		/>
-																		View Details
+																		Dettagli
 																	</Link>
 																</DropdownMenuItem>
 															</DropdownMenuContent>
-														</DropdownMenu>
+														</DropdownMenu> */}
 													</div>
 													<Badge
 														variant={getStatusVariant(assessment.status)}
@@ -355,35 +350,39 @@ export default function AssessmentsRoute() {
 												<CardContent className="space-y-4">
 													<div className="grid grid-cols-2 gap-4 text-sm">
 														<div>
-															<p className="text-muted-foreground">Created</p>
+															<p className="text-muted-foreground">Iniziato</p>
 															<p className="font-medium">
 																{format(
 																	new Date(assessment.createdAt),
-																	'MMM dd, yyyy',
+																	'dd MMM yyyy',
+																	{ locale: it },
 																)}
 															</p>
 														</div>
 														{assessment.completedAt && (
 															<div>
 																<p className="text-muted-foreground">
-																	Completed
+																	Completato
 																</p>
 																<p className="font-medium">
 																	{format(
 																		new Date(assessment.completedAt),
-																		'MMM dd, yyyy',
+																		'dd MMM yyyy',
+																		{ locale: it },
 																	)}
 																</p>
 															</div>
 														)}
 														<div>
-															<p className="text-muted-foreground">Answers</p>
+															<p className="text-muted-foreground">Risposte</p>
 															<p className="font-medium">
 																{assessment.answers.length}
 															</p>
 														</div>
 														<div>
-															<p className="text-muted-foreground">Progress</p>
+															<p className="text-muted-foreground">
+																Completamento
+															</p>
 															<div className="flex items-center gap-2">
 																<Progress
 																	value={calculateCompletionPercentage(
@@ -408,7 +407,7 @@ export default function AssessmentsRoute() {
 																		name="arrow-right"
 																		className="mr-2 h-4 w-4"
 																	/>
-																	Continue
+																	Continua
 																</Link>
 															</Button>
 														) : (
@@ -425,7 +424,7 @@ export default function AssessmentsRoute() {
 																		name="arrow-right"
 																		className="mr-2 h-4 w-4"
 																	/>
-																	View Details
+																	Visualizza dettagli
 																</Link>
 															</Button>
 														)}
@@ -456,13 +455,14 @@ export default function AssessmentsRoute() {
 														</Avatar>
 														<div>
 															<p className="text-sm leading-none font-medium">
-																Assessment #{assessment.id.slice(-6)}
+																Questionario #{assessment.id.slice(-6)}
 															</p>
 															<p className="text-muted-foreground text-sm">
-																Created{' '}
+																Creato{' '}
 																{format(
 																	new Date(assessment.createdAt),
-																	'MMM dd, yyyy',
+																	'dd MMM yyyy',
+																	{ locale: it },
 																)}
 															</p>
 														</div>
@@ -479,8 +479,8 @@ export default function AssessmentsRoute() {
 															</p>
 															<p className="text-muted-foreground text-sm">
 																{assessment.status === 'completed'
-																	? 'Completed'
-																	: 'In Progress'}
+																	? 'Completato'
+																	: 'In corso'}
 															</p>
 														</div>
 														{assessment.status === 'open' ? (
@@ -492,7 +492,7 @@ export default function AssessmentsRoute() {
 																<Link
 																	to={`/dashboard/assessments/${assessment.id}`}
 																>
-																	View
+																	Visualizza
 																</Link>
 															</Button>
 														)}
@@ -523,18 +523,18 @@ export default function AssessmentsRoute() {
 																	name="check"
 																	className="text-primary h-4 w-4"
 																/>
-																Assessment #{assessment.id.slice(-6)}
+																Questionario #{assessment.id.slice(-6)}
 															</CardTitle>
 															<Badge variant="default">
 																<Icon name="check" className="mr-1 h-3 w-3" />
-																Completed
+																Completato
 															</Badge>
 														</div>
 													</CardHeader>
 													<CardContent className="space-y-4">
 														<div className="text-sm">
 															<p className="text-muted-foreground">
-																Completed on
+																Data invio
 															</p>
 															<p className="font-medium">
 																{assessment.completedAt &&
@@ -552,7 +552,7 @@ export default function AssessmentsRoute() {
 																	name="arrow-right"
 																	className="mr-2 h-4 w-4"
 																/>
-																View Report
+																Visualizza risultati
 															</Link>
 														</Button>
 													</CardContent>
@@ -570,17 +570,18 @@ export default function AssessmentsRoute() {
 											</div>
 											<div className="space-y-2">
 												<h3 className="text-lg font-semibold">
-													No completed assessments
+													Nessun questionario completato
 												</h3>
 												<p className="text-muted-foreground mx-auto max-w-sm">
-													You haven't completed any ESG assessments yet. Start
-													your first assessment to see it here when complete.
+													Non hai ancora completato nessun questionario. Dopo
+													che avrai iniziato il tuo primo questionario potrai
+													visualizzarlo qui.
 												</p>
 											</div>
 											<Button asChild className="mt-4">
 												<Link to="/assessment/take">
 													<Icon name="plus" className="mr-2 h-4 w-4" />
-													Start New Assessment
+													Inizia nuovo questionario
 												</Link>
 											</Button>
 										</CardContent>
@@ -606,19 +607,17 @@ export default function AssessmentsRoute() {
 																	name="clock"
 																	className="text-secondary-foreground h-4 w-4"
 																/>
-																Assessment #{assessment.id.slice(-6)}
+																Questionario #{assessment.id.slice(-6)}
 															</CardTitle>
 															<Badge variant="secondary">
 																<Icon name="clock" className="mr-1 h-3 w-3" />
-																In Progress
+																In corso
 															</Badge>
 														</div>
 													</CardHeader>
 													<CardContent className="space-y-4">
 														<div className="text-sm">
-															<p className="text-muted-foreground">
-																Started on
-															</p>
+															<p className="text-muted-foreground">Iniziato</p>
 															<p className="font-medium">
 																{format(new Date(assessment.createdAt), 'PPP')}
 															</p>
@@ -626,7 +625,7 @@ export default function AssessmentsRoute() {
 														<div>
 															<div className="mb-2 flex items-center justify-between text-sm">
 																<span className="text-muted-foreground">
-																	Progress
+																	Complemtamento
 																</span>
 																<span>
 																	{calculateCompletionPercentage(assessment)}%
@@ -644,7 +643,7 @@ export default function AssessmentsRoute() {
 																	name="arrow-right"
 																	className="mr-2 h-4 w-4"
 																/>
-																Continue Assessment
+																Continua questionario
 															</Link>
 														</Button>
 													</CardContent>
@@ -662,17 +661,18 @@ export default function AssessmentsRoute() {
 											</div>
 											<div className="space-y-2">
 												<h3 className="text-lg font-semibold">
-													No assessments in progress
+													Nessun questionario in corso
 												</h3>
 												<p className="text-muted-foreground mx-auto max-w-sm">
-													You don't have any ongoing assessments. Start a new
-													assessment to begin tracking your ESG progress.
+													Non hai ancora completato nessun questionario. Dopo
+													che avrai iniziato il tuo primo questionario potrai
+													visualizzarlo qui.
 												</p>
 											</div>
 											<Button asChild className="mt-4">
 												<Link to="/assessment/take">
 													<Icon name="plus" className="mr-2 h-4 w-4" />
-													Start New Assessment
+													Inizia nuovo questionario
 												</Link>
 											</Button>
 										</CardContent>

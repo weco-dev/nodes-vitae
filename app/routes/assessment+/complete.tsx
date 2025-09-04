@@ -83,16 +83,17 @@ export default function AssessmentComplete() {
 			<Card className="mx-auto max-w-2xl">
 				<CardContent className="flex flex-col items-center justify-center py-12">
 					<CheckCircle className="mb-4 h-16 w-16 text-green-500" />
-					<h1 className="mb-2 text-2xl font-bold">Assessment Completed!</h1>
+					<h1 className="mb-2 text-2xl font-bold">Questionario completato!</h1>
 					<p className="text-muted-foreground mb-4 text-center">
-						Thank you for completing your ESG assessment. Your responses have
-						been saved and you can now view your results.
+						Grazie per aver completato il questionario sulla Valutazione etica
+						d'impresa. I tuoi risultati sono stati salvati e ora puoi
+						visualizzarli.
 					</p>
 
 					{/* Score summary */}
 					<div className="bg-muted mb-8 rounded-lg p-6">
 						<p className="text-muted-foreground mb-2 text-center text-sm">
-							Overall Completion
+							Avanzamento
 						</p>
 						<p className="text-center text-4xl font-bold">
 							{completionPercentage}%
@@ -101,11 +102,11 @@ export default function AssessmentComplete() {
 
 					<div className="flex gap-4">
 						<Button asChild variant="outline">
-							<Link to="/dashboard/assessments">View All Assessments</Link>
+							<Link to="/dashboard/assessments">Vedi tutti i questionari</Link>
 						</Button>
 						<Button asChild>
 							<Link to={`/dashboard/assessments/${assessment.id}`}>
-								View Detailed Results
+								Visualizza i risultati
 							</Link>
 						</Button>
 					</div>
