@@ -327,15 +327,23 @@ function DemoResultsContent({
 					</Card>
 
 					{/* Demo Info */}
-					<Card>
+					<Card className="gap-2">
 						<CardHeader>
 							<CardTitle className="flex items-center gap-2 text-sm">
 								<Icon name="question-mark-circled" className="h-4 w-4" />
-								Informazioni su questa demo
+								Serve aiuto?
 							</CardTitle>
 						</CardHeader>
 						<CardContent className="text-muted-foreground space-y-2 text-sm">
-							<p>La piattaforma è ancora in fase di sviluppo.....</p>
+							<p>
+								Puoi contattare il nostro supporto in qualsiasi momento per
+								segnalare bug o problemi di funzionamento:
+							</p>
+							<span className="text-primary mt-4 block">
+								<Icon name="mail" size="md" className="text-foreground">
+									vitae@we.co.it
+								</Icon>
+							</span>
 						</CardContent>
 					</Card>
 
