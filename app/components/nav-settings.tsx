@@ -56,7 +56,7 @@ export function NavSettings({
 							<Button
 								variant="ghost"
 								type="submit"
-								className="pl-0 font-normal"
+								className="!pl-0 font-normal"
 							>
 								<Icon name="log-out" />
 								Esci dalla Dashboard
