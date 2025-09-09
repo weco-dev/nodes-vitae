@@ -633,6 +633,10 @@ export function SurveyComponent({
 			// Configure navigation buttons based on navigation state
 			survey.showNavigationButtons = !isNavigating
 
+			// Configure Italian button labels for all assessments
+			survey.pageNextText = 'Prossima →'
+			survey.pagePrevText = '← Precedente'
+
 			// Demo-specific configuration
 			if (isDemo) {
 				survey.showProgressBar = 'off' // Completely hide progress bar for demo
@@ -640,8 +644,6 @@ export function SurveyComponent({
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
 				survey.completeText = 'Completa la demo'
-				survey.pageNextText = 'Prossima →'
-				survey.pagePrevText = '← Precedente'
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {

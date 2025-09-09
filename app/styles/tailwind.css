@@ -367,6 +367,51 @@
 	@apply w-full;
 }
 
+/* SurveyJS Navigation Buttons - Mobile inline layout */
+/* Force horizontal layout for navigation buttons */
+.sd-action-bar.sd-footer.sd-body__navigation.sd-clearfix {
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	gap: 0.75rem !important;
+}
+
+.sd-action-bar.sd-footer.sd-body__navigation .sv-action {
+	flex: 1 !important;
+	min-width: 0 !important;
+	display: block !important;
+}
+
+.sd-action-bar.sd-footer.sd-body__navigation .sv-action .sv-action__content {
+	width: 100% !important;
+}
+
+.sd-action-bar.sd-footer.sd-body__navigation .sd-btn {
+	width: 100% !important;
+	margin: 0 !important;
+}
+
+/* Additional specificity for mobile */
+@media (max-width: 640px) {
+	.sd-action-bar.sd-footer.sd-body__navigation.sd-clearfix {
+		display: flex !important;
+		flex-direction: row !important;
+		gap: 0.5rem !important;
+	}
+
+	.sd-action-bar.sd-footer.sd-body__navigation .sd-btn {
+		font-size: 0.875rem !important;
+		padding: 0.5rem 0.75rem !important;
+		width: 100% !important;
+	}
+}
+
+/* Override any float styles from sd-clearfix */
+.sd-action-bar.sd-footer.sd-body__navigation .sv-action {
+	float: none !important;
+}
+
 .dark .question-title-markdown code {
 	@apply bg-muted/50 border-border/20;
 }
