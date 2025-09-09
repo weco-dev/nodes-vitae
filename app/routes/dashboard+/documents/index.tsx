@@ -28,10 +28,13 @@ export default function DocumentsRoute() {
 
 						{/* Documents cards with groups */}
 						{documentGroups.map((group) => (
-							<div key={group}>
-								<h2 className="mb-4 text-2xl font-semibold">{group}</h2>
+							<div key={group} className="mb-12">
+								<div className="mb-6">
+									<h2 className="text-2xl font-semibold">{group}</h2>
+									<hr className="border-muted-foreground/20 mt-4" />
+								</div>
 
-								<div className="mb-8 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+								<div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-6 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-3">
 									{documentsList
 										.filter((document) => document.group === group)
 										.map((document) => (
