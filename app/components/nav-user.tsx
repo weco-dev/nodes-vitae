@@ -21,7 +21,7 @@ import { useOptionalUser } from '#app/utils/user.ts'
 import { Icon } from './ui/icon'
 
 export function NavUser() {
-	const { isMobile } = useSidebar()
+	const { isMobile, closeMobileSidebar } = useSidebar()
 	const user = useOptionalUser()
 	const formRef = useRef<HTMLFormElement>(null)
 
@@ -84,7 +84,10 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link to="/dashboard/settings/profile">
+								<Link
+									to="/dashboard/settings/profile"
+									onClick={closeMobileSidebar}
+								>
 									<IconUserCircle />
 									Profilo
 								</Link>
@@ -105,7 +108,11 @@ export function NavUser() {
 						<DropdownMenuSeparator />
 						<Form action="/logout" method="POST" ref={formRef}>
 							<DropdownMenuItem asChild>
-								<button type="submit" className="w-full">
+								<button
+									type="submit"
+									className="w-full"
+									onClick={closeMobileSidebar}
+								>
 									<Icon name="log-out" />
 									Logout
 								</button>

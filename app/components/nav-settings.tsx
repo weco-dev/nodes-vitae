@@ -9,6 +9,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from '#app/components/ui/sidebar'
 import { cn } from '#app/utils/misc'
 import { Button } from './ui/button'
@@ -31,6 +32,7 @@ export function NavSettings({
 }) {
 	//const { isMobile } = useSidebar()
 	const formRef = useRef<HTMLFormElement>(null)
+	const { closeMobileSidebar } = useSidebar()
 
 	return (
 		<SidebarGroup
@@ -40,13 +42,13 @@ export function NavSettings({
 			<SidebarMenu>
 				<SidebarMenuItem>
 					<SidebarMenuButton asChild>
-						<Link to="/dashboard/settings">
+						<Link to="/dashboard/settings" onClick={closeMobileSidebar}>
 							<Icon name="settings" />
 							Impostazioni
 						</Link>
 					</SidebarMenuButton>
 					<SidebarMenuButton asChild>
-						<Link to="https://we.co.it">
+						<Link to="https://we.co.it" onClick={closeMobileSidebar}>
 							<Icon name="heart" />
 							Weco
 						</Link>
@@ -57,6 +59,7 @@ export function NavSettings({
 								variant="ghost"
 								type="submit"
 								className="!pl-0 font-normal"
+								onClick={closeMobileSidebar}
 							>
 								<Icon name="log-out" />
 								Esci dalla Dashboard
