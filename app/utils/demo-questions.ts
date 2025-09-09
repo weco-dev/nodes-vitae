@@ -7,7 +7,7 @@
  * DO NOT EDIT MANUALLY - Use 'npm run import-demo-questions' to regenerate
  */
 
-import { demoRadio01, demoRadio02 } from "./assessment/radiogroup-answers"
+import { demoRadio01, demoRadio02 } from './assessment/radiogroup-answers'
 
 export interface DemoQuestionConfig {
 	questionId: string
@@ -30,8 +30,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-00-01',
 		name: 'Anagrafica | Domanda 0.1',
 		type: 'text' as const,
-		title:
-			`Quale è la ragione sociale della tua impresa?`,
+		title: `Quale è la ragione sociale della tua impresa?`,
 		section: 'Anagrafica',
 		isRequired: true,
 		score: 1,
@@ -40,8 +39,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-00-02',
 		name: 'Anagrafica | Domanda 0.2',
 		type: 'text' as const,
-		title:
-			`Inserisci il tuo indirizzo mail:`,
+		title: `Inserisci il tuo indirizzo mail:`,
 		section: 'Anagrafica',
 		isRequired: true,
 		score: 1,
@@ -50,8 +48,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-01-01',
 		name: 'I. Documentazione e trasparenza | Domanda 1.1',
 		type: 'radiogroup' as const,
-		title:
-			`Conosci i nomi delle persone che hanno lavorato per te (anche se dipendenti di cooperative)?`,
+		title: `Conosci i nomi delle persone che hanno lavorato per te (anche se dipendenti di cooperative)?`,
 		section: 'I. Documentazione e trasparenza',
 		choices: demoRadio01,
 		isRequired: true,
@@ -59,10 +56,9 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 	},
 	{
 		questionId: 'demo-01-02',
-		name: 'I. Documentazione e trasparenza | Domanda 1.1',
+		name: 'I. Documentazione e trasparenza | Domanda 1.2',
 		type: 'radiogroup' as const,
-		title:
-			`Sai quali documenti ha firmato ciascun lavoratore e se le condizioni di contratto sono spiegate in modo comprensibile per chi non parla italiano?`,
+		title: `Sai quali documenti ha firmato ciascun lavoratore e se le condizioni di contratto sono spiegate in modo comprensibile per chi non parla italiano?`,
 		section: 'I. Documentazione e trasparenza',
 		choices: demoRadio01,
 		isRequired: true,
@@ -72,8 +68,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-02-01',
 		name: 'II. Orari e stagionalità | Domanda 2.1',
 		type: 'radiogroup' as const,
-		title:
-			`In certi periodi di raccolta può capitare che i lavoratori superino le 8 ore al giorno. Ti sei mai accertato se sanno esattamente quanto devono lavorare e quanto devono essere pagati per eventuali straordinari?`,
+		title: `In certi periodi di raccolta può capitare che i lavoratori superino le 8 ore al giorno. Ti sei mai accertato se sanno esattamente quanto devono lavorare e quanto devono essere pagati per eventuali straordinari?`,
 		section: 'II. Orari e stagionalità',
 		choices: demoRadio01,
 		isRequired: true,
@@ -83,8 +78,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-03-01',
 		name: 'III. Reclami e problemi interni | Domanda 3.1',
 		type: 'radiogroup' as const,
-		title:
-			`Se un lavoratore avesse un problema (es. paga, alloggio, disagio con un caposquadra), saprebbe a chi rivolgersi e sentirebbe di poterlo fare senza timore?`,
+		title: `Se un lavoratore avesse un problema (es. paga, alloggio, disagio con un caposquadra), saprebbe a chi rivolgersi e sentirebbe di poterlo fare senza timore?`,
 		section: 'III. Reclami e problemi interni',
 		choices: demoRadio01,
 		isRequired: true,
@@ -94,8 +88,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-04-01',
 		name: 'IV. Sicurrezza | Domanda 4.1',
 		type: 'radiogroup' as const,
-		title:
-			`Ti accerti che i lavoratori che arrivano nella tua azienda abbiano/indossino i dispositivi di sicurezza (guanti, occhiali o visiera, elmetto, tuta da lavoro, calzature di sicurezza)?`,
+		title: `Ti accerti che i lavoratori che arrivano nella tua azienda abbiano/indossino i dispositivi di sicurezza (guanti, occhiali o visiera, elmetto, tuta da lavoro, calzature di sicurezza)?`,
 		section: 'IV. Sicurrezza',
 		choices: demoRadio01,
 		isRequired: true,
@@ -105,8 +98,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-04-02',
 		name: 'IV. Sicurrezza | Domanda 4.2',
 		type: 'radiogroup' as const,
-		title:
-			`Sei consapevole dei vantaggi che avresti nel promuovere un ambiente di lavoro più sicuro e stabile? Come ad esempio la riduzione del turnover del personale, l'aumento di l’efficienza produttiva e un impatto positivo sulla sostenibilità economica del territorio.`,
+		title: `Sei consapevole dei vantaggi che avresti nel promuovere un ambiente di lavoro più sicuro e stabile? Come ad esempio la riduzione del turnover del personale, l'aumento di l’efficienza produttiva e un impatto positivo sulla sostenibilità economica del territorio.`,
 		section: 'IV. Sicurrezza',
 		choices: demoRadio01,
 		isRequired: true,
@@ -116,8 +108,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-05-01',
 		name: 'V. Vita fuori dal campo | Domanda 5.1',
 		type: 'radiogroup' as const,
-		title:
-			`Sai in che condizioni vivono i lavoratori stagionali quando non sono nei campi? Hanno accesso ad acqua, bagni, una doccia, un posto dignitoso dove stare?`,
+		title: `Sai in che condizioni vivono i lavoratori stagionali quando non sono nei campi? Hanno accesso ad acqua, bagni, una doccia, un posto dignitoso dove stare?`,
 		section: 'V. Vita fuori dal campo',
 		choices: demoRadio01,
 		isRequired: true,
@@ -125,10 +116,9 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 	},
 	{
 		questionId: 'demo-05-02',
-		name: 'V. Vita fuori dal campo | Domanda 5.1',
+		name: 'V. Vita fuori dal campo | Domanda 5.2',
 		type: 'radiogroup' as const,
-		title:
-			`Sei a conoscenza e puoi indicare quali mezzi di trasporto abbiano usato le persone che hanno lavorato o lavorano per te nel 2025?`,
+		title: `Sei a conoscenza e puoi indicare quali mezzi di trasporto abbiano usato le persone che hanno lavorato o lavorano per te nel 2025?`,
 		section: 'V. Vita fuori dal campo',
 		choices: demoRadio01,
 		isRequired: true,
@@ -149,8 +139,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-06-01-01',
 		name: 'VI. Vantaggi | Domanda 6.1.1',
 		type: 'radiogroup' as const,
-		title:
-			`*Quanto è importante per la tua azienda:*
+		title: `*Quanto è importante per la tua azienda:*
 			Prevenire il rischio di sanzioni legali legate a situazioni di sfruttamento lavorativo, anche quando queste coinvolgono fornitori esterni o intermediari di manodopera?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
@@ -162,8 +151,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-06-01-02',
 		name: 'VI. Vantaggi | Domanda 6.1.2',
 		type: 'radiogroup' as const,
-		title:
-			`*Quanto è importante per la tua azienda:*
+		title: `*Quanto è importante per la tua azienda:*
 			Rispondere in modo efficace alle richieste di trasparenza di acquirenti nazionali e internazionali, così come alle aspettative di trasparenza dei consumatori finali?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
@@ -175,8 +163,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-06-01-03',
 		name: 'VI. Vantaggi | Domanda 6.1.3',
 		type: 'radiogroup' as const,
-		title:
-			`*Quanto è importante per la tua azienda:*
+		title: `*Quanto è importante per la tua azienda:*
 			Tutelare la reputazione aziendale, prevenendo danni d’immagine e rafforzando la percezione positiva da parte di clienti, partner e istituzioni?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
@@ -188,8 +175,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-06-01-04',
 		name: 'VI. Vantaggi | Domanda 6.1.4',
 		type: 'radiogroup' as const,
-		title:
-			`*Quanto è importante per la tua azienda:*
+		title: `*Quanto è importante per la tua azienda:*
 			Adottare pratiche organizzative che facilitano il raggiungimento degli standard richiesti dalle principali certificazioni di settore, come Equalitas?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
@@ -201,8 +187,7 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		questionId: 'demo-06-01-05',
 		name: 'VI. Vantaggi | Domanda 6.1.5',
 		type: 'radiogroup' as const,
-		title:
-			`*Quanto è importante per la tua azienda:*
+		title: `*Quanto è importante per la tua azienda:*
 			Contrastare la concorrenza sleale da parte di aziende che basano i loro prezzi su pratiche di sfruttamento, tutelando così il valore del lavoro regolare e la competitività delle imprese virtuose?`,
 		section: 'VI. Vantaggi',
 		choices: demoRadio02,
@@ -210,7 +195,6 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 		score: 1,
 		parentQuestionId: 'demo-06-01',
 	},
-	
 ] as const
 
 /**
@@ -285,8 +269,8 @@ export function convertDemoToSurveyJsFormat(
  */
 export function getDemoAnswerableQuestions() {
 	//return demoAssessmentQuestions
-	return demoAssessmentQuestions.filter(question => 
-		question.type !== 'group'  // Exclude group/umbrella questions
+	return demoAssessmentQuestions.filter(
+		(question) => question.type !== 'group', // Exclude group/umbrella questions
 	)
 }
 
