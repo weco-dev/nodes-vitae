@@ -635,7 +635,7 @@ export function SurveyComponent({
 
 			// Demo-specific configuration
 			if (isDemo) {
-				survey.showProgressBar = 'bottom'
+				survey.showProgressBar = 'off' // Completely hide progress bar for demo
 				survey.showTitle = false
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'

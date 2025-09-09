@@ -207,8 +207,8 @@ export function convertDemoToSurveyJsFormat(
 		title: 'ESG Assessment Demo',
 		description: 'Experience our ESG assessment with 25 sample questions',
 		logoPosition: 'right',
-		showProgressBar: 'bottom',
-		progressBarType: 'questions',
+		showProgressBar: 'off', // Hide progress bar completely
+		progressBarType: 'pages',
 		showQuestionNumbers: 'off',
 		showNavigationButtons: 'bottom',
 		goNextPageAutomatic: false,
@@ -235,7 +235,7 @@ export function convertDemoToSurveyJsFormat(
 			type: question.type === 'text' ? 'text' : 'radiogroup',
 			name: question.name,
 			title: question.title,
-			isRequired: question.isRequired,
+			isRequired: false, // Remove required constraint for demo
 		}
 
 		if (
