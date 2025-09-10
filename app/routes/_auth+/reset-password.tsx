@@ -28,9 +28,7 @@ async function requireResetPasswordEmail(request: Request) {
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	const resetPasswordEmail = verifySession.get(
-		resetPasswordEmailSessionKey,
-	)
+	const resetPasswordEmail = verifySession.get(resetPasswordEmailSessionKey)
 	if (typeof resetPasswordEmail !== 'string' || !resetPasswordEmail) {
 		throw redirect('/login')
 	}
