@@ -215,10 +215,6 @@ function DemoResultsContent({
 							<CardContent className="space-y-4">
 								{choiceAnalysis.choice === '01' && (
 									<div>
-										<p className="text-muted-foreground mb-2 text-sm italic">
-											Se la maggioranza delle tue risposte è "Non ci ho mai
-											pensato" o "Per niente importante"
-										</p>
 										<ul className="text-muted-foreground space-y-1 text-left text-sm">
 											<li className="flex gap-2">
 												<Icon
@@ -258,10 +254,6 @@ function DemoResultsContent({
 
 								{choiceAnalysis.choice === '02' && (
 									<div>
-										<p className="text-muted-foreground mb-2 text-sm italic">
-											Se la maggioranza delle tue risposte è "A volte ci penso
-											ma non ho fatto nulla al riguardo" o "Poco importante"
-										</p>
 										<p className="text-muted-foreground text-sm">
 											Hai già identificato alcuni temi importanti per i diritti
 											dei lavoratori, ma secondo i principi OCSE è fondamentale
@@ -273,10 +265,6 @@ function DemoResultsContent({
 
 								{choiceAnalysis.choice === '03' && (
 									<div>
-										<p className="text-muted-foreground mb-2 text-sm italic">
-											Se la maggioranza delle tue risposte è "Si e ho agito per
-											assicurarmene" o "Molto importante"
-										</p>
 										<ul className="text-muted-foreground space-y-1 text-left text-sm">
 											<li className="flex gap-2">
 												<Icon
