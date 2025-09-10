@@ -50,7 +50,7 @@ const SurveyComponent = lazy(() =>
 export async function loader({}: Route.LoaderArgs) {
 	// No authentication required for demo
 	const demoData = getDemoDataFromLocalStorage()
-	const surveyJson = convertDemoToSurveyJsFormat(demoAssessmentQuestions)
+	const surveyJson = convertDemoToSurveyJsFormat(demoAssessmentQuestions, true) // Force all questions to be required
 
 	return {
 		assessment: {
@@ -637,6 +637,7 @@ export default function DemoTake() {
 											onError={handleError}
 											isNavigating={assessmentNavigation.isNavigating}
 											isDemo={true}
+											demoRequireAllQuestions={true}
 										/>
 									</Suspense>
 								)}

@@ -47,6 +47,12 @@
  * - **Text Wrapping**: Improved text flow for long question content
  * - **Hierarchy Display**: Clear visual hierarchy for umbrella question relationships
  *
+ * ### Demo Mode Features:
+ * - **Optional Validation**: Questions can be made required or optional
+ * - **Runtime Configuration**: `demoRequireAllQuestions` prop forces all questions to be required
+ * - **Flexible Survey Generation**: `convertDemoToSurveyJsFormat(questions, forceRequired)` parameter
+ * - **Page-Level Validation**: When required, validation occurs on each page navigation
+ *
  * The component is designed to handle complex assessment workflows where users may:
  * - Navigate away and return to continue surveys
  * - Experience network interruptions during completion
@@ -389,6 +395,15 @@
  *   onComplete={handleAssessmentCompletion}
  * />
  *
+ * // Demo usage with required questions
+ * <SurveyComponent
+ *   surveyJson={convertDemoToSurveyJsFormat(demoQuestions, true)}
+ *   isDemo={true}
+ *   demoRequireAllQuestions={true}
+ *   onValueChanged={handleDemoAnswerTracking}
+ *   onComplete={handleDemoCompletion}
+ * />
+ *
  * @see {@link app/routes/assessment+/take.tsx} for usage example
  * @see {@link app/utils/assessment-questions.ts} for survey JSON structure
  * @see {@link app/utils/assessment.server.ts} for backend persistence
@@ -421,6 +436,7 @@ interface SurveyComponentProps {
 	isNavigating?: boolean
 	onNavigationStateChange?: (isNavigating: boolean) => void
 	isDemo?: boolean // Add demo mode support
+	demoRequireAllQuestions?: boolean // Force all demo questions to be required
 }
 
 function QuestionAccordion({
@@ -578,6 +594,7 @@ export function SurveyComponent({
 	isNavigating = false,
 	onNavigationStateChange: _onNavigationStateChange,
 	isDemo = false,
+	demoRequireAllQuestions = false,
 }: SurveyComponentProps) {
 	console.log('🎯 SurveyComponent render called')
 	const surveyRef = useRef<Model | null>(null)
@@ -644,6 +661,19 @@ export function SurveyComponent({
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
 				survey.completeText = 'Completa la demo'
+
+				// Demo validation configuration
+				if (demoRequireAllQuestions) {
+					// Validate on each page navigation to ensure questions are answered
+					survey.checkErrorsMode = 'onNextPage'
+					// Make all questions required at runtime
+					survey.getAllQuestions().forEach((question) => {
+						question.isRequired = true
+					})
+				} else {
+					// Keep default validation mode for optional demo flow
+					survey.checkErrorsMode = 'onComplete'
+				}
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {
