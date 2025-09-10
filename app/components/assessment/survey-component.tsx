@@ -583,6 +583,61 @@ function processMarkdownSafely(markdown: string): string {
 	)
 }
 
+// Helper function for demo completion validation
+function validateDemoCompletion(
+	survey: any,
+): Array<{ questionId: string; name: string; title: string }> {
+	const unansweredQuestions: Array<{
+		questionId: string
+		name: string
+		title: string
+	}> = []
+
+	survey.getAllQuestions().forEach((question: any) => {
+		if (question.isRequired) {
+			const value = question.value
+			const isEmpty =
+				value === undefined ||
+				value === null ||
+				value === '' ||
+				(typeof value === 'string' && value.trim() === '')
+
+			if (isEmpty) {
+				unansweredQuestions.push({
+					questionId: question.questionId || question.name,
+					name: question.name,
+					title: question.title || 'Untitled Question',
+				})
+			}
+		}
+	})
+
+	return unansweredQuestions
+}
+
+// Helper function to find the first unanswered required question page
+function findFirstUnansweredPage(
+	survey: any,
+	unansweredQuestions: Array<{
+		questionId: string
+		name: string
+		title: string
+	}>,
+) {
+	const pages = survey.pages
+
+	for (let i = 0; i < pages.length; i++) {
+		const pageQuestions = pages[i].questions
+		if (pageQuestions.length > 0) {
+			const questionName = pageQuestions[0].name
+			if (unansweredQuestions.some((uq) => uq.name === questionName)) {
+				return i
+			}
+		}
+	}
+	return 0
+}
+
 export function SurveyComponent({
 	surveyJson,
 	initialData = {},
@@ -753,7 +808,50 @@ export function SurveyComponent({
 				}
 			})
 
-			// Handle completion
+			// Handle completion validation before allowing completion
+			survey.onCompleting.add((sender, options) => {
+				try {
+					// Demo-specific completion validation
+					if (isDemo && demoRequireAllQuestions) {
+						const unansweredQuestions = validateDemoCompletion(sender)
+						if (unansweredQuestions.length > 0) {
+							// Prevent completion by setting allowComplete to false
+							options.allowComplete = false
+
+							// Show error message
+							const questionsText =
+								unansweredQuestions.length === 1
+									? '1 domanda'
+									: `${unansweredQuestions.length} domande`
+
+							const message = `Per completare la demo, devi rispondere a tutte le domande. ${questionsText} rimanenti da completare.`
+
+							// Navigate to first unanswered question
+							const firstUnansweredPage = findFirstUnansweredPage(
+								sender,
+								unansweredQuestions,
+							)
+							sender.currentPageNo = firstUnansweredPage
+
+							// Show message after navigation
+							setTimeout(() => {
+								alert(message)
+							}, 100)
+
+							console.log('🚫 Demo completion blocked:', {
+								unansweredCount: unansweredQuestions.length,
+								firstUnansweredPage,
+								unansweredQuestions: unansweredQuestions.map((q) => q.name),
+							})
+							return // Prevent completion
+						}
+					}
+				} catch (error) {
+					console.error('Error in onCompleting:', error)
+				}
+			})
+
+			// Handle successful completion
 			survey.onComplete.add((sender) => {
 				try {
 					if (onCompleteRef.current) {
