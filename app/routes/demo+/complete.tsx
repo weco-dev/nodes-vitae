@@ -20,6 +20,10 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Separator } from '#app/components/ui/separator.tsx'
 import {
+	demoRadio01,
+	demoRadio02,
+} from '#app/utils/assessment/radiogroup-answers.ts'
+import {
 	trackDemoCompletion,
 	trackDemoConversion,
 	trackDemoReset,
@@ -35,6 +39,21 @@ import { type Route } from './+types/complete'
 export async function loader({}: Route.LoaderArgs) {
 	// No authentication required for demo
 	return {}
+}
+
+/**
+ * Get the text value corresponding to a choice value from demo radio options
+ */
+function getChoiceText(choiceValue: string): string {
+	// Get texts from both demo radio option sets for the same value
+	const option1 = demoRadio01.find((option) => option.value === choiceValue)
+	const option2 = demoRadio02.find((option) => option.value === choiceValue)
+
+	const texts = []
+	if (option1) texts.push(option1.text.toLowerCase())
+	if (option2) texts.push(option2.text.toLowerCase())
+
+	return texts.length > 0 ? texts.join('; ') : choiceValue
 }
 
 export default function DemoComplete() {
@@ -146,6 +165,21 @@ function DemoResultsContent({
 										{Math.round(sessionStats.completionRate * 100)}%
 									</span>
 								</div>
+								{choiceAnalysis.totalRadioAnswers > 0 &&
+									choiceAnalysis.choice && (
+										<div className="text-muted-foreground text-sm">
+											<div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+												<span className="font-medium">
+													Risposta più frequente:{' '}
+													{getChoiceText(choiceAnalysis.choice)}
+												</span>
+												<span className="text-right font-medium whitespace-nowrap sm:ml-4">
+													{choiceAnalysis.count}{' '}
+													{choiceAnalysis.count === 1 ? 'volta' : 'volte'}
+												</span>
+											</div>
+										</div>
+									)}
 							</div>
 						</CardContent>
 					</Card>
@@ -155,15 +189,12 @@ function DemoResultsContent({
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
-									<Icon name="question-mark-circled" className="h-5 w-5" />
-									Cosa puoi fare ora?
+									<Icon name="clipboard-check" className="h-5 w-5" />
+									{recommendation.title}
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div>
-									<h4 className="text-md mb-2 font-semibold">
-										{recommendation.title}
-									</h4>
 									<p className="text-muted-foreground text-sm leading-relaxed">
 										{recommendation.description}
 									</p>
