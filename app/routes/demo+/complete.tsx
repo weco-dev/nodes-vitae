@@ -158,23 +158,10 @@ function DemoResultsContent({
 									<Icon name="question-mark-circled" className="h-5 w-5" />
 									Cosa puoi fare ora?
 								</CardTitle>
-								<CardDescription>
-									{choiceAnalysis.choice ? (
-										<>
-											Basata sulle tue risposte ({choiceAnalysis.count} domande
-											con scelta "{choiceAnalysis.choice}")
-										</>
-									) : (
-										<>
-											Basata sulle tue {choiceAnalysis.totalRadioAnswers}{' '}
-											risposte
-										</>
-									)}
-								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div>
-									<h4 className="mb-2 text-lg font-semibold">
+									<h4 className="text-md mb-2 font-semibold">
 										{recommendation.title}
 									</h4>
 									<p className="text-muted-foreground text-sm leading-relaxed">
@@ -184,98 +171,6 @@ function DemoResultsContent({
 							</CardContent>
 						</Card>
 					)}
-
-					{/* Sample Recommendations */}
-					<Card>
-						<CardHeader>
-							<CardTitle className="flex items-center gap-2">
-								<Icon name="question-mark-circled" className="h-5 w-5" />
-								Cosa puoi fare ora?
-							</CardTitle>
-							<CardDescription>
-								Raccomandazioni basate sulle tue risposte
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “Non ci ho mai pensato”
-									o “Per niente importante”
-								</p>
-								<ul className="mb-4 space-y-2">
-									<li>
-										<Icon name="check" className="text-primary">
-											Iniziare a valutare i rischi nella tua attività
-											quotidiana, come suggerisce il primo principio OCSE.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Impegnarti a raccogliere informazioni e a creare una base
-											di conoscenza: chi lavora per te, in che condizioni, con
-											quali contratti.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Scoprire strumenti semplici e guidati per fare i primi
-											passi: il nostro questionario completo può aiutarti in
-											modo pratico.
-										</Icon>
-									</li>
-								</ul>
-							</div>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “A volte ci penso ma
-									non ho fatto nulla al riguardo” o “Poco importante”
-								</p>
-								<p className="mb-4 space-y-2">
-									Hai già identificato alcuni temi importanti per i diritti dei
-									lavoratori, ma secondo i principi OCSE è fondamentale passare
-									dalla consapevolezza all’azione. Solo così potrai prevenire o
-									ridurre possibili rischi.
-								</p>
-							</div>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “Si e ho agito per
-									assicurarmene” o “Molto importante” [3]
-								</p>
-								<ul className="mb-4 space-y-2">
-									<li>
-										<Icon name="check" className="text-primary">
-											Creare un sistema di monitoraggio continuo, anche
-											documentando le buone pratiche che già applichi.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Comunicare questi impegni ai tuoi partner e collaboratori.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Considerare piccoli strumenti di verifica regolare e
-											accesso a sistemi di reclamo, per garantire miglioramenti
-											continui.
-										</Icon>
-									</li>
-								</ul>
-							</div>
-							{/* <ul className="space-y-3">
-								{mockRecommendations.map((rec, index) => (
-									<li key={index} className="flex items-start gap-3">
-										<Icon
-											name="arrow-right"
-											className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0"
-										/>
-										<span className="text-sm">{rec}</span>
-									</li>
-								))}
-							</ul> */}
-						</CardContent>
-					</Card>
 				</div>
 
 				{/* Conversion Sidebar */}

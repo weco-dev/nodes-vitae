@@ -633,15 +633,17 @@ export function SurveyComponent({
 			// Configure navigation buttons based on navigation state
 			survey.showNavigationButtons = !isNavigating
 
+			// Configure Italian button labels for all assessments
+			survey.pageNextText = 'Prossima →'
+			survey.pagePrevText = '← Precedente'
+
 			// Demo-specific configuration
 			if (isDemo) {
-				survey.showProgressBar = 'bottom'
+				survey.showProgressBar = 'off' // Completely hide progress bar for demo
 				survey.showTitle = false
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
 				survey.completeText = 'Completa la demo'
-				survey.pageNextText = 'Prossima →'
-				survey.pagePrevText = '← Precedente'
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {
@@ -813,6 +815,7 @@ export function SurveyComponent({
 						})
 
 						fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
+						fieldNameDiv.style.textWrap = 'auto'
 						fieldNameDiv.textContent = question.name
 
 						console.log('📋 Created field name element:', fieldNameDiv)
@@ -871,6 +874,7 @@ export function SurveyComponent({
 						const umbrellaTitleDiv = document.createElement('div')
 						umbrellaTitleDiv.className =
 							'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
+						umbrellaTitleDiv.style.textWrap = 'auto'
 						umbrellaTitleDiv.innerHTML =
 							processMarkdownSafely(parentQuestionTitle)
 

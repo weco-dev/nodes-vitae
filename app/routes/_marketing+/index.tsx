@@ -433,22 +433,22 @@ export default function Index() {
 						</p>
 						<div className="md-grid-cols-2 mt-4 grid items-center justify-items-center gap-4 space-y-8 lg:grid-cols-4 lg:space-y-0">
 							<img
-								src="/public/img/next-gen-eu.png"
+								src="/img/next-gen-eu.png"
 								alt="Placeholder"
 								className="col-span-1 h-16"
 							/>
 							<img
-								src="/public/img/mur.png"
+								src="/img/mur.png"
 								alt="Placeholder"
 								className="col-span-1 h-16"
 							/>
 							<img
-								src="/public/img/italia-domani.png"
+								src="/img/italia-domani.png"
 								alt="Placeholder"
 								className="col-span-1 h-16"
 							/>
 							<img
-								src="/public/img/nodes.png"
+								src="/img/nodes.png"
 								alt="Placeholder"
 								className="col-span-1 h-16"
 							/>

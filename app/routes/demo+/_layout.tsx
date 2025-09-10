@@ -33,7 +33,7 @@ export default function DemoLayout() {
 						<div className="bg-border h-6 w-px" />
 						<div className="flex items-center gap-2">
 							<div className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-							<span className="text-muted-foreground text-sm font-medium">
+							<span className="text-muted-foreground hidden text-sm font-medium sm:flex">
 								Questionario Demo
 							</span>
 						</div>

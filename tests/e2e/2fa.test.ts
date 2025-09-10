@@ -44,7 +44,7 @@ test('Users can add 2FA to their account and use it when logging in', async ({
 
 	await page.goto('/login')
 	await expect(page).toHaveURL(`/login`)
-	await page.getByRole('textbox', { name: /username/i }).fill(user.username)
+	await page.getByRole('textbox', { name: /email/i }).fill(user.email)
 	await page.getByLabel(/^password$/i).fill(password)
 	await page.getByRole('button', { name: 'Login', exact: true }).click()
 	await expect(page).toHaveURL(/\/verify/)

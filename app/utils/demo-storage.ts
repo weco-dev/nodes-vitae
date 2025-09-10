@@ -12,7 +12,7 @@
  * - Automatic cleanup and data isolation from production
  */
 
-import { getDemoAnswerableQuestionsCount } from "./demo-questions"
+import { getDemoAnswerableQuestionsCount } from './demo-questions'
 
 const DEMO_STORAGE_KEY = 'vitae-demo-assessment'
 const DEMO_ANALYTICS_KEY = 'vitae-demo-analytics'
@@ -370,29 +370,9 @@ export function getMostAnsweredChoice(): {
 	// Count each choice value from radio group questions
 	Object.entries(demoData.surveyData).forEach(([_key, answer]) => {
 		// Only count valid choice answers (exclude text answers and undefined)
-		if (typeof answer === 'string') {
-			let normalizedChoice: string | null = null
-
-			// Normalize choices to base categories, including "ancora" variations
-			if (answer === 'Non ci ho mai pensato' || answer === 'Per niente importante') {
-				normalizedChoice = 'Non ci ho mai pensato'
-			} else if (
-				answer === 'A volte ci penso ma non ho fatto nulla al riguardo' ||
-				answer === 'Poco importante'
-			) {
-				normalizedChoice = 'Poco importante'
-			} else if (
-				answer === 'Sì e ho agito per assicurarmene' ||
-				answer === 'Molto importante'
-			) {
-				normalizedChoice = 'Molto importante'
-			} 
-
-			if (normalizedChoice) {
-				choiceCounts[normalizedChoice] =
-					(choiceCounts[normalizedChoice] || 0) + 1
-				totalRadioAnswers++
-			}
+		if (typeof answer === 'string' && answer.trim() !== '') {
+			choiceCounts[answer] = (choiceCounts[answer] || 0) + 1
+			totalRadioAnswers++
 		}
 	})
 
@@ -407,11 +387,15 @@ export function getMostAnsweredChoice(): {
 		}
 	})
 
-	return {
+	const result = {
 		choice: mostFrequentChoice,
 		count: maxCount,
 		totalRadioAnswers,
 	}
+
+	console.log('Most Answered Choice Analysis:', result)
+
+	return result
 }
 
 /**

@@ -28,7 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 	const options = await generateRegistrationOptions({
 		rpName: config.rpName,
 		rpID: config.rpID,
-		userName: user.username,
+		userName: user.email,
 		userID: new TextEncoder().encode(userId),
 		userDisplayName: user.name ?? user.email,
 		attestationType: 'none',
