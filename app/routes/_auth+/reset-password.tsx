@@ -19,31 +19,31 @@ export const handle: SEOHandle = {
 	getSitemapEntries: () => null,
 }
 
-export const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
+export const resetPasswordEmailSessionKey = 'resetPasswordEmail'
 
 const ResetPasswordSchema = PasswordAndConfirmPasswordSchema
 
-async function requireResetPasswordUsername(request: Request) {
+async function requireResetPasswordEmail(request: Request) {
 	await requireAnonymous(request)
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	const resetPasswordUsername = verifySession.get(
-		resetPasswordUsernameSessionKey,
+	const resetPasswordEmail = verifySession.get(
+		resetPasswordEmailSessionKey,
 	)
-	if (typeof resetPasswordUsername !== 'string' || !resetPasswordUsername) {
+	if (typeof resetPasswordEmail !== 'string' || !resetPasswordEmail) {
 		throw redirect('/login')
 	}
-	return resetPasswordUsername
+	return resetPasswordEmail
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-	const resetPasswordUsername = await requireResetPasswordUsername(request)
-	return { resetPasswordUsername }
+	const resetPasswordEmail = await requireResetPasswordEmail(request)
+	return { resetPasswordEmail }
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	const resetPasswordUsername = await requireResetPasswordUsername(request)
+	const resetPasswordEmail = await requireResetPasswordEmail(request)
 	const formData = await request.formData()
 	const submission = await parseWithZod(formData, {
 		schema: ResetPasswordSchema.superRefine(async ({ password }, ctx) => {
@@ -66,7 +66,7 @@ export async function action({ request }: Route.ActionArgs) {
 	}
 	const { password } = submission.value
 
-	await resetUserPassword({ username: resetPasswordUsername, password })
+	await resetUserPassword({ email: resetPasswordEmail, password })
 	const verifySession = await verifySessionStorage.getSession()
 	return redirect('/login', {
 		headers: {
@@ -103,7 +103,7 @@ export default function ResetPasswordPage({
 						Reset Password
 					</h1>
 					<p className="text-muted-foreground text-sm">
-						Ciao, {loaderData.resetPasswordUsername}. Nessun problema, succede
+						Ciao, {loaderData.resetPasswordEmail}. Nessun problema, succede
 						sempre.
 					</p>
 				</div>
