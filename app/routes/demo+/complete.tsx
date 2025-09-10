@@ -50,10 +50,10 @@ function getChoiceText(choiceValue: string): string {
 	const option2 = demoRadio02.find((option) => option.value === choiceValue)
 
 	const texts = []
-	if (option1) texts.push(option1.text.toLowerCase())
-	if (option2) texts.push(option2.text.toLowerCase())
+	if (option1) texts.push(`"${option1.text.toLowerCase()}"`)
+	if (option2) texts.push(`"${option2.text.toLowerCase()}"`)
 
-	return texts.length > 0 ? texts.join('; ') : choiceValue
+	return texts.length > 0 ? texts.join(' o ') : choiceValue
 }
 
 export default function DemoComplete() {
@@ -199,6 +199,119 @@ function DemoResultsContent({
 										{recommendation.description}
 									</p>
 								</div>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Next Steps Based on Choice */}
+					{choiceAnalysis.totalRadioAnswers > 0 && choiceAnalysis.choice && (
+						<Card>
+							<CardHeader>
+								<CardTitle className="flex items-center gap-2">
+									<Icon name="arrow-right" className="h-5 w-5" />
+									Cosa puoi fare adesso?
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								{choiceAnalysis.choice === '01' && (
+									<div>
+										<p className="text-muted-foreground mb-2 text-sm italic">
+											Se la maggioranza delle tue risposte è "Non ci ho mai
+											pensato" o "Per niente importante"
+										</p>
+										<ul className="text-muted-foreground space-y-1 text-left text-sm">
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Iniziare a valutare i rischi nella tua attività
+													quotidiana, come suggerisce il primo principio OCSE.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Impegnarti a raccogliere informazioni e a creare una
+													base di conoscenza: chi lavora per te, in che
+													condizioni, con quali contratti.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Scoprire strumenti semplici e guidati per fare i primi
+													passi: il nostro questionario completo può aiutarti in
+													modo pratico.
+												</span>
+											</li>
+										</ul>
+									</div>
+								)}
+
+								{choiceAnalysis.choice === '02' && (
+									<div>
+										<p className="text-muted-foreground mb-2 text-sm italic">
+											Se la maggioranza delle tue risposte è "A volte ci penso
+											ma non ho fatto nulla al riguardo" o "Poco importante"
+										</p>
+										<p className="text-muted-foreground text-sm">
+											Hai già identificato alcuni temi importanti per i diritti
+											dei lavoratori, ma secondo i principi OCSE è fondamentale
+											passare dalla consapevolezza all'azione. Solo così potrai
+											prevenire o ridurre possibili rischi.
+										</p>
+									</div>
+								)}
+
+								{choiceAnalysis.choice === '03' && (
+									<div>
+										<p className="text-muted-foreground mb-2 text-sm italic">
+											Se la maggioranza delle tue risposte è "Si e ho agito per
+											assicurarmene" o "Molto importante"
+										</p>
+										<ul className="text-muted-foreground space-y-1 text-left text-sm">
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Creare un sistema di monitoraggio continuo, anche
+													documentando le buone pratiche che già applichi.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Comunicare questi impegni ai tuoi partner e
+													collaboratori.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Considerare piccoli strumenti di verifica regolare e
+													accesso a sistemi di reclamo, per garantire
+													miglioramenti continui.
+												</span>
+											</li>
+										</ul>
+									</div>
+								)}
 							</CardContent>
 						</Card>
 					)}
