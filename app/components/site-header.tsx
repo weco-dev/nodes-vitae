@@ -21,14 +21,14 @@ export function SiteHeader() {
 					<Link to="https://we.co.it">
 						<Button variant="ghost" className="w-full">
 							<Icon name="heart" />
-							Weco
+							<span className="hidden sm:inline">Weco</span>
 						</Button>
 					</Link>
 
 					<Form action="/logout" method="POST" ref={formRef}>
 						<Button variant="ghost" type="submit" className="w-full">
 							<Icon name="log-out" />
-							Esci dalla Dashboard
+							<span className="hidden sm:inline">Esci dalla Dashboard</span>
 						</Button>
 					</Form>
 				</div>
