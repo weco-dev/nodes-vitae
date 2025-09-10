@@ -36,6 +36,7 @@ import {
 	saveDemoProgressToLocalStorage,
 	saveDemoAnswerToLocalStorage,
 	completeDemoInLocalStorage,
+	clearDemoData,
 } from '#app/utils/demo-storage.ts'
 import { type Route } from './+types/take'
 
@@ -149,6 +150,12 @@ export default function DemoTake() {
 		const endTime = performance.now()
 		trackDemoLoadingPerformance('demo_take_route', endTime - startTime)
 	}, [])
+
+	// Handle demo restart
+	const handleRestartDemo = () => {
+		clearDemoData()
+		window.location.href = '/demo/take'
+	}
 
 	// Demo-specific navigation system (adapted from assessment route)
 	const assessmentNavigation = useAssessmentNavigation(
@@ -646,6 +653,14 @@ export default function DemoTake() {
 									Crea un account gratuito per accedere al questionario completo
 								</p>
 								<div className="flex flex-col justify-center gap-3 sm:flex-row">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleRestartDemo}
+									>
+										<Icon name="reset" className="mr-2 h-4 w-4" />
+										Riprova la demo
+									</Button>
 									<Button size="sm" asChild>
 										<Link to="/signup">Crea account</Link>
 									</Button>
