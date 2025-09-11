@@ -6,8 +6,6 @@ import DocumentCard from './components/documentCard'
 
 export default function DocumentsRoute() {
 	const documentsList = documents
-	console.log('Documents: ', documents)
-	console.log('Document groups: ', documentGroups)
 	return (
 		<div className="flex flex-1 flex-col">
 			<div className="@container/main flex flex-1 flex-col gap-2">

@@ -20,14 +20,14 @@ export function SiteHeader() {
 				<div className="ml-auto flex items-center gap-2">
 					<Link to="https://we.co.it">
 						<Button variant="ghost" className="w-full">
-							<Icon name="heart" />
+							<Icon name="heart" className="hidden sm:inline" />
 							<span className="hidden sm:inline">Weco</span>
 						</Button>
 					</Link>
 
 					<Form action="/logout" method="POST" ref={formRef}>
 						<Button variant="ghost" type="submit" className="w-full">
-							<Icon name="log-out" />
+							<Icon name="log-out" className="hidden sm:inline" />
 							<span className="hidden sm:inline">Esci dalla Dashboard</span>
 						</Button>
 					</Form>

@@ -189,7 +189,7 @@ model Passkey {
 model Assessment {
   id               String    @id @default(cuid())
   userId           String
-  title            String?   // Optional title field
+  title            String? // Optional title field
   status           String    @default("open") // open, completed, archived
   currentPageIndex Int       @default(0)
   surveyData       String    @default("{}") // JSON TEXT field
@@ -197,7 +197,7 @@ model Assessment {
   updatedAt        DateTime  @updatedAt
   completedAt      DateTime?
 
-  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   answers AssessmentAnswer[]
 
   @@index([userId])
@@ -207,16 +207,28 @@ model Assessment {
 model AssessmentAnswer {
   id           String   @id @default(cuid())
   assessmentId String
-  questionId   String   // unique question identifier
-  questionName String   // SurveyJS question name
-  section      String   // question section grouping
-  answer       String   // JSON TEXT field for answer data
+  questionId   String // unique question identifier
+  questionName String // SurveyJS question name
+  section      String // question section grouping
+  answer       String // JSON TEXT field for answer data
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
 
+  @@unique([assessmentId, questionId])
   @@index([assessmentId])
   @@index([assessmentId, questionId])
-  @@unique([assessmentId, questionId])
+}
+
+model DemoSession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique // Generated client-side UUID
+  surveyData  String   @default("{}") // JSON storage, matches Assessment pattern
+  startTime   DateTime @default(now())
+  completedAt DateTime @default(now()) // Only completed sessions are stored
+  isCompleted Boolean  @default(true) // Always true since we only store completed
+
+  @@index([sessionId])
+  @@index([completedAt])
 }

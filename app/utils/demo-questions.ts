@@ -199,9 +199,12 @@ export const demoAssessmentQuestions: DemoQuestionConfig[] = [
 
 /**
  * Convert demo questions to SurveyJS format
+ * @param questions - Array of demo questions
+ * @param forceRequired - Optional: Force all questions to be required regardless of their isRequired setting
  */
 export function convertDemoToSurveyJsFormat(
 	questions: typeof demoAssessmentQuestions,
+	forceRequired: boolean = false,
 ) {
 	const surveyConfig = {
 		title: 'ESG Assessment Demo',
@@ -235,7 +238,7 @@ export function convertDemoToSurveyJsFormat(
 			type: question.type === 'text' ? 'text' : 'radiogroup',
 			name: question.name,
 			title: question.title,
-			isRequired: false, // Remove required constraint for demo
+			isRequired: forceRequired ? true : question.isRequired, // Use forceRequired or original isRequired value
 		}
 
 		if (
