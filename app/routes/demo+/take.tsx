@@ -32,11 +32,17 @@ import {
 	getDemoAnswerableQuestions,
 } from '#app/utils/demo-questions.ts'
 import {
+	saveCompletedDemoSession,
+	demoSessionExists,
+	type CompletedDemoSessionData,
+} from '#app/utils/demo-session.server.ts'
+import {
 	getDemoDataFromLocalStorage,
 	saveDemoProgressToLocalStorage,
 	saveDemoAnswerToLocalStorage,
 	completeDemoInLocalStorage,
 	clearDemoData,
+	ensureDemoSessionId,
 } from '#app/utils/demo-storage.ts'
 import { type Route } from './+types/take'
 
@@ -55,6 +61,7 @@ export async function loader({}: Route.LoaderArgs) {
 	return {
 		assessment: {
 			id: 'demo',
+			sessionId: demoData.sessionId,
 			currentPageIndex: demoData.currentPageIndex,
 			surveyData: demoData.surveyData,
 		},
@@ -112,7 +119,31 @@ export async function action({ request }: Route.ActionArgs) {
 		}
 
 		case 'complete': {
+			const sessionId = formData.get('sessionId') as string
+			const completionDataStr = formData.get('completionData') as string
+
+			// 1. Complete in localStorage (existing) - this runs on client side
 			completeDemoInLocalStorage()
+
+			// 2. NEW: Save completed session to database
+			if (completionDataStr && sessionId && sessionId !== 'ssr-placeholder') {
+				try {
+					const completedData = JSON.parse(
+						completionDataStr,
+					) as CompletedDemoSessionData
+
+					// Check if already stored to prevent duplicates
+					const exists = await demoSessionExists(sessionId)
+
+					if (!exists) {
+						await saveCompletedDemoSession(sessionId, completedData)
+					}
+				} catch (error) {
+					// Database save failure doesn't break demo completion
+					console.warn('Failed to save completed demo session:', error)
+				}
+			}
+
 			return redirect('/demo/complete')
 		}
 
@@ -145,6 +176,9 @@ export default function DemoTake() {
 	useEffect(() => {
 		const startTime = performance.now()
 		initializeDemoAnalytics()
+
+		// Ensure demo session has proper session ID
+		ensureDemoSessionId()
 
 		// Track loading performance
 		const endTime = performance.now()
@@ -511,15 +545,31 @@ export default function DemoTake() {
 
 	const handleComplete = useCallback(
 		(surveyData: any) => {
+			// Get the current demo data to ensure we have the correct sessionId
+			const currentDemoData = getDemoDataFromLocalStorage()
+			const sessionId =
+				currentDemoData.sessionId !== 'ssr-placeholder'
+					? currentDemoData.sessionId
+					: assessment.sessionId
+
+			// Prepare the completion data on the client side
+			const completionData = {
+				sessionId,
+				surveyData: currentDemoData.surveyData,
+				startTime: currentDemoData.startTime,
+			}
+
 			void fetcher.submit(
 				{
 					intent: 'complete',
+					sessionId,
+					completionData: JSON.stringify(completionData),
 					surveyData: JSON.stringify(surveyData),
 				},
 				{ method: 'POST' },
 			)
 		},
-		[fetcher],
+		[fetcher, assessment.sessionId],
 	)
 
 	const handleError = useCallback((error: Error, errorInfo: any) => {

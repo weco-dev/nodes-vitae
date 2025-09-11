@@ -13,11 +13,13 @@
  */
 
 import { getDemoAnswerableQuestionsCount } from './demo-questions'
+import { getDemoSessionId, clearDemoSessionId } from './demo-session.client.ts'
 
 const DEMO_STORAGE_KEY = 'vitae-demo-assessment'
 const DEMO_ANALYTICS_KEY = 'vitae-demo-analytics'
 
 export interface DemoData {
+	sessionId: string // NEW: Add session tracking
 	currentPageIndex: number
 	surveyData: Record<string, any>
 	startTime: number
@@ -48,6 +50,11 @@ export function getDemoDataFromLocalStorage(): DemoData {
 
 		// Ensure we have all required fields
 		return {
+			sessionId:
+				parsed.sessionId ??
+				(typeof window !== 'undefined'
+					? getDemoSessionId()
+					: 'ssr-placeholder'),
 			currentPageIndex: parsed.currentPageIndex ?? 0,
 			surveyData: parsed.surveyData ?? {},
 			startTime: parsed.startTime ?? Date.now(),
@@ -131,12 +138,14 @@ export function completeDemoInLocalStorage(): void {
 
 	try {
 		const current = getDemoDataFromLocalStorage()
+
 		const updated: DemoData = {
 			...current,
 			isCompleted: true,
 			lastUpdated: Date.now(),
 		}
 		localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(updated))
+
 		trackDemoAnalytics('demo_completed', {
 			totalQuestions: Object.keys(current.surveyData).length,
 			sessionDuration: Date.now() - current.startTime,
@@ -155,6 +164,7 @@ export function clearDemoData(): void {
 	try {
 		localStorage.removeItem(DEMO_STORAGE_KEY)
 		localStorage.removeItem(DEMO_ANALYTICS_KEY)
+		clearDemoSessionId()
 	} catch (error) {
 		console.warn('Failed to clear demo data:', error)
 	}
@@ -290,6 +300,8 @@ export function isDemoSessionAbandoned(timeoutMinutes: number = 30): boolean {
  */
 function getDefaultDemoData(): DemoData {
 	return {
+		sessionId:
+			typeof window !== 'undefined' ? getDemoSessionId() : 'ssr-placeholder',
 		currentPageIndex: 0,
 		surveyData: {},
 		startTime: Date.now(),
@@ -412,6 +424,63 @@ export function exportDemoData(): {
 		analytics: getDemoAnalyticsEvents(),
 		stats: getDemoSessionStats(),
 		exportTime: Date.now(),
+	}
+}
+
+/**
+ * Get completed demo data formatted for database storage
+ */
+export function getCompletedDemoDataForStorage(): {
+	sessionId: string
+	surveyData: Record<string, any>
+	startTime: number
+} | null {
+	if (typeof window === 'undefined') {
+		return null
+	}
+
+	try {
+		const demoData = getDemoDataFromLocalStorage()
+
+		// Only return data if demo is completed
+		if (!demoData.isCompleted) {
+			return null
+		}
+
+		const result = {
+			sessionId: demoData.sessionId,
+			surveyData: demoData.surveyData,
+			startTime: demoData.startTime,
+		}
+
+		return result
+	} catch (error) {
+		console.warn('Failed to get completed demo data for storage:', error)
+		return null
+	}
+}
+
+/**
+ * Ensure demo session has a proper session ID (client-side only)
+ */
+export function ensureDemoSessionId(): void {
+	if (typeof window === 'undefined') return
+
+	try {
+		const current = getDemoDataFromLocalStorage()
+
+		// If session ID is placeholder or missing, generate a new one
+		if (!current.sessionId || current.sessionId === 'ssr-placeholder') {
+			const newSessionId = getDemoSessionId()
+			const updated: DemoData = {
+				...current,
+				sessionId: newSessionId,
+				lastUpdated: Date.now(),
+			}
+			localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(updated))
+		}
+	} catch (error) {
+		console.warn('Failed to ensure demo session ID:', error)
 	}
 }
 
