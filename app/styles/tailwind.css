@@ -272,9 +272,11 @@
 /* SurveyJS default title wrapping */
 .sv_q_title,
 .sv-question__title,
-.sv_q_title_text {
+.sv_q_title_text,
+.sd-question__title,
+.sv-string-viewer {
 	@apply break-words whitespace-normal;
-	@apply leading-relaxed;
+	@apply leading-relaxed font-normal;
 	white-space: normal !important;
 	word-break: break-word !important;
 	overflow-wrap: anywhere !important;
