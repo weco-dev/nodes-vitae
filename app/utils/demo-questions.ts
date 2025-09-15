@@ -207,8 +207,8 @@ export function convertDemoToSurveyJsFormat(
 	forceRequired: boolean = false,
 ) {
 	const surveyConfig = {
-		title: 'ESG Assessment Demo',
-		description: 'Experience our ESG assessment with 25 sample questions',
+		title: 'Vitae Demo',
+		description: 'Metti alla prova la tua azienda con il questionario demo',
 		logoPosition: 'right',
 		showProgressBar: 'off', // Hide progress bar completely
 		progressBarType: 'pages',

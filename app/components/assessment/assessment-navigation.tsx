@@ -569,7 +569,7 @@ export function AssessmentNavigation({
 							Risposte {currentQuestion} / {totalQuestions}
 						</div>
 						<div className="text-sm font-medium">
-							Compleato:{' '}
+							Completato:{' '}
 							{Math.round((answeredQuestions.size / totalQuestions) * 100)}%
 						</div>
 					</div>

@@ -213,7 +213,7 @@ export default function Index() {
 									<ul>
 										<li>
 											<Icon name="check" className="text-primary">
-												25 domande
+												15 domande
 											</Icon>
 										</li>
 										<li>
@@ -259,7 +259,7 @@ export default function Index() {
 									<ul className="lg:mr-4">
 										<li>
 											<Icon name="check" className="text-primary">
-												89 domande
+												86 domande
 											</Icon>
 										</li>
 										<li>
