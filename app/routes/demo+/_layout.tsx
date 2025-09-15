@@ -9,6 +9,7 @@
 import { Outlet, Link } from 'react-router'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
+import { clearDemoData } from '#app/utils/demo-storage.ts'
 import { type Route } from './+types/_layout'
 
 export async function loader({}: Route.LoaderArgs) {
@@ -17,6 +18,11 @@ export async function loader({}: Route.LoaderArgs) {
 }
 
 export default function DemoLayout() {
+	const handleRestartDemo = () => {
+		clearDemoData()
+		window.location.href = '/demo/take'
+	}
+
 	return (
 		<div className="bg-background min-h-screen">
 			<header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 border-b backdrop-blur">
@@ -33,7 +39,7 @@ export default function DemoLayout() {
 						<div className="bg-border h-6 w-px" />
 						<div className="flex items-center gap-2">
 							<div className="h-2 w-2 animate-pulse rounded-full bg-blue-500" />
-							<span className="text-muted-foreground text-sm font-medium">
+							<span className="text-muted-foreground hidden text-sm font-medium sm:flex">
 								Questionario Demo
 							</span>
 						</div>
@@ -44,6 +50,15 @@ export default function DemoLayout() {
 							<Icon name="check" className="h-3 w-3" />
 							<span>Senza registrazione</span>
 						</div>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleRestartDemo}
+							className="hidden sm:flex"
+						>
+							<Icon name="reset" className="mr-2 h-4 w-4" />
+							Riprova la demo
+						</Button>
 						<Button size="sm" asChild>
 							<Link to="/signup">Crea account</Link>
 						</Button>

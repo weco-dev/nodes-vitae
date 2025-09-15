@@ -95,8 +95,8 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 			<hr className="border-muted-foreground/20" />
 
 			<div className="rounded-lg border p-6">
-				<div className="flex items-start gap-6">
-					<div className="bg-muted flex h-20 w-20 shrink-0 rounded-full">
+				<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+					<div className="bg-muted flex h-20 w-20 shrink-0 self-center rounded-full sm:self-start">
 						{user.image?.objectKey ? (
 							<img
 								src={
@@ -114,7 +114,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 							/>
 						)}
 					</div>
-					<div className="flex-1">
+					<div className="flex-1 text-center sm:text-left">
 						<div className="">
 							<h2 className="text-xl font-semibold">
 								{user.name ?? user.username}
@@ -140,7 +140,7 @@ export default function EditUserProfile({ loaderData }: Route.ComponentProps) {
 							</div>
 						</div>
 					</div>
-					<div className="flex gap-2">
+					<div className="flex justify-center sm:justify-start">
 						<Link
 							to="me"
 							className="bg-background hover:bg-muted/50 inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors"

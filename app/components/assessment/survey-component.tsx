@@ -47,6 +47,12 @@
  * - **Text Wrapping**: Improved text flow for long question content
  * - **Hierarchy Display**: Clear visual hierarchy for umbrella question relationships
  *
+ * ### Demo Mode Features:
+ * - **Optional Validation**: Questions can be made required or optional
+ * - **Runtime Configuration**: `demoRequireAllQuestions` prop forces all questions to be required
+ * - **Flexible Survey Generation**: `convertDemoToSurveyJsFormat(questions, forceRequired)` parameter
+ * - **Page-Level Validation**: When required, validation occurs on each page navigation
+ *
  * The component is designed to handle complex assessment workflows where users may:
  * - Navigate away and return to continue surveys
  * - Experience network interruptions during completion
@@ -389,6 +395,15 @@
  *   onComplete={handleAssessmentCompletion}
  * />
  *
+ * // Demo usage with required questions
+ * <SurveyComponent
+ *   surveyJson={convertDemoToSurveyJsFormat(demoQuestions, true)}
+ *   isDemo={true}
+ *   demoRequireAllQuestions={true}
+ *   onValueChanged={handleDemoAnswerTracking}
+ *   onComplete={handleDemoCompletion}
+ * />
+ *
  * @see {@link app/routes/assessment+/take.tsx} for usage example
  * @see {@link app/utils/assessment-questions.ts} for survey JSON structure
  * @see {@link app/utils/assessment.server.ts} for backend persistence
@@ -421,6 +436,7 @@ interface SurveyComponentProps {
 	isNavigating?: boolean
 	onNavigationStateChange?: (isNavigating: boolean) => void
 	isDemo?: boolean // Add demo mode support
+	demoRequireAllQuestions?: boolean // Force all demo questions to be required
 }
 
 function QuestionAccordion({
@@ -567,6 +583,61 @@ function processMarkdownSafely(markdown: string): string {
 	)
 }
 
+// Helper function for demo completion validation
+function validateDemoCompletion(
+	survey: any,
+): Array<{ questionId: string; name: string; title: string }> {
+	const unansweredQuestions: Array<{
+		questionId: string
+		name: string
+		title: string
+	}> = []
+
+	survey.getAllQuestions().forEach((question: any) => {
+		if (question.isRequired) {
+			const value = question.value
+			const isEmpty =
+				value === undefined ||
+				value === null ||
+				value === '' ||
+				(typeof value === 'string' && value.trim() === '')
+
+			if (isEmpty) {
+				unansweredQuestions.push({
+					questionId: question.questionId || question.name,
+					name: question.name,
+					title: question.title || 'Untitled Question',
+				})
+			}
+		}
+	})
+
+	return unansweredQuestions
+}
+
+// Helper function to find the first unanswered required question page
+function findFirstUnansweredPage(
+	survey: any,
+	unansweredQuestions: Array<{
+		questionId: string
+		name: string
+		title: string
+	}>,
+) {
+	const pages = survey.pages
+
+	for (let i = 0; i < pages.length; i++) {
+		const pageQuestions = pages[i].questions
+		if (pageQuestions.length > 0) {
+			const questionName = pageQuestions[0].name
+			if (unansweredQuestions.some((uq) => uq.name === questionName)) {
+				return i
+			}
+		}
+	}
+	return 0
+}
+
 export function SurveyComponent({
 	surveyJson,
 	initialData = {},
@@ -578,6 +649,7 @@ export function SurveyComponent({
 	isNavigating = false,
 	onNavigationStateChange: _onNavigationStateChange,
 	isDemo = false,
+	demoRequireAllQuestions = false,
 }: SurveyComponentProps) {
 	console.log('🎯 SurveyComponent render called')
 	const surveyRef = useRef<Model | null>(null)
@@ -633,15 +705,30 @@ export function SurveyComponent({
 			// Configure navigation buttons based on navigation state
 			survey.showNavigationButtons = !isNavigating
 
+			// Configure Italian button labels for all assessments
+			survey.pageNextText = 'Prossima →'
+			survey.pagePrevText = '← Precedente'
+
 			// Demo-specific configuration
 			if (isDemo) {
-				survey.showProgressBar = 'bottom'
+				survey.showProgressBar = 'off' // Completely hide progress bar for demo
 				survey.showTitle = false
 				survey.completedHtml =
 					'<div class="text-center"><p class="text-muted-foreground">Demo completed! Redirecting to results...</p></div>'
 				survey.completeText = 'Completa la demo'
-				survey.pageNextText = 'Prossima →'
-				survey.pagePrevText = '← Precedente'
+
+				// Demo validation configuration
+				if (demoRequireAllQuestions) {
+					// Validate on each page navigation to ensure questions are answered
+					survey.checkErrorsMode = 'onNextPage'
+					// Make all questions required at runtime
+					survey.getAllQuestions().forEach((question) => {
+						question.isRequired = true
+					})
+				} else {
+					// Keep default validation mode for optional demo flow
+					survey.checkErrorsMode = 'onComplete'
+				}
 
 				// Add demo watermark or indicator if needed
 				if (survey.title) {
@@ -721,7 +808,50 @@ export function SurveyComponent({
 				}
 			})
 
-			// Handle completion
+			// Handle completion validation before allowing completion
+			survey.onCompleting.add((sender, options) => {
+				try {
+					// Demo-specific completion validation
+					if (isDemo && demoRequireAllQuestions) {
+						const unansweredQuestions = validateDemoCompletion(sender)
+						if (unansweredQuestions.length > 0) {
+							// Prevent completion by setting allowComplete to false
+							options.allowComplete = false
+
+							// Show error message
+							const questionsText =
+								unansweredQuestions.length === 1
+									? '1 domanda'
+									: `${unansweredQuestions.length} domande`
+
+							const message = `Per completare la demo, devi rispondere a tutte le domande. ${questionsText} rimanenti da completare.`
+
+							// Navigate to first unanswered question
+							const firstUnansweredPage = findFirstUnansweredPage(
+								sender,
+								unansweredQuestions,
+							)
+							sender.currentPageNo = firstUnansweredPage
+
+							// Show message after navigation
+							setTimeout(() => {
+								alert(message)
+							}, 100)
+
+							console.log('🚫 Demo completion blocked:', {
+								unansweredCount: unansweredQuestions.length,
+								firstUnansweredPage,
+								unansweredQuestions: unansweredQuestions.map((q) => q.name),
+							})
+							return // Prevent completion
+						}
+					}
+				} catch (error) {
+					console.error('Error in onCompleting:', error)
+				}
+			})
+
+			// Handle successful completion
 			survey.onComplete.add((sender) => {
 				try {
 					if (onCompleteRef.current) {
@@ -813,6 +943,7 @@ export function SurveyComponent({
 						})
 
 						fieldNameDiv.className = `${isUmbrellaQuestion ? '-mt-6' : '-mt-4'} -ml-6 -mr-6 ${isUmbrellaQuestion ? 'sm:-mt-12 sm:-ml-12 sm:-mr-12' : 'sm:-mt-8 sm:-ml-10 sm:-mr-10'} p-4 ${isUmbrellaQuestion ? 'bg-blue-50 text-blue-700 border-b border-blue-200' : 'bg-primary/10 text-primary border-b border-primary/10'} text-sm font-medium mb-6`
+						fieldNameDiv.style.textWrap = 'auto'
 						fieldNameDiv.textContent = question.name
 
 						console.log('📋 Created field name element:', fieldNameDiv)
@@ -871,6 +1002,7 @@ export function SurveyComponent({
 						const umbrellaTitleDiv = document.createElement('div')
 						umbrellaTitleDiv.className =
 							'umbrella-question-title sm:-mt-8 sm:-ml-10 sm:-mr-10 -mt-4 -ml-6 -mr-6 mb-4 sm:mb-8 p-3 bg-blue-50 text-blue-700 text-base font-semibold mb-2 text-sm break-words whitespace-normal py-6 px-4'
+						umbrellaTitleDiv.style.textWrap = 'auto'
 						umbrellaTitleDiv.innerHTML =
 							processMarkdownSafely(parentQuestionTitle)
 

@@ -75,30 +75,40 @@ export function DynamicBreadcrumb() {
 		)
 	}
 
+	const currentPage = breadcrumbs[breadcrumbs.length - 1]
+
 	return (
-		<Breadcrumb>
-			<BreadcrumbList>
-				{breadcrumbs.map((breadcrumb, index) => (
-					<div key={index} className="flex items-center">
-						<BreadcrumbItem>
-							{breadcrumb.href ? (
-								<BreadcrumbLink href={breadcrumb.href}>
-									<span className="text-base font-medium">
-										{breadcrumb.label}
-									</span>
-								</BreadcrumbLink>
-							) : (
-								<BreadcrumbPage>
-									<span className="text-base font-medium">
-										{breadcrumb.label}
-									</span>
-								</BreadcrumbPage>
-							)}
-						</BreadcrumbItem>
-						{index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-					</div>
-				))}
-			</BreadcrumbList>
-		</Breadcrumb>
+		<>
+			{/* Mobile: Show only current page */}
+			<div className="sm:hidden">
+				<h1 className="text-base font-medium">{currentPage?.label}</h1>
+			</div>
+
+			{/* Desktop: Show full breadcrumb */}
+			<Breadcrumb className="hidden sm:block">
+				<BreadcrumbList>
+					{breadcrumbs.map((breadcrumb, index) => (
+						<div key={index} className="flex items-center">
+							<BreadcrumbItem>
+								{breadcrumb.href ? (
+									<BreadcrumbLink href={breadcrumb.href}>
+										<span className="text-base font-medium">
+											{breadcrumb.label}
+										</span>
+									</BreadcrumbLink>
+								) : (
+									<BreadcrumbPage>
+										<span className="text-base font-medium">
+											{breadcrumb.label}
+										</span>
+									</BreadcrumbPage>
+								)}
+							</BreadcrumbItem>
+							{index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+						</div>
+					))}
+				</BreadcrumbList>
+			</Breadcrumb>
+		</>
 	)
 }

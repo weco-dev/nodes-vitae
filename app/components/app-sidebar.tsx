@@ -38,6 +38,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from '#app/components/ui/sidebar'
 
 const data = {
@@ -152,6 +153,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const { closeMobileSidebar } = useSidebar()
+
 	return (
 		<Sidebar collapsible="offcanvas" {...props}>
 			<SidebarHeader>
@@ -161,7 +164,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							asChild
 							className="data-[slot=sidebar-menu-button]:!p-1.5"
 						>
-							<a href="/">
+							<a href="/" onClick={closeMobileSidebar}>
 								<span className="text-base font-semibold">Vitae</span>
 							</a>
 						</SidebarMenuButton>

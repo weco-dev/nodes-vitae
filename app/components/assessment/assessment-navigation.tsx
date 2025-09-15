@@ -87,6 +87,10 @@ interface AssessmentNavigationProps {
 	canNavigatePrevious?: boolean
 	canNavigateNext?: boolean
 
+	// Demo mode props
+	isDemo?: boolean
+	demoRequireAllQuestions?: boolean
+
 	// Styling
 	className?: string
 }
@@ -105,6 +109,8 @@ export function AssessmentNavigation({
 	onNavigateNext,
 	canNavigatePrevious = false,
 	canNavigateNext = false,
+	isDemo = false,
+	demoRequireAllQuestions = false,
 	className,
 }: AssessmentNavigationProps) {
 	// Refs for scroll containers
@@ -332,6 +338,12 @@ export function AssessmentNavigation({
 								const isAnswered = answeredQuestions.has(question.questionId)
 								const isCurrent = index === currentIndex
 								const isUmbrella = question.type === 'group'
+								const isRequiredAndUnanswered =
+									isDemo &&
+									demoRequireAllQuestions &&
+									question.isRequired &&
+									!isAnswered &&
+									!isUmbrella
 
 								return (
 									<button
@@ -356,12 +368,24 @@ export function AssessmentNavigation({
 												// Current answered question
 												'ring-primary/30 rounded-full border-green-500 bg-green-500 ring-2 sm:ring-4':
 													isAnswered && isCurrent && !isUmbrella,
-												// Current unanswered question
+												// Demo: Required unanswered questions (red indicators)
+												'rounded-full border-red-500 bg-red-100 ring-1 ring-red-300 hover:bg-red-200':
+													isRequiredAndUnanswered && !isCurrent,
+												// Demo: Current required unanswered question
+												'rounded-full border-red-500 bg-red-100 ring-2 ring-red-300 sm:ring-4':
+													isRequiredAndUnanswered && isCurrent,
+												// Current unanswered question (non-demo or optional)
 												'border-primary ring-primary/30 rounded-full bg-transparent ring-2 sm:ring-4':
-													!isAnswered && isCurrent && !isUmbrella,
-												// Unanswered question
+													!isAnswered &&
+													isCurrent &&
+													!isUmbrella &&
+													!isRequiredAndUnanswered,
+												// Unanswered question (non-demo or optional)
 												'rounded-full border-gray-300 bg-gray-300 hover:bg-gray-400':
-													!isAnswered && !isCurrent && !isUmbrella,
+													!isAnswered &&
+													!isCurrent &&
+													!isUmbrella &&
+													!isRequiredAndUnanswered,
 											},
 										)}
 										aria-label={`Question ${index + 1}: ${question.title} - ${
@@ -369,7 +393,9 @@ export function AssessmentNavigation({
 												? 'Overview'
 												: isAnswered
 													? 'Answered'
-													: 'Not answered'
+													: isRequiredAndUnanswered
+														? 'Required - Not answered'
+														: 'Not answered'
 										}${isCurrent ? ' (Current)' : ''}`}
 										title={`${question.section}: ${question.title}`}
 									></button>
@@ -431,6 +457,12 @@ export function AssessmentNavigation({
 							const isAnswered = answeredQuestions.has(question.questionId)
 							const isCurrent = index === currentIndex
 							const isUmbrella = question.type === 'group'
+							const isRequiredAndUnanswered =
+								isDemo &&
+								demoRequireAllQuestions &&
+								question.isRequired &&
+								!isAnswered &&
+								!isUmbrella
 
 							return (
 								<button
@@ -455,12 +487,24 @@ export function AssessmentNavigation({
 											// Current answered question
 											'ring-primary/30 rounded-full border-green-500 bg-green-500 ring-4':
 												isAnswered && isCurrent && !isUmbrella,
-											// Current unanswered question
+											// Demo: Required unanswered questions (red indicators)
+											'rounded-full border-red-500 bg-red-100 ring-2 ring-red-300 hover:bg-red-200':
+												isRequiredAndUnanswered && !isCurrent,
+											// Demo: Current required unanswered question
+											'rounded-full border-red-500 bg-red-100 ring-4 ring-red-300':
+												isRequiredAndUnanswered && isCurrent,
+											// Current unanswered question (non-demo or optional)
 											'border-primary ring-primary/30 rounded-full bg-transparent ring-4':
-												!isAnswered && isCurrent && !isUmbrella,
-											// Unanswered question
+												!isAnswered &&
+												isCurrent &&
+												!isUmbrella &&
+												!isRequiredAndUnanswered,
+											// Unanswered question (non-demo or optional)
 											'rounded-full border-gray-300 bg-gray-300 hover:bg-gray-400':
-												!isAnswered && !isCurrent && !isUmbrella,
+												!isAnswered &&
+												!isCurrent &&
+												!isUmbrella &&
+												!isRequiredAndUnanswered,
 										},
 									)}
 									aria-label={`Question ${index + 1}: ${question.title} - ${
@@ -468,7 +512,9 @@ export function AssessmentNavigation({
 											? 'Overview'
 											: isAnswered
 												? 'Answered'
-												: 'Not answered'
+												: isRequiredAndUnanswered
+													? 'Required - Not answered'
+													: 'Not answered'
 									}${isCurrent ? ' (Current)' : ''}`}
 									title={`${question.section}: ${question.title}`}
 								></button>

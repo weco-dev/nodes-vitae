@@ -14,7 +14,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { login, requireAnonymous } from '#app/utils/auth.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { getErrorMessage, useIsPending } from '#app/utils/misc.tsx'
-import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema, EmailSchema } from '#app/utils/user-validation.ts'
 import { type Route } from './+types/login.ts'
 import { handleNewSession } from './login.server.ts'
 
@@ -23,7 +23,7 @@ export const handle: SEOHandle = {
 }
 
 const LoginFormSchema = z.object({
-	username: UsernameSchema,
+	email: EmailSchema,
 	password: PasswordSchema,
 	redirectTo: z.string().optional(),
 	remember: z.boolean().optional(),
@@ -51,7 +51,7 @@ export async function action({ request }: Route.ActionArgs) {
 				if (!session) {
 					ctx.addIssue({
 						code: z.ZodIssueCode.custom,
-						message: 'Invalid username or password',
+						message: 'Invalid email or password',
 					})
 					return z.NEVER
 				}
@@ -102,7 +102,7 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 						Accedi al tuo account
 					</h1>
 					<p className="text-muted-foreground text-sm">
-						Inserisci username e password per accedere
+						Inserisci email e password per accedere
 					</p>
 				</div>
 
@@ -113,14 +113,14 @@ export default function LoginPage({ actionData }: Route.ComponentProps) {
 						<Form method="POST" {...getFormProps(form)}>
 							<HoneypotInputs />
 							<Field
-								labelProps={{ children: 'Username' }}
+								labelProps={{ children: 'Email' }}
 								inputProps={{
-									...getInputProps(fields.username, { type: 'text' }),
+									...getInputProps(fields.email, { type: 'email' }),
 									autoFocus: true,
 									className: 'lowercase',
-									autoComplete: 'username',
+									autoComplete: 'email',
 								}}
-								errors={fields.username.errors}
+								errors={fields.email.errors}
 							/>
 
 							<Field

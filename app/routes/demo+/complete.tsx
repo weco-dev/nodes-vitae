@@ -20,6 +20,10 @@ import {
 import { Icon } from '#app/components/ui/icon.tsx'
 import { Separator } from '#app/components/ui/separator.tsx'
 import {
+	demoRadio01,
+	demoRadio02,
+} from '#app/utils/assessment/radiogroup-answers.ts'
+import {
 	trackDemoCompletion,
 	trackDemoConversion,
 	trackDemoReset,
@@ -35,6 +39,21 @@ import { type Route } from './+types/complete'
 export async function loader({}: Route.LoaderArgs) {
 	// No authentication required for demo
 	return {}
+}
+
+/**
+ * Get the text value corresponding to a choice value from demo radio options
+ */
+function getChoiceText(choiceValue: string): string {
+	// Get texts from both demo radio option sets for the same value
+	const option1 = demoRadio01.find((option) => option.value === choiceValue)
+	const option2 = demoRadio02.find((option) => option.value === choiceValue)
+
+	const texts = []
+	if (option1) texts.push(`"${option1.text.toLowerCase()}"`)
+	if (option2) texts.push(`"${option2.text.toLowerCase()}"`)
+
+	return texts.length > 0 ? texts.join(' o ') : choiceValue
 }
 
 export default function DemoComplete() {
@@ -146,6 +165,21 @@ function DemoResultsContent({
 										{Math.round(sessionStats.completionRate * 100)}%
 									</span>
 								</div>
+								{choiceAnalysis.totalRadioAnswers > 0 &&
+									choiceAnalysis.choice && (
+										<div className="text-muted-foreground text-sm">
+											<div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+												<span className="font-medium">
+													Risposta più frequente:{' '}
+													{getChoiceText(choiceAnalysis.choice)}
+												</span>
+												<span className="text-right font-medium whitespace-nowrap sm:ml-4">
+													{choiceAnalysis.count}{' '}
+													{choiceAnalysis.count === 1 ? 'volta' : 'volte'}
+												</span>
+											</div>
+										</div>
+									)}
 							</div>
 						</CardContent>
 					</Card>
@@ -155,28 +189,12 @@ function DemoResultsContent({
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
-									<Icon name="question-mark-circled" className="h-5 w-5" />
-									Cosa puoi fare ora?
+									<Icon name="clipboard-check" className="h-5 w-5" />
+									{recommendation.title}
 								</CardTitle>
-								<CardDescription>
-									{choiceAnalysis.choice ? (
-										<>
-											Basata sulle tue risposte ({choiceAnalysis.count} domande
-											con scelta "{choiceAnalysis.choice}")
-										</>
-									) : (
-										<>
-											Basata sulle tue {choiceAnalysis.totalRadioAnswers}{' '}
-											risposte
-										</>
-									)}
-								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div>
-									<h4 className="mb-2 text-lg font-semibold">
-										{recommendation.title}
-									</h4>
 									<p className="text-muted-foreground text-sm leading-relaxed">
 										{recommendation.description}
 									</p>
@@ -185,97 +203,106 @@ function DemoResultsContent({
 						</Card>
 					)}
 
-					{/* Sample Recommendations */}
-					<Card>
-						<CardHeader>
-							<CardTitle className="flex items-center gap-2">
-								<Icon name="question-mark-circled" className="h-5 w-5" />
-								Cosa puoi fare ora?
-							</CardTitle>
-							<CardDescription>
-								Raccomandazioni basate sulle tue risposte
-							</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “Non ci ho mai pensato”
-									o “Per niente importante”
-								</p>
-								<ul className="mb-4 space-y-2">
-									<li>
-										<Icon name="check" className="text-primary">
-											Iniziare a valutare i rischi nella tua attività
-											quotidiana, come suggerisce il primo principio OCSE.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Impegnarti a raccogliere informazioni e a creare una base
-											di conoscenza: chi lavora per te, in che condizioni, con
-											quali contratti.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Scoprire strumenti semplici e guidati per fare i primi
-											passi: il nostro questionario completo può aiutarti in
-											modo pratico.
-										</Icon>
-									</li>
-								</ul>
-							</div>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “A volte ci penso ma
-									non ho fatto nulla al riguardo” o “Poco importante”
-								</p>
-								<p className="mb-4 space-y-2">
-									Hai già identificato alcuni temi importanti per i diritti dei
-									lavoratori, ma secondo i principi OCSE è fondamentale passare
-									dalla consapevolezza all’azione. Solo così potrai prevenire o
-									ridurre possibili rischi.
-								</p>
-							</div>
-							<div>
-								<p className="text-muted-foreground mb-2 italic">
-									Se la maggioranza delle tue risposte è “Si e ho agito per
-									assicurarmene” o “Molto importante” [3]
-								</p>
-								<ul className="mb-4 space-y-2">
-									<li>
-										<Icon name="check" className="text-primary">
-											Creare un sistema di monitoraggio continuo, anche
-											documentando le buone pratiche che già applichi.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Comunicare questi impegni ai tuoi partner e collaboratori.
-										</Icon>
-									</li>
-									<li>
-										<Icon name="check" className="text-primary">
-											Considerare piccoli strumenti di verifica regolare e
-											accesso a sistemi di reclamo, per garantire miglioramenti
-											continui.
-										</Icon>
-									</li>
-								</ul>
-							</div>
-							{/* <ul className="space-y-3">
-								{mockRecommendations.map((rec, index) => (
-									<li key={index} className="flex items-start gap-3">
-										<Icon
-											name="arrow-right"
-											className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0"
-										/>
-										<span className="text-sm">{rec}</span>
-									</li>
-								))}
-							</ul> */}
-						</CardContent>
-					</Card>
+					{/* Next Steps Based on Choice */}
+					{choiceAnalysis.totalRadioAnswers > 0 && choiceAnalysis.choice && (
+						<Card>
+							<CardHeader>
+								<CardTitle className="flex items-center gap-2">
+									<Icon name="arrow-right" className="h-5 w-5" />
+									Cosa puoi fare adesso?
+								</CardTitle>
+							</CardHeader>
+							<CardContent className="space-y-4">
+								{choiceAnalysis.choice === '01' && (
+									<div>
+										<ul className="text-muted-foreground space-y-1 text-left text-sm">
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Iniziare a valutare i rischi nella tua attività
+													quotidiana, come suggerisce il primo principio OCSE.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Impegnarti a raccogliere informazioni e a creare una
+													base di conoscenza: chi lavora per te, in che
+													condizioni, con quali contratti.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Scoprire strumenti semplici e guidati per fare i primi
+													passi: il nostro questionario completo può aiutarti in
+													modo pratico.
+												</span>
+											</li>
+										</ul>
+									</div>
+								)}
+
+								{choiceAnalysis.choice === '02' && (
+									<div>
+										<p className="text-muted-foreground text-sm">
+											Hai già identificato alcuni temi importanti per i diritti
+											dei lavoratori, ma secondo i principi OCSE è fondamentale
+											passare dalla consapevolezza all'azione. Solo così potrai
+											prevenire o ridurre possibili rischi.
+										</p>
+									</div>
+								)}
+
+								{choiceAnalysis.choice === '03' && (
+									<div>
+										<ul className="text-muted-foreground space-y-1 text-left text-sm">
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Creare un sistema di monitoraggio continuo, anche
+													documentando le buone pratiche che già applichi.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Comunicare questi impegni ai tuoi partner e
+													collaboratori.
+												</span>
+											</li>
+											<li className="flex gap-2">
+												<Icon
+													name="check"
+													className="text-primary h-4 w-4 flex-shrink-0 self-start"
+												/>
+												<span className="flex-1">
+													Considerare piccoli strumenti di verifica regolare e
+													accesso a sistemi di reclamo, per garantire
+													miglioramenti continui.
+												</span>
+											</li>
+										</ul>
+									</div>
+								)}
+							</CardContent>
+						</Card>
+					)}
 				</div>
 
 				{/* Conversion Sidebar */}

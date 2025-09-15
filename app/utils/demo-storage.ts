@@ -12,12 +12,14 @@
  * - Automatic cleanup and data isolation from production
  */
 
-import { getDemoAnswerableQuestionsCount } from "./demo-questions"
+import { getDemoAnswerableQuestionsCount } from './demo-questions'
+import { getDemoSessionId, clearDemoSessionId } from './demo-session.client.ts'
 
 const DEMO_STORAGE_KEY = 'vitae-demo-assessment'
 const DEMO_ANALYTICS_KEY = 'vitae-demo-analytics'
 
 export interface DemoData {
+	sessionId: string // NEW: Add session tracking
 	currentPageIndex: number
 	surveyData: Record<string, any>
 	startTime: number
@@ -48,6 +50,11 @@ export function getDemoDataFromLocalStorage(): DemoData {
 
 		// Ensure we have all required fields
 		return {
+			sessionId:
+				parsed.sessionId ??
+				(typeof window !== 'undefined'
+					? getDemoSessionId()
+					: 'ssr-placeholder'),
 			currentPageIndex: parsed.currentPageIndex ?? 0,
 			surveyData: parsed.surveyData ?? {},
 			startTime: parsed.startTime ?? Date.now(),
@@ -131,12 +138,14 @@ export function completeDemoInLocalStorage(): void {
 
 	try {
 		const current = getDemoDataFromLocalStorage()
+
 		const updated: DemoData = {
 			...current,
 			isCompleted: true,
 			lastUpdated: Date.now(),
 		}
 		localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(updated))
+
 		trackDemoAnalytics('demo_completed', {
 			totalQuestions: Object.keys(current.surveyData).length,
 			sessionDuration: Date.now() - current.startTime,
@@ -155,6 +164,7 @@ export function clearDemoData(): void {
 	try {
 		localStorage.removeItem(DEMO_STORAGE_KEY)
 		localStorage.removeItem(DEMO_ANALYTICS_KEY)
+		clearDemoSessionId()
 	} catch (error) {
 		console.warn('Failed to clear demo data:', error)
 	}
@@ -290,6 +300,8 @@ export function isDemoSessionAbandoned(timeoutMinutes: number = 30): boolean {
  */
 function getDefaultDemoData(): DemoData {
 	return {
+		sessionId:
+			typeof window !== 'undefined' ? getDemoSessionId() : 'ssr-placeholder',
 		currentPageIndex: 0,
 		surveyData: {},
 		startTime: Date.now(),
@@ -370,29 +382,9 @@ export function getMostAnsweredChoice(): {
 	// Count each choice value from radio group questions
 	Object.entries(demoData.surveyData).forEach(([_key, answer]) => {
 		// Only count valid choice answers (exclude text answers and undefined)
-		if (typeof answer === 'string') {
-			let normalizedChoice: string | null = null
-
-			// Normalize choices to base categories, including "ancora" variations
-			if (answer === 'Non ci ho mai pensato' || answer === 'Per niente importante') {
-				normalizedChoice = 'Non ci ho mai pensato'
-			} else if (
-				answer === 'A volte ci penso ma non ho fatto nulla al riguardo' ||
-				answer === 'Poco importante'
-			) {
-				normalizedChoice = 'Poco importante'
-			} else if (
-				answer === 'Sì e ho agito per assicurarmene' ||
-				answer === 'Molto importante'
-			) {
-				normalizedChoice = 'Molto importante'
-			} 
-
-			if (normalizedChoice) {
-				choiceCounts[normalizedChoice] =
-					(choiceCounts[normalizedChoice] || 0) + 1
-				totalRadioAnswers++
-			}
+		if (typeof answer === 'string' && answer.trim() !== '') {
+			choiceCounts[answer] = (choiceCounts[answer] || 0) + 1
+			totalRadioAnswers++
 		}
 	})
 
@@ -407,11 +399,15 @@ export function getMostAnsweredChoice(): {
 		}
 	})
 
-	return {
+	const result = {
 		choice: mostFrequentChoice,
 		count: maxCount,
 		totalRadioAnswers,
 	}
+
+	console.log('Most Answered Choice Analysis:', result)
+
+	return result
 }
 
 /**
@@ -428,6 +424,63 @@ export function exportDemoData(): {
 		analytics: getDemoAnalyticsEvents(),
 		stats: getDemoSessionStats(),
 		exportTime: Date.now(),
+	}
+}
+
+/**
+ * Get completed demo data formatted for database storage
+ */
+export function getCompletedDemoDataForStorage(): {
+	sessionId: string
+	surveyData: Record<string, any>
+	startTime: number
+} | null {
+	if (typeof window === 'undefined') {
+		return null
+	}
+
+	try {
+		const demoData = getDemoDataFromLocalStorage()
+
+		// Only return data if demo is completed
+		if (!demoData.isCompleted) {
+			return null
+		}
+
+		const result = {
+			sessionId: demoData.sessionId,
+			surveyData: demoData.surveyData,
+			startTime: demoData.startTime,
+		}
+
+		return result
+	} catch (error) {
+		console.warn('Failed to get completed demo data for storage:', error)
+		return null
+	}
+}
+
+/**
+ * Ensure demo session has a proper session ID (client-side only)
+ */
+export function ensureDemoSessionId(): void {
+	if (typeof window === 'undefined') return
+
+	try {
+		const current = getDemoDataFromLocalStorage()
+
+		// If session ID is placeholder or missing, generate a new one
+		if (!current.sessionId || current.sessionId === 'ssr-placeholder') {
+			const newSessionId = getDemoSessionId()
+			const updated: DemoData = {
+				...current,
+				sessionId: newSessionId,
+				lastUpdated: Date.now(),
+			}
+			localStorage.setItem(DEMO_STORAGE_KEY, JSON.stringify(updated))
+		}
+	} catch (error) {
+		console.warn('Failed to ensure demo session ID:', error)
 	}
 }
 

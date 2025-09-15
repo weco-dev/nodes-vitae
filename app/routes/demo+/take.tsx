@@ -32,10 +32,17 @@ import {
 	getDemoAnswerableQuestions,
 } from '#app/utils/demo-questions.ts'
 import {
+	saveCompletedDemoSession,
+	demoSessionExists,
+	type CompletedDemoSessionData,
+} from '#app/utils/demo-session.server.ts'
+import {
 	getDemoDataFromLocalStorage,
 	saveDemoProgressToLocalStorage,
 	saveDemoAnswerToLocalStorage,
 	completeDemoInLocalStorage,
+	clearDemoData,
+	ensureDemoSessionId,
 } from '#app/utils/demo-storage.ts'
 import { type Route } from './+types/take'
 
@@ -49,11 +56,12 @@ const SurveyComponent = lazy(() =>
 export async function loader({}: Route.LoaderArgs) {
 	// No authentication required for demo
 	const demoData = getDemoDataFromLocalStorage()
-	const surveyJson = convertDemoToSurveyJsFormat(demoAssessmentQuestions)
+	const surveyJson = convertDemoToSurveyJsFormat(demoAssessmentQuestions, true) // Force all questions to be required
 
 	return {
 		assessment: {
 			id: 'demo',
+			sessionId: demoData.sessionId,
 			currentPageIndex: demoData.currentPageIndex,
 			surveyData: demoData.surveyData,
 		},
@@ -111,7 +119,31 @@ export async function action({ request }: Route.ActionArgs) {
 		}
 
 		case 'complete': {
+			const sessionId = formData.get('sessionId') as string
+			const completionDataStr = formData.get('completionData') as string
+
+			// 1. Complete in localStorage (existing) - this runs on client side
 			completeDemoInLocalStorage()
+
+			// 2. NEW: Save completed session to database
+			if (completionDataStr && sessionId && sessionId !== 'ssr-placeholder') {
+				try {
+					const completedData = JSON.parse(
+						completionDataStr,
+					) as CompletedDemoSessionData
+
+					// Check if already stored to prevent duplicates
+					const exists = await demoSessionExists(sessionId)
+
+					if (!exists) {
+						await saveCompletedDemoSession(sessionId, completedData)
+					}
+				} catch (error) {
+					// Database save failure doesn't break demo completion
+					console.warn('Failed to save completed demo session:', error)
+				}
+			}
+
 			return redirect('/demo/complete')
 		}
 
@@ -145,10 +177,19 @@ export default function DemoTake() {
 		const startTime = performance.now()
 		initializeDemoAnalytics()
 
+		// Ensure demo session has proper session ID
+		ensureDemoSessionId()
+
 		// Track loading performance
 		const endTime = performance.now()
 		trackDemoLoadingPerformance('demo_take_route', endTime - startTime)
 	}, [])
+
+	// Handle demo restart
+	const handleRestartDemo = () => {
+		clearDemoData()
+		window.location.href = '/demo/take'
+	}
 
 	// Demo-specific navigation system (adapted from assessment route)
 	const assessmentNavigation = useAssessmentNavigation(
@@ -504,15 +545,31 @@ export default function DemoTake() {
 
 	const handleComplete = useCallback(
 		(surveyData: any) => {
+			// Get the current demo data to ensure we have the correct sessionId
+			const currentDemoData = getDemoDataFromLocalStorage()
+			const sessionId =
+				currentDemoData.sessionId !== 'ssr-placeholder'
+					? currentDemoData.sessionId
+					: assessment.sessionId
+
+			// Prepare the completion data on the client side
+			const completionData = {
+				sessionId,
+				surveyData: currentDemoData.surveyData,
+				startTime: currentDemoData.startTime,
+			}
+
 			void fetcher.submit(
 				{
 					intent: 'complete',
+					sessionId,
+					completionData: JSON.stringify(completionData),
 					surveyData: JSON.stringify(surveyData),
 				},
 				{ method: 'POST' },
 			)
 		},
-		[fetcher],
+		[fetcher, assessment.sessionId],
 	)
 
 	const handleError = useCallback((error: Error, errorInfo: any) => {
@@ -630,6 +687,7 @@ export default function DemoTake() {
 											onError={handleError}
 											isNavigating={assessmentNavigation.isNavigating}
 											isDemo={true}
+											demoRequireAllQuestions={true}
 										/>
 									</Suspense>
 								)}
@@ -646,6 +704,14 @@ export default function DemoTake() {
 									Crea un account gratuito per accedere al questionario completo
 								</p>
 								<div className="flex flex-col justify-center gap-3 sm:flex-row">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleRestartDemo}
+									>
+										<Icon name="reset" className="mr-2 h-4 w-4" />
+										Riprova la demo
+									</Button>
 									<Button size="sm" asChild>
 										<Link to="/signup">Crea account</Link>
 									</Button>

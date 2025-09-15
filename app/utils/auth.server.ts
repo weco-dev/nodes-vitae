@@ -74,13 +74,13 @@ export async function requireAnonymous(request: Request) {
 }
 
 export async function login({
-	username,
+	email,
 	password,
 }: {
-	username: User['username']
+	email: User['email']
 	password: string
 }) {
-	const user = await verifyUserPassword({ username }, password)
+	const user = await verifyUserPassword({ email }, password)
 	if (!user) return null
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true, userId: true },
@@ -93,15 +93,15 @@ export async function login({
 }
 
 export async function resetUserPassword({
-	username,
+	email,
 	password,
 }: {
-	username: User['username']
+	email: User['email']
 	password: string
 }) {
 	const hashedPassword = await getPasswordHash(password)
 	return prisma.user.update({
-		where: { username },
+		where: { email },
 		data: {
 			password: {
 				update: {
@@ -236,7 +236,7 @@ export async function getPasswordHash(password: string) {
 }
 
 export async function verifyUserPassword(
-	where: Pick<User, 'username'> | Pick<User, 'id'>,
+	where: Pick<User, 'username'> | Pick<User, 'id'> | Pick<User, 'email'>,
 	password: Password['hash'],
 ) {
 	const userWithPassword = await prisma.user.findUnique({

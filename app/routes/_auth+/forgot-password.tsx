@@ -41,7 +41,7 @@ export async function action({ request }: Route.ActionArgs) {
 				ctx.addIssue({
 					path: ['usernameOrEmail'],
 					code: z.ZodIssueCode.custom,
-					message: 'No user exists with this username or email',
+					message: 'No user exists with this email or username',
 				})
 				return
 			}
@@ -150,7 +150,7 @@ export default function ForgotPasswordRoute() {
 							<Field
 								labelProps={{
 									htmlFor: fields.usernameOrEmail.id,
-									children: 'Username o Email',
+									children: 'Email o Username',
 								}}
 								inputProps={{
 									autoFocus: true,

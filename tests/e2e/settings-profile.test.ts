@@ -48,13 +48,13 @@ test('Users can update their password', async ({ page, login }) => {
 
 	await expect(page).toHaveURL(`/dashboard/settings/profile`)
 
-	const { username } = user
+	const { email } = user
 	expect(
-		await verifyUserPassword({ username }, oldPassword),
+		await verifyUserPassword({ email }, oldPassword),
 		'Old password still works',
 	).toBeNull()
 	expect(
-		await verifyUserPassword({ username }, newPassword),
+		await verifyUserPassword({ email }, newPassword),
 		'New password does not work',
 	).toEqual({ id: user.id })
 })
